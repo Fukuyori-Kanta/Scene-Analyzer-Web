@@ -1,0 +1,2 @@
+# Scene-Analyzer-Web
+デスクトップアプリであるScene-AnalyzerをWeb版として移植する際の管理用リポジトリ
