@@ -1,0 +1,173 @@
+﻿import React from 'react'
+import {
+  BrowserRouter as Router,
+  Route, 
+  Link, 
+  Switch
+} from 'react-router-dom'
+import './style.css'
+import TopPage from './module/TopPageModule'
+import TestPage from './module/TestPageModule'
+import ResultsPage from './module/ResultsPageModule'
+import ResultDetailPage from './module/ResultDetailPageModule'
+
+// React Routerを使ったメインコンポーネントの定義
+const SceneAnalyzerApp = () => (
+  <Router>
+    <Header />
+    <div>
+      <Switch>
+        <Route exact path='/' component={TopPage} />
+        <Route path='/top' component={TopPage} />
+        <Route path='/results' component={ResultsPage} />
+        <Route path='/result/:id' component={ResultDetailPage} />
+        <Route path='/statistics' component={StatisticsPage} />
+        <Route path='/newAnalysis' component={NewAnalysisPage} />
+        <Route path='/test' component={TestPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </div>
+    <Footer />
+  </Router>
+)
+
+// ヘッダーの定義
+const Header = () => (
+  <header className="page-header">
+    <NaviMenu
+      title="SceneAnalyzer"
+      values="結果一覧,統計,新規分析"
+      herf="/results,/statistics,/newAnalysis" />
+    <HamburgerMenu />
+  </header>
+)
+// フッター
+const Footer = () => (
+  <div style={styleHeader}>
+    分析結果を確認するためのアプリです。
+  </div>
+)
+
+const NotFound = () => {
+  <div>
+    <div><h1>Not Found</h1></div>
+  </div>
+}
+/*
+// 結果詳細ページのコンポーネント
+const ResultDetailPage = () => (
+  <div id="result-detail">
+    <div className="bread">
+      <ul>
+        <li><a href="/top">トップページ</a></li>
+        <li><a href="/results">結果一覧</a></li>
+      </ul>
+    </div>
+
+    <div className="video-info">
+      <div id="file-name">{this.props.match}</div>
+      <div id="scene-no"></div>
+    </div>
+
+    <div id="result-screen">
+
+      <div id="movie-screen" className="border-line"></div>
+
+      <div id="label-screen" className="border-line">
+        <div className="annotation-area">
+          <h2 className="heading tag">このシーンのラベル一覧</h2>
+          <div className="button-area">
+            <div className="edit-btn">
+              <p>編集</p>
+            </div>
+            <div className="save-btn">
+              <p>保存</p>
+            </div>
+            <div className="cancel-btn">
+              <p>キャンセル</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="labels"></div>
+
+        <div id="input-area"></div>
+
+        <h2 className="heading tag">このシーンの好感度</h2>
+
+        <div className="favo-gragh">
+          <canvas id="canvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div className="scene-list-screen" className="border-line">
+      <h4 className="heading margin-left">シーン分割結果（計 : <span id="scene-cnt"></span>シーン）</h4>
+      <div id="scene-list" className="horizontal-scroll"></div>
+    </div>
+  </div>
+)
+*/
+// 統計ページのコンポーネント
+const StatisticsPage = () => (
+  <div><h1>統計</h1></div>
+)
+// 新規分析ページのコンポーネント
+const NewAnalysisPage = () => (
+  <div><h1>新規分析</h1></div>
+)
+// スタイルの定義
+const styleHeader = {
+  backgroundColor: '#a2a851',
+  color: 'white',
+  padding: 8
+}
+class NaviMenu extends React.Component {
+  render() {
+    const values = this.props.values.split(",") // 遷移先ページ名
+    const herf = this.props.herf.split(",") // 遷移先パス
+
+    // 遷移先のページ名とパスの対応リスト作成関数
+    const zip = (...arrays) => {
+      const length = Math.min(...(arrays.map(arr => arr.length)))
+      return new Array(length).fill().map((_, i) => arrays.map(arr => arr[i]))
+    }
+
+    const items = zip(values, herf) // 遷移先のページ名とパスの対応リスト
+    const itemsObj = items.map(
+      (item) => {
+        return (
+          <li key={item[0]}>
+            <a href={item[1]}>{item[0]}</a>
+          </li>
+        )
+      })
+    let title = this.props.title  // タイトル
+    if (!title) title = "LIST"
+
+    return (
+      <div className="left-side">
+        <h1 className="headline"><a href="/top">{title}</a></h1>
+        <ul className="main-nav">{itemsObj}</ul>
+      </div>)
+  }
+}
+
+// ハンバーガーメニュー
+const HamburgerMenu = () => {
+  return (
+    <div className="right-side">
+      <div className="menu-btn">
+        <i className="fa fa-bars" aria-hidden="true"></i>
+      </div>
+      <ul className="menu">
+        <li className="menu-item">アカウント</li>
+        <li className="menu-item">スコア</li>
+        <li className="menu-item">ランキング</li>
+        <li className="menu-item"><a href="/help">ヘルプ</a></li>
+        <li className="menu-item">お問い合わせ</li>
+      </ul>
+    </div>
+  )
+}
+export default SceneAnalyzerApp
