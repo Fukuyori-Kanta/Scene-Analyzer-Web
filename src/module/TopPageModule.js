@@ -1,5 +1,6 @@
 ﻿import React from 'react'
 import request from 'superagent'
+import Thumbnail from './Thumbnail'
 
 class Button extends React.Component {
   render() {
@@ -12,7 +13,7 @@ class Button extends React.Component {
 }
 
 class TopPage extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     // 状態の初期化
     this.state = {
@@ -20,7 +21,7 @@ class TopPage extends React.Component {
     }
   }
   // マウントされるとき
-  componentWillMount () {
+  componentWillMount() {
     // JSONデータを読み込む --- (※2)
     request.get('http://192.168.204.128/history')
       .end((err, res) => {
@@ -28,7 +29,7 @@ class TopPage extends React.Component {
       })
   }
   // データを読み込んだとき --- (※3)
-  loadedJSON (err, res) {
+  loadedJSON(err, res) {
     if (err) {
       console.log('JSON読み込みエラー')
       return
@@ -38,7 +39,7 @@ class TopPage extends React.Component {
       items: res.body
     })
   }
-  render () {
+  render() {
     // JSONデータの読み込みが完了してるか? --- (※5)
     if (!this.state.items) {
       return <div className='App'>
@@ -47,14 +48,10 @@ class TopPage extends React.Component {
     // 読み込んだデータからselect要素を作る --- (※6)
     const thumbnail = this.state.items.map(e => {
       const videoId = e.video_id
+      const productName = e.product_name
       const imgPath = '/result/thumbnail/' + videoId + '/thumbnail1.jpg'
       return (
-        <div className="item" key={videoId}>
-          <img data-video-id={videoId}
-            className="thumbnail"
-            src={`${process.env.PUBLIC_URL}` + imgPath} />
-          <p className="video-name" data-video-name={videoId}>{e.product_name}</p>
-        </div>
+        <Thumbnail videoId={videoId} productName={productName} imgPath={imgPath} key={videoId} />
       )
     })
     return (
@@ -72,7 +69,9 @@ class TopPage extends React.Component {
             <h3 className="bgc-gray text-center">閲 覧 履 歴</h3>
           </div>
 
-          <div id="access-history">{thumbnail}</div>
+          <div id="access-history">
+            {thumbnail}
+          </div>
 
           <div id="add">
             <a href="/results"><h3 className="bgc-gray text-center border-gray">さらに見る</h3></a>
@@ -84,4 +83,4 @@ class TopPage extends React.Component {
   }
 }
 
-export default TopPage 
+export default TopPage

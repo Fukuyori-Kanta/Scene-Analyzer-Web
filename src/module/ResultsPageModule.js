@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom'
 import ResultDetailPage from './ResultDetailPageModule'
 import Breadcrumbs from './Breadcrumbs'
+import Thumbnail from './Thumbnail'
 
 class ResultsPage extends React.Component {
   constructor(props) {
@@ -97,36 +98,6 @@ class ResultsPage extends React.Component {
 
         <div id="video-list">{thumbnail}</div>
 
-      </div>
-    )
-  }
-}
-
-class Thumbnail extends React.Component {
-  constructor(props) {
-    super(props)
-    this.clickHandler = this.clickHandler.bind(this)
-  }
-  clickHandler(e) {
-
-    //window.alert(e.currentTarget.dataset.id);
-    //const clickedVideoId = this.
-    //console.log(clickedVideoId)
-  }
-  render() {
-    return (
-      <div className="item">
-        <Link to={'result/' + this.props.videoId}>
-          <img data-id={this.props.videoId}
-            className="thumbnail"
-            src={`${process.env.PUBLIC_URL}` + this.props.imgPath}
-            onClick={this.clickHandler} />
-        </Link>
-        <Link to={'result/' + this.props.videoId}>
-          <p className="video-name"
-            data-id={this.props.videoId}
-            onClick={this.clickHandler}>{this.props.productName}</p>
-        </Link>
       </div>
     )
   }

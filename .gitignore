@@ -24,12 +24,12 @@ yarn-error.log*
 
 public/result/ 
 
-.package.json
-.package-lock.json
+package.json
+package-lock.json
 
 src/logo.svg
 
-/public/favicon.ico
-/public/logo192.png
-/public/logo512.png
-/public/logo192.png
+public/favicon.ico
+public/logo192.png
+public/logo512.png
+public/logo192.png

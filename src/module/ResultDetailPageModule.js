@@ -157,12 +157,11 @@ class ResultDetailPage extends React.Component {
     }
     */
 
-
     /* ラベルデータ */
     const labelsData = []
-    this.state.items.filter(data => {
-      if (data.scene_no.indexOf('scene_' + this.state.currentNo) !== -1) {
-        labelsData.push(data.label_name_ja)
+    this.state.items.filter(item => {
+      if (item.scene_no == 'scene_' + this.state.currentNo) {
+        labelsData.push(item.label_name_ja)
       }
     })
     const labels = labelsData.map((label, index) => {
@@ -172,7 +171,6 @@ class ResultDetailPage extends React.Component {
         </div>
       )
     })
-
 
     /* 好感度データ */
     const favoData = []
@@ -185,7 +183,7 @@ class ResultDetailPage extends React.Component {
       })
       favoData.push(l[0])
     })
-    console.log(favoData)
+    //console.log(favoData)
     /*
     function drawChart(favoData, current, videoId) { 
       // x軸ラベル（シーン〇  〇は全角数字）
@@ -342,25 +340,5 @@ class Labels extends React.Component {
     )
   }
 }
-
-class Thumbnail extends React.Component {
-  constructor(props) {
-    super(props)
-    this.clickHandler = this.clickHandler.bind(this)
-  }
-  render() {
-
-    return (
-      <div className="item">
-        <img data-id={this.props.videoId}
-          className="thumbnail"
-          data-scene-no="1"
-          src={`${process.env.PUBLIC_URL}` + this.props.imgPath}
-          onClick={this.clickHandler} />
-      </div>
-    )
-  }
-}
-
 
 export default ResultDetailPage
