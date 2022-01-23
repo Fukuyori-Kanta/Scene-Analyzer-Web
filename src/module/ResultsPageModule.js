@@ -4,23 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSearch } from "@fortawesome/free-solid-svg-icons"
 import {
   BrowserRouter as Router,
-  Route, 
-  Link, 
+  Route,
+  Link,
   Switch
 } from 'react-router-dom'
 import ResultDetailPage from './ResultDetailPageModule'
-
-class Button extends React.Component {
-  render () {
-    const value = this.props.value  // 遷移先ページ名
-    const herf = this.props.herf // 遷移先パス
-    return (
-      <a className="button" href={herf}>{value}</a>
-    )
-  }
-}
-
-
+import Breadcrumbs from './Breadcrumbs'
 
 class ResultsPage extends React.Component {
   constructor(props) {
@@ -63,25 +52,20 @@ class ResultsPage extends React.Component {
     }
 
     const allCount = this.state.items.length  // 全CM数
-    
+
     // サムネ画像
     const thumbnail = this.state.items.map(e => {
       const videoId = e.video_id
       const productName = e.product_name
       const imgPath = '/result/thumbnail/' + videoId + '/thumbnail1.jpg'
       return (
-        <Thumbnail videoId={videoId} productName={productName} imgPath={imgPath} key={videoId}/>
+        <Thumbnail videoId={videoId} productName={productName} imgPath={imgPath} key={videoId} />
       )
     })
-    
+
     return (
       <div id="result-list">
-        <div className="bread">
-          <ul>
-            <li><a href="/top">トップページ</a></li>
-            <li><a href="/results">結果一覧</a></li>
-          </ul>
-        </div>
+        <Breadcrumbs />
 
         <div className="container">
           <div className="left-side">
@@ -112,6 +96,7 @@ class ResultsPage extends React.Component {
         </div>
 
         <div id="video-list">{thumbnail}</div>
+
       </div>
     )
   }
@@ -122,27 +107,27 @@ class Thumbnail extends React.Component {
     super(props)
     this.clickHandler = this.clickHandler.bind(this)
   }
-  clickHandler (e) {
-    
+  clickHandler(e) {
+
     //window.alert(e.currentTarget.dataset.id);
     //const clickedVideoId = this.
     //console.log(clickedVideoId)
   }
-  render () {
+  render() {
     return (
-        <div className="item">
-          <Link to={'result/' + this.props.videoId}>
-            <img data-id={this.props.videoId}
-              className="thumbnail"
-              src={`${process.env.PUBLIC_URL}` + this.props.imgPath} 
-              onClick={this.clickHandler}/>
-          </Link>
-          <Link to={'result/' + this.props.videoId}>
-            <p className="video-name" 
-              data-id={this.props.videoId}
-              onClick={this.clickHandler}>{this.props.productName}</p>
-          </Link>
-        </div>
+      <div className="item">
+        <Link to={'result/' + this.props.videoId}>
+          <img data-id={this.props.videoId}
+            className="thumbnail"
+            src={`${process.env.PUBLIC_URL}` + this.props.imgPath}
+            onClick={this.clickHandler} />
+        </Link>
+        <Link to={'result/' + this.props.videoId}>
+          <p className="video-name"
+            data-id={this.props.videoId}
+            onClick={this.clickHandler}>{this.props.productName}</p>
+        </Link>
+      </div>
     )
   }
 }

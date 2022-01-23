@@ -1,8 +1,8 @@
 ﻿import React from 'react'
 import {
   BrowserRouter as Router,
-  Route, 
-  Link, 
+  Route,
+  Link,
   Switch
 } from 'react-router-dom'
 import './style.css'
@@ -10,7 +10,8 @@ import TopPage from './module/TopPageModule'
 import TestPage from './module/TestPageModule'
 import ResultsPage from './module/ResultsPageModule'
 import ResultDetailPage from './module/ResultDetailPageModule'
-
+import StatisticsPage from './module/StatisticsPageModule'
+import NewAnalysisPage from './module/NewAnalysisPageModule'
 // React Routerを使ったメインコンポーネントの定義
 const SceneAnalyzerApp = () => (
   <Router>
@@ -54,68 +55,17 @@ const NotFound = () => {
   </div>
 }
 /*
-// 結果詳細ページのコンポーネント
-const ResultDetailPage = () => (
-  <div id="result-detail">
-    <div className="bread">
-      <ul>
-        <li><a href="/top">トップページ</a></li>
-        <li><a href="/results">結果一覧</a></li>
-      </ul>
-    </div>
-
-    <div className="video-info">
-      <div id="file-name">{this.props.match}</div>
-      <div id="scene-no"></div>
-    </div>
-
-    <div id="result-screen">
-
-      <div id="movie-screen" className="border-line"></div>
-
-      <div id="label-screen" className="border-line">
-        <div className="annotation-area">
-          <h2 className="heading tag">このシーンのラベル一覧</h2>
-          <div className="button-area">
-            <div className="edit-btn">
-              <p>編集</p>
-            </div>
-            <div className="save-btn">
-              <p>保存</p>
-            </div>
-            <div className="cancel-btn">
-              <p>キャンセル</p>
-            </div>
-          </div>
-        </div>
-
-        <div id="labels"></div>
-
-        <div id="input-area"></div>
-
-        <h2 className="heading tag">このシーンの好感度</h2>
-
-        <div className="favo-gragh">
-          <canvas id="canvas"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <div className="scene-list-screen" className="border-line">
-      <h4 className="heading margin-left">シーン分割結果（計 : <span id="scene-cnt"></span>シーン）</h4>
-      <div id="scene-list" className="horizontal-scroll"></div>
-    </div>
-  </div>
-)
-*/
 // 統計ページのコンポーネント
 const StatisticsPage = () => (
   <div><h1>統計</h1></div>
 )
+*/
+/*
 // 新規分析ページのコンポーネント
 const NewAnalysisPage = () => (
   <div><h1>新規分析</h1></div>
 )
+*/
 // スタイルの定義
 const styleHeader = {
   backgroundColor: '#a2a851',

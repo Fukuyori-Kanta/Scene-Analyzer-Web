@@ -1,15 +1,49 @@
 ﻿import React from 'react'
 import request from 'superagent'
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Switch,
+  useLocation
+} from 'react-router-dom'
+import Breadcrumbs from './Breadcrumbs'
 
-class Button extends React.Component {
-  render() {
-    const value = this.props.value  // 遷移先ページ名
-    const herf = this.props.herf // 遷移先パス
-    return (
-      <a className="button" href={herf}>{value}</a>
-    )
-  }
+/*
+        <div className="bread">
+            <ul>
+            <li><a href="/top">トップページ</a></li>
+            <li><a href="/results">結果一覧</a></li>
+            <li>{productName}</li>
+          </ul>
+        </div>
+*/
+
+/*
+
+const Breadcrumbs = (props) => (
+  <div className="bread">
+      <ul className='container'>
+          <Route path='/:path' component={BreadcrumbsItem} />
+      </ul>
+  </div>
+)
+
+const BreadcrumbsItem = ({ match, ...rest }) => {
+  console.log(match.url)
+  console.log(pageList.result)
+  return (
+    <span>
+        <li className={match.isExact ? 'bread-active' : undefined}>
+            <Link to={match.url || ''}>
+                {match.url}
+            </Link>
+        </li>
+        <Route path={`${match.url}/:path`} component={BreadcrumbsItem} />
+    </span>
+  )
 }
+*/
 
 class ResultDetailPage extends React.Component {
   constructor(props) {
@@ -25,7 +59,7 @@ class ResultDetailPage extends React.Component {
   componentWillMount() {
     const { params } = this.props.match
     const id = params.id
-    
+
     this.setState({
       videoId: id
     })
@@ -46,11 +80,11 @@ class ResultDetailPage extends React.Component {
     // 状態を更新 --- (※4)
     this.setState({
       items: res.body,
-      productName: res.body[0].product_name, 
+      productName: res.body[0].product_name,
       sceneList: sceneList
     })
   }
-  clickHandler (e) {
+  clickHandler(e) {
     const clickedScene = e.currentTarget.dataset.scene_no
     console.log(clickedScene)
 
@@ -58,6 +92,7 @@ class ResultDetailPage extends React.Component {
       currentNo: clickedScene
     })
   }
+
   render() {
     // JSONデータの読み込みが完了してるか? --- (※5)
     if (!this.state.items) {
@@ -71,39 +106,80 @@ class ResultDetailPage extends React.Component {
 
     /* シーン一覧用サムネイル */
     const thumbnail = [...Array(sceneCount).keys()].map(i => ++i).map(cnt => {
-      const imgPath = '/result/thumbnail/' + videoId + '/thumbnail' + cnt + '.jpg'  
+      const imgPath = '/result/thumbnail/' + videoId + '/thumbnail' + cnt + '.jpg'
       return (
         <li className="item" key={cnt}>
-          <img data-scene_no={cnt} 
+          <img data-scene_no={cnt}
             className="thumbnail"
-            src={`${process.env.PUBLIC_URL}` + imgPath} 
+            src={`${process.env.PUBLIC_URL}` + imgPath}
             onClick={this.clickHandler} />
         </li>
       )
     })
 
+    /* パンくずリスト */
+    /*
+    const Breadcrumbs = () => (
+      <div className="bread">
+        <ul>
+          <Route path='/:path' component={BreadcrumbsItem} />
+        </ul>
+      </div>
+    )
+    
+    const BreadcrumbsItem = () => {
+      let location = useLocation()
+      let firstPath = '/' + (location.pathname.split('/')[1])
+      let secondPath = location.pathname.split('/')[2]
+      if (firstPath == '/result') {
+        firstPath = '/results'
+      }
+      const pageList = (path) => {
+        switch (path) {
+          case '/results':
+            return '結果一覧'
+          case '/statistics':
+            return '統計'
+          case 'newAnalysis':
+            return '新規分析'
+          default:
+            return 'テスト'
+        }
+      }
+      const product_name = this.state.productName
+      return (
+        <>
+          <li><Link to={'/top'}>トップ</Link></li>
+          <li><Link to={firstPath}>{pageList(firstPath)}</Link></li>
+          {secondPath && <li>{product_name}</li>}
+        </>
+      )
+    }
+    */
+
+
     /* ラベルデータ */
     const labelsData = []
     this.state.items.filter(data => {
-      if(data.scene_no.indexOf('scene_' + this.state.currentNo)!== -1) {
+      if (data.scene_no.indexOf('scene_' + this.state.currentNo) !== -1) {
         labelsData.push(data.label_name_ja)
       }
     })
     const labels = labelsData.map((label, index) => {
       return (
-        <div data-label_id={index+1} className="label-item" key={index+1}>
+        <div data-label_id={index + 1} className="label-item" key={index + 1}>
           <h3 className="label">{label}</h3>
         </div>
       )
     })
-    
+
 
     /* 好感度データ */
     const favoData = []
     const ListCnt = [...Array(sceneCount).keys()].map(i => ++i).map(cnt => {
       let l = []
       this.state.items.filter(data => {
-        if(data.scene_no.indexOf('scene_' + cnt)!== -1) {
+        if (data.scene_no.indexOf('scene_' + cnt) !== -1) {
           l.push(data.favo)
         }
       })
@@ -184,13 +260,7 @@ class ResultDetailPage extends React.Component {
     /* データの表示 */
     return (
       <div id="result-show">
-        <div className="bread">
-          <ul>
-            <li><a href="/top">トップページ</a></li>
-            <li><a href="/results">結果一覧</a></li>
-            <li>{productName}</li>
-          </ul>
-        </div>
+        <Breadcrumbs productName={productName} />
 
         <div className="video-info">
           <div id="file-name">{productName}</div>
@@ -199,7 +269,7 @@ class ResultDetailPage extends React.Component {
 
         <div id="result-screen">
 
-          <div id="movie-screen" className="border-line"><Video videoId={videoId} no={this.state.currentNo}/></div>
+          <div id="movie-screen" className="border-line"><Video videoId={videoId} no={this.state.currentNo} /></div>
 
           <div id="label-screen" className="border-line">
             <div className="annotation-area">
@@ -246,12 +316,12 @@ class Video extends React.Component {
       items: null // 読み込んだデータ保存用
     }
   }
-  render () {
+  render() {
     const videoId = this.props.videoId
     const currentNo = this.props.no
     const videoPath = '/result/scene/' + videoId + '/scene' + currentNo + '.mp4'
     return (
-      <video  src={`${process.env.PUBLIC_URL}` + videoPath} controls="controls" autoPlay="autoplay"></video>
+      <video src={`${process.env.PUBLIC_URL}` + videoPath} controls="controls" autoPlay="autoplay"></video>
     )
   }
 }
@@ -263,12 +333,12 @@ class Labels extends React.Component {
       items: null // 読み込んだデータ保存用
     }
   }
-  render () {
+  render() {
     const videoId = this.props.videoId
     const currentNo = this.props.no
     const videoPath = '/result/scene/' + videoId + '/scene' + currentNo + '.mp4'
     return (
-      <video  src={`${process.env.PUBLIC_URL}` + videoPath} controls="controls" autoPlay="autoplay"></video>
+      <video src={`${process.env.PUBLIC_URL}` + videoPath} controls="controls" autoPlay="autoplay"></video>
     )
   }
 }
@@ -278,16 +348,16 @@ class Thumbnail extends React.Component {
     super(props)
     this.clickHandler = this.clickHandler.bind(this)
   }
-  render () {
+  render() {
 
     return (
-        <div className="item">
-          <img data-id={this.props.videoId}
-            className="thumbnail"
-            data-scene-no="1"
-            src={`${process.env.PUBLIC_URL}` + this.props.imgPath} 
-            onClick={this.clickHandler}/>
-        </div>
+      <div className="item">
+        <img data-id={this.props.videoId}
+          className="thumbnail"
+          data-scene-no="1"
+          src={`${process.env.PUBLIC_URL}` + this.props.imgPath}
+          onClick={this.clickHandler} />
+      </div>
     )
   }
 }
