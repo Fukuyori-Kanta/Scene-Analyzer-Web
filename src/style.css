@@ -718,7 +718,6 @@ video {
   letter-spacing: 1px;
   cursor : pointer;
   position: relative;
-  display: none;
 }
 .save-btn p{
   position: absolute;
@@ -741,7 +740,6 @@ video {
   letter-spacing: 1px;
   cursor : pointer;
   position: relative;
-  display: none;
 }
 .cancel-btn p{
   position: absolute;
