@@ -72,8 +72,8 @@ class ResultDetailPage extends React.Component {
       editMode: false
     })
   }
-
-  render() {
+  
+  render() { 
     // JSONデータの読み込みが完了してるか? --- (※5)
     if (!this.state.items) {
       return <div className='App'>
@@ -190,50 +190,236 @@ class ResultDetailPage extends React.Component {
     )
   }
 }
-class Canvas extends React.Component {
-  constructor(props) {
-    super(props)
-    // 状態の初期化
-    this.state = {
-      labelData: this.props
-    }
+
+
+
+// const ResultDetailPage = (props) => {
+//   const { params } = props.match
+//   const id = params.id
+//   const [videoId, setVideoId] = useState(id)
+//   const [currentNo, setCurrentNo] = useState(1)
+//   const [productName, setProductName] = useState('')
+//   const [items, setItems] = useState(null)
+//   const [sceneList, setSceneList] = useState(null)
+//   const [editMode, setEditMode] = useState(false)
+
+//   useEffect(async () => {
+//     // JSONデータを読み込む
+//     request.get('http://192.168.204.128/result/' + id)
+//       .end((err, res) => {
+//         if (err) {
+//           console.log('JSON読み込みエラー')
+//           return
+//         }
+//         console.log(res)
+//         const sceneList = [...new Set(res.body.map(item => item.scene_no))]
+//         // 状態を更新
+//         setItems(res.body)
+//         setProductName(res.body[0].product_name)
+//         setSceneList(sceneList)
+//       })
+//   });
+
+
+//   const clickHandler = (e) => {
+//     setCurrentNo(e.currentTarget.dataset.scene_no)
+//   }
+
+//   const editBtnClickHandler = () => {
+//     setEditMode(true)
+//   }
+
+//   const saveBtnClickHandler = () => {
+//     setEditMode(false)
+//   }
+
+//   /* データの表示 */
+//   if (!items) {
+//     return <div className='App'>
+//       現在読み込み中...</div>
+//   }
+//   console.log(sceneList)
+//   const sceneCount = sceneList.length  // 全シーン数
+
+//   /* シーン一覧用サムネイル */
+//   const thumbnail = [...Array(sceneCount).keys()].map(i => ++i).map(cnt => {
+//     const imgPath = '/result/thumbnail/' + videoId + '/thumbnail' + cnt + '.jpg'
+//     // 現在のシーンの枠に色付け
+//     let isColorRed = false
+//     if (cnt === currentNo) {
+//       //isColorRed = true
+//     }
+//     return (
+//       <li className="item" key={cnt}>
+//         <img data-scene_no={cnt}
+//           className="thumbnail"
+//           src={`${process.env.PUBLIC_URL}` + imgPath}
+//           onClick={clickHandler}
+//           style={isColorRed ? { borderColor: 'red' } : {}} />
+//       </li>
+//     )
+//   })
+//   /* ラベルデータ */
+//   const labelsData = []
+//   items.filter(item => {
+//     if (item.scene_no == 'scene_' + currentNo) {
+//       labelsData.push(item)
+//     }
+//   })
+//   const labels = labelsData.map((label, index) => {
+//     return (
+//       <div data-label_id={index + 1} className="label-item" key={index + 1}>
+//         <h3 className="label">{label.label_name_ja}</h3>
+//       </div>
+//     )
+//   })
+
+//   /* 好感度データ */
+//   const favoData = []
+//   const ListCnt = [...Array(sceneCount).keys()].map(i => ++i).map(cnt => {
+//     let l = []
+//     items.filter(data => {
+//       if (data.scene_no.indexOf('scene_' + cnt) !== -1) {
+//         l.push(data.favo)
+//       }
+//     })
+//     favoData.push(l[0])
+//   })
+
+//   // 表示領域の切り替え
+//   const showMovieScreen = (isEditMode) => {
+//     if (!isEditMode) {
+//       return <Video videoId={videoId} no={currentNo} />
+//     } else {
+//       return <Canvas videoId={videoId} no={currentNo} data={labelsData} />
+//     }
+//   }
+
+//   return (
+//     <div id="result-show">
+//       <Breadcrumbs productName={productName} />
+
+//       <div className="video-info">
+//         <div id="file-name">{productName}</div>
+//         <div id="scene-no">{currentNo}シーン目</div>
+//       </div>
+
+//       <div id="result-screen">
+//         <div id="movie-screen" className="border-line layer-wrap" >
+//           {showMovieScreen(editMode)}
+//         </div>
+
+//         <div id="label-screen" className="border-line">
+//           <div className="annotation-area">
+//             <h2 className="heading tag">このシーンのラベル一覧</h2>
+//             <div className="button-area" >
+//               <div className="edit-btn" style={{ display: editMode ? 'none' : '' }} onClick={editBtnClickHandler}>
+//                 <p>編集</p>
+//               </div>
+//               <div className="save-btn" style={{ display: editMode ? '' : 'none' }} onClick={saveBtnClickHandler}>
+//                 <p>保存</p>
+//               </div>
+//               <div className="cancel-btn" style={{ display: editMode ? '' : 'none' }}>
+//                 <p>キャンセル</p>
+//               </div>
+//             </div>
+//           </div>
+
+//           <div id="labels">{labels}</div>
+
+//           <div id="input-area"></div>
+
+//           <h2 className="heading tag">このシーンの好感度</h2>
+
+//           <div className="favo-gragh">
+//             <canvas id="canvas"></canvas>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="scene-list-screen border-line">
+//         <h4 className="heading margin-left">シーン分割結果（計 : <span id="scene-cnt">{sceneCount}</span>シーン）</h4>
+//         <div id="scene-list" className="horizontal-scroll">{thumbnail}</div>
+//       </div>
+//     </div>
+//   )
+// }
+
+// const ResultDetailPage = (props) => {
+//   const [items, setItems] = useState()
+//   const [label, setLabels] = useState(null)
+//   const { params } = props.match
+//   const id = params.id
+
+//   useEffect(() => {
+//     // JSONデータを読み込む
+//     const accessDb = async () => {
+//       request.get('http://192.168.204.128/result/' + id)
+//       .end((err, res) => {
+//         if (err) {
+//           console.log('JSON読み込みエラー')
+//           return
+//         }
+//         // 状態を更新
+//         setItems(res.body[0].product_name)
+//       })
+//     }
+//     accessDb()
+//   }, []);
+  
+//   useEffect(() => {
+//     const currentNo = 1
+
+//     // ラベルデータ 
+//     const labelsData = []
+//     items.filter(item => {
+//       if (item.scene_no == 'scene_' + currentNo) {
+//         labelsData.push(item)
+//       }
+//     })
+//     const labels = labelsData.map((label, index) => {
+//       return (
+//         <div data-label_id={index + 1} className="label-item" key={index + 1}>
+//           <h3 className="label">{label.label_name_ja}</h3>
+//         </div>
+//       )
+//     })
+//     setLabels(labels)
+//   }, [items]);
+  
+//   return (
+//     <div id="labels">{items}</div>
+//   )
+
+// }
+
+const Video = (props) => {
+  const videoId = props.videoId
+  const currentNo = props.no
+  const videoPath = '/result/scene/' + videoId + '/scene' + currentNo + '.mp4'
+
+  return (
+    <video src={`${process.env.PUBLIC_URL}` + videoPath} controls="controls" autoPlay="autoplay"></video>
+  )
+}
+
+const Canvas = (props) => {
+  const parentElements = document.getElementById('movie-screen').getBoundingClientRect()  // 親要素
+  const width = parentElements['width'] - 3   // 画像表示領域の幅
+  const height = parentElements['height'] - 2 // 画像表示領域の高さ
+
+  const style = {
+    width: width,
+    height: height,
+    marginLeft: '1px'
   }
-  render() {
-    const parentElements = document.getElementById('movie-screen').getBoundingClientRect()  // 親要素
-    const width = parentElements['width'] - 3   // 画像表示領域の幅
-    const height = parentElements['height'] - 2 // 画像表示領域の高さ
-    const style = {
-      width: width,
-      height: height,
-      marginLeft: '1px'
-    }
-    return (
-      <>
-        <canvas id="image-area" style={style}></canvas>
-        <canvas id="rect-area" className="lower-canvas" style={style}></canvas>
-      </>
-    )
-  }
-  // 描画終了後の処理
-  componentDidMount() {
-    // サムネ画像の表示
-    this.showCanvas()
-    
-  }
-  // 更新後の処理
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    /*
-    // 状態の初期化
-    this.setState = ({
-      labelData: this.props
-    }, ()=>{
-      this.showCanvas()
-    })
-    */
-   this.showCanvas()
-  }
+
+  useEffect(() => {
+    showCanvas()
+  });
+
   // サムネ画像の表示
-  showCanvas() {
+  const showCanvas = () => {
     const imageCanvas = document.getElementById("image-area")
     const Context = imageCanvas.getContext("2d")
 
@@ -244,8 +430,9 @@ class Canvas extends React.Component {
     let canvasWidth = imageCanvas.width     // キャンバスサイズ（幅）
     let canvasHeight = imageCanvas.height   // キャンバスサイズ（高さ）
 
-    const videoId = this.props.videoId  // 動画ID
-    const currentNo = this.props.no     // 現在のシーン番号
+    const videoId = props.videoId  // 動画ID
+    const currentNo = props.no     // 現在のシーン番号
+    const labelData = props.data   // ラベルデータ
 
     let thumbnailPath = '/result/thumbnail/' + videoId + '/thumbnail' + currentNo + '.jpg' // サムネ画像のパス
 
@@ -255,8 +442,8 @@ class Canvas extends React.Component {
     img.onload = function () {
       Context.drawImage(img, 0, 0, canvasWidth, canvasHeight)
     }
-    
-    let rectCanvas = new fabric.Canvas('rect-area', {width: width, height: height})    // バウンディングボックスを描画するためのキャンバス
+
+    let rectCanvas = new fabric.Canvas('rect-area', { width: width, height: height })    // バウンディングボックスを描画するためのキャンバス
 
     let rectCanvasWidth = rectCanvas.width     // キャンバスサイズ（幅）
     let rectCanvasHeight = rectCanvas.height   // キャンバスサイズ（高さ）
@@ -264,11 +451,9 @@ class Canvas extends React.Component {
     let imgaeHeight = 240   // 画像サイズ（高さ）
     let xMagnification = rectCanvasWidth / imageWidth   // サイズ倍率(x)
     let yMagnification = rectCanvasHeight / imgaeHeight // サイズ倍率(y)   
-      
+
     let objId = 1     // バウンディングボックスを一意に識別するためのID
 
-    const labelData = this.state.labelData.data// ラベルデータ
-    
     // バウンディングボックスを描画
     for (let data of labelData) {
       let labelId = data.label_id    // ラベルID
@@ -295,194 +480,63 @@ class Canvas extends React.Component {
     // バウンディングボックスを描画する関数
     function drawRect(objId, coordinate, labelName) {
       let x = coordinate[0],
-          y = coordinate[1],
-          w = coordinate[2],
-          h = coordinate[3] 
-      
+        y = coordinate[1],
+        w = coordinate[2],
+        h = coordinate[3]
+
       // 矩形
       let rect = new fabric.Rect({
-          left: x,         // 左
-          top: y,          // 上
-          axisX: x,        // 原点からの座標（x）
-          axisY: y,        // 原点からの座標（y）            
-          width: w,        // 幅
-          height: h,       // 高さ
-          strokeWidth: 2,  // 線の幅
-          stroke: '#0BF',  // 線の色
-          fill: 'rgba(174,230,255,0.1)', // 塗潰し色
+        left: x,         // 左
+        top: y,          // 上
+        axisX: x,        // 原点からの座標（x）
+        axisY: y,        // 原点からの座標（y）            
+        width: w,        // 幅
+        height: h,       // 高さ
+        strokeWidth: 2,  // 線の幅
+        stroke: '#0BF',  // 線の色
+        fill: 'rgba(174,230,255,0.1)', // 塗潰し色
 
-          hasRotatingPoint: false, // 回転の無効化
-          strokeUniform: true      // 拡大縮小時に線の幅を固定   
+        hasRotatingPoint: false, // 回転の無効化
+        strokeUniform: true      // 拡大縮小時に線の幅を固定   
       })
 
       // ラベル名のテキストボックス
       let textbox = new fabric.Textbox('\u00a0' + labelName + '\u00a0', {
-          left: x + 2,     // 左
-          top: y + 2,      // 上
-          fontSize: 14,
-          fontFamily: 'Arial',
-          stroke: '#000',  // アウトラインの色
-          strokeWidth: 1,  // アウトラインの太さ
-          backgroundColor: 'rgba(174,230,255)', 
+        left: x + 2,     // 左
+        top: y + 2,      // 上
+        fontSize: 14,
+        fontFamily: 'Arial',
+        stroke: '#000',  // アウトラインの色
+        strokeWidth: 1,  // アウトラインの太さ
+        backgroundColor: 'rgba(174,230,255)',
       })
-      
+
       // 矩形とテキストボックスをグループ化
       var group = new fabric.Group([rect, textbox], {
-          id: objId,
-          left: x,
-          top: y,
-          hasRotatingPoint: false, // 回転の無効化            
-          lockScalingFlip: true,    // 裏返しをロック
+        id: objId,
+        left: x,
+        top: y,
+        hasRotatingPoint: false, // 回転の無効化            
+        lockScalingFlip: true,    // 裏返しをロック
 
-          // コーナー設定
-          cornerColor: '#333',
-          cornerSize: 9,
-          cornerStyle: 'circle'
-      })                
+        // コーナー設定
+        cornerColor: '#333',
+        cornerSize: 9,
+        cornerStyle: 'circle'
+      })
       rectCanvas.add(group)
 
       // オブジェクトの描画
       rectCanvas.renderAll()
     }
-    
   }
+
+  return (
+    <div>
+      <canvas id="image-area" style={style}></canvas>
+      <canvas id="rect-area" className="lower-canvas" style={style}></canvas>
+    </div>
+  )
 }
 
-class Video extends React.Component {
-  constructor(props) {
-    super(props)
-    // 状態の初期化
-    this.state = {
-      items: null // 読み込んだデータ保存用
-    }
-  }
-  render() {
-    const videoId = this.props.videoId
-    const currentNo = this.props.no
-    const videoPath = '/result/scene/' + videoId + '/scene' + currentNo + '.mp4'
-    return (
-      <video src={`${process.env.PUBLIC_URL}` + videoPath} controls="controls" autoPlay="autoplay"></video>
-    )
-  }
-}
-
-class Labels extends React.Component {
-  constructor(props) {
-    super(props)
-    // 状態の初期化
-    this.state = {
-      items: null // 読み込んだデータ保存用
-    }
-  }
-  render() {
-    const videoId = this.props.videoId
-    const currentNo = this.props.no
-    const videoPath = '/result/scene/' + videoId + '/scene' + currentNo + '.mp4'
-    return (
-      <video src={`${process.env.PUBLIC_URL}` + videoPath} controls="controls" autoPlay="autoplay"></video>
-    )
-  }
-}
-
-class ButtonArea extends React.Component {
-  constructor(props) {
-    super(props)
-    this.editBtnClickHandler = this.editBtnClickHandler.bind(this)  // 編集ボタンクリックイベントをバインド
-    // 状態の初期化
-    this.state = {
-      editMode: false
-    }
-  }
-  /* 編集ボタンを押したときの処理 */
-  editBtnClickHandler(e) {
-    this.setState({
-      editMode: true
-    })
-  }
-  render() {
-    return (
-      <div className="button-area" >
-        <div className="edit-btn" onClick={this.editBtnClickHandler}>
-          <p>編集</p>
-        </div>
-        <div className="save-btn">
-          <p>保存</p>
-        </div>
-        <div className="cancel-btn">
-          <p>キャンセル</p>
-        </div>
-      </div>
-    )
-  }
-}
-/*
-    function drawChart(favoData, current, videoId) { 
-      // x軸ラベル（シーン〇  〇は全角数字）
-      const xAxisLabels = [...Array(favoData.length).keys()].map((d) => {return "シーン" + zenkaku2Hankaku(String(d+1))})
-  
-      // 描画するグラフのデータ
-      const lineChartData = {
-          labels : xAxisLabels, 
-          datasets : [
-              {
-              label: "好感度",
-              lineTension: 0,
-              data : favoData, 
-              borderColor: '#00a0dcff',
-              backgroundColor: '#00a0dc11',
-              pointRadius: [3]
-              }
-          ]
-      }
-      // グラフのオプション
-      const lineChartOption = {
-          // 大きさ
-          scales: {
-              yAxes: [                    // Ｙ軸 
-                  {
-                      ticks: {            // 目盛り        
-                          min: 0,         // 最小値
-                          //max: 0.06,    // 最大値
-                          stepSize: 0.01  // 間隔
-                      }
-                  }
-              ]
-          },
-          // 凡例
-          legend: {
-              display: false
-          },
-          // アニメーション
-          animation: false, 
-          // マウスオーバー時のカーソル変更関数
-          onHover : function(e, el) {
-              if (! el || el.length === 0) {
-                  $('#canvas').css('cursor', 'default')
-              } else {
-                  $('#canvas').css('cursor', 'pointer')
-              }
-          },
-      }
-  
-      // ポイントの大きさを設定（現在シーンには、大きくポイントを描画）
-      for (let i = 0 i < lineChartData.datasets[0].data.length i++) {
-          lineChartData.datasets[0].pointRadius[i] = 3
-      }
-      lineChartData.datasets[0].pointRadius[current-1] = 10
-  
-      let myCanvas = $('#canvas')[0]
-      let ctx = myCanvas.getContext('2d')
-      // 既に描画している場合は、一度クリア
-      // クリアしないと描画ずれが起きる
-      if(myChart) {
-          myChart.destroy()
-      }
-      // 折れ線グラフを描画
-      myChart = new Chart(ctx, {
-          type: 'line',
-          data: lineChartData,
-          options: lineChartOption
-      }) 
-    }
-    */
 export default ResultDetailPage
