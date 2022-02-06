@@ -5,11 +5,10 @@ import {
 } from 'react-router-dom'
 
 /* パンくずリスト */
-const Breadcrumbs = (props) => {
-  const productName = props.productName // 製品名
+export default function Breadcrumbs({ productName = '' }) {
   let location = useLocation()  // 現在のURL
   let currentPath = '/' + (location.pathname.split('/')[1]) // 現在のパス
-
+ 
   // 結果詳細ページ(/result/:id)の前ページを結果一覧ページ(/results)に設定
   if (currentPath == '/result') {
     currentPath = '/results'
@@ -39,4 +38,3 @@ const Breadcrumbs = (props) => {
     </div>
   )
 }
-export default Breadcrumbs

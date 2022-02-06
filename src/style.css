@@ -564,7 +564,7 @@ height: 105%;
 }
 
 /* 動画表示画面 */
-#movie-screen {
+#switch-screen {
   background-color: #ffffff;
   width: 60vw;
   height: 58vh;
@@ -574,7 +574,7 @@ height: 105%;
   */
   background-color: #000;
 }
-#movie-screen .edit-img {
+#switch-screen .edit-img {
   width: 100%;  
 }
 video {
@@ -831,7 +831,7 @@ video {
   #result-screen {
       display: flex;
   }
-  #movie-screen {
+  #switch-screen {
       flex-grow: 1;
   }
   #label-screen {
@@ -843,7 +843,7 @@ video {
   #result-screen {
       display: grid;
   }
-  #movie-screen {
+  #switch-screen {
       width: 100%;
       height: 50vh;
   }
