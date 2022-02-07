@@ -2,16 +2,15 @@
 import { useMode } from "./ModeProvider"
 import { useCurrent } from "./CurrentProvider"
 
-export default function LabelScreen({ data }) {
+import FavoChart from './FavoChart'
 
+
+export default function LabelScreen({ data }) {
   let { isEditMode, makeEditMode, makeViewMode } = useMode();
   let { currentNo } = useCurrent();
-  const labelsData = []
-  data.filter(item => {
-    if (item.scene_no == 'scene_' + currentNo) {
-      labelsData.push(item)
-    }
-  })
+
+  // ラベルデータの抽出
+  const labelsData = data.filter(item => item.scene_no == 'scene_' + currentNo)
   const labels = labelsData.map((label, index) => {
     return (
       <div data-label_id={index + 1} className="label-item" key={index + 1}>
@@ -19,6 +18,13 @@ export default function LabelScreen({ data }) {
       </div>
     )
   })
+
+  // 好感度データの抽出
+  const sceneCount = [...new Set(data.map(item => item.scene_no))].length
+  const favoData = [...Array(sceneCount).keys()].map(i => ++i).map(cnt => {
+    const reg = new RegExp('^' + 'scene_' + cnt + '$')
+    return data.filter(d => d.scene_no.match(reg) !== null)[0].favo
+  })  
 
   return (
     <div id="label-screen" className="border-line">
@@ -43,9 +49,7 @@ export default function LabelScreen({ data }) {
 
       <h2 className="heading tag">このシーンの好感度</h2>
 
-      <div className="favo-gragh">
-        <canvas id="canvas"></canvas>
-      </div>
+      <FavoChart favoData={favoData}/>
     </div>
   )
 }

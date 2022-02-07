@@ -656,10 +656,6 @@ video {
   width:  calc(90% - 40px);
   overflow: hidden;
 }
-.favo-gragh canvas{
-  width: 200px;
-  height: 200px;
-}
 
 /* （カット）シーン一覧画面 */
 .scene-list-screen {

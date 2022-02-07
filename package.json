@@ -42,5 +42,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "chart.js": "^3.7.0",
+    "react-chartjs-2": "^4.0.1"
   }
 }
