@@ -3,9 +3,10 @@ import { useCurrent } from "./CurrentProvider"
 import { fabric } from "fabric"
 
 export default function Canvas({ videoId, data }) {
-  let { currentNo } = useCurrent();
+  const { currentScene, changeCurrentScene, currentLabel, changeCurrentLabel } = useCurrent();
 
   const [style, setStyle] = useState()
+  const [rectCanvas, setRectCanvas] = useState()
 
   useEffect(() => {
     const parentElements = document.getElementById('switch-screen').getBoundingClientRect()  // 親要素
@@ -22,12 +23,12 @@ export default function Canvas({ videoId, data }) {
 
   useEffect(() => {
     showCanvas()
-  }, [currentNo]);
+  }, [currentScene]);
 
   /* ラベルデータ */
   const labelsData = []
   data.filter(item => {
-    if (item.scene_no == 'scene_' + currentNo) {
+    if (item.scene_no == 'scene_' + currentScene) {
       labelsData.push(item)
     }
   })
@@ -44,7 +45,7 @@ export default function Canvas({ videoId, data }) {
     let canvasWidth = imageCanvas.width     // キャンバスサイズ（幅）
     let canvasHeight = imageCanvas.height   // キャンバスサイズ（高さ）
 
-    let thumbnailPath = '/result/thumbnail/' + videoId + '/thumbnail' + currentNo + '.jpg' // サムネ画像のパス
+    let thumbnailPath = '/result/thumbnail/' + videoId + '/thumbnail' + currentScene + '.jpg' // サムネ画像のパス
 
     // サムネ画像を描画
     let img = new Image()
@@ -139,12 +140,136 @@ export default function Canvas({ videoId, data }) {
       // オブジェクトの描画
       rectCanvas.renderAll()
     }
-  }
 
+    // 矩形選択時のイベントハンドラ
+    rectSelectionEventHandler()
+
+    // 矩形選択時のイベントハンドラ
+    function rectSelectionEventHandler() {
+      // 何も選択していない状態で矩形をクリックした時の処理
+      rectCanvas.on('selection:created', (e) => {
+        let selectedObj = e.selected[0];            // 選択したオブジェクト
+        let selectedRect = selectedObj._objects[0]; // 選択した矩形
+
+        // 現在の選択ラベルを変更
+        changeCurrentLabel(selectedObj.id)
+
+        changeDrawnRect(selectedRect, 'selected');
+      })
+
+      // 選択状態で他の矩形をクリックした時の処理
+      rectCanvas.on('selection:updated', (e) => {
+        let deselectedObj = e.deselected[0];            // 選択解除したオブジェクト
+        let deselectedRect = deselectedObj._objects[0]; // 選択解除した矩形
+        let selectedObj = e.selected[0];            // 選択したオブジェクト
+        let selectedRect = selectedObj._objects[0]; // 選択した矩形
+
+        // 現在の選択ラベルを変更
+        changeCurrentLabel(selectedObj.id)
+
+        // 矩形の設定を変更
+        changeDrawnRect(deselectedRect, 'deselected');
+        changeDrawnRect(selectedRect, 'selected');
+
+        // 選択した該当ラベルを強調
+        //emphasizeLabel(selectedObj.id);
+
+        // [削除]ボタンを追加        
+        //addDeleteBtn(selectedObj.id, deselectedObj.id);
+
+        // [削除]ボタンの削除
+        //removeDeleteBtn(deselectedObj.id);
+      });
+
+      // 選択状態で背景をクリックしたときの処理
+      rectCanvas.on('before:selection:cleared', (e) => {
+        let deselectedObj = e.target;                   // 選択解除したオブジェクト
+        let deselectedRect = deselectedObj._objects[0]; // 選択解除した矩形
+
+        // 現在の選択ラベルを初期値に設定
+        changeCurrentLabel(0)
+
+        // 矩形の設定を変更
+        changeDrawnRect(deselectedRect, 'deselected');
+
+        // ラベルの強調を終了
+        //endLabelEmphasis();
+
+        // [削除]ボタンの削除
+        //removeDeleteBtn(deselectedObj.id);
+      });
+
+      // 拡大縮小時のテキストボックスのサイズ固定処理
+      rectCanvas.on({
+        'object:scaling': onChange
+      });
+      function onChange(obj) {
+        let textbox = obj.target.item(1);
+        let group = obj.target;
+        let scaleX = group.width / (group.width * group.scaleX);
+        let scaleY = group.height / (group.height * group.scaleY);
+        textbox.set({
+          scaleX: scaleX,
+          scaleY: scaleY
+        });
+      }
+
+      // 矩形修正時の更新処理
+      rectCanvas.on('object:modified', (e) => {
+        let rectObj = e.target;
+        let rect = rectObj._objects[0]; // 矩形
+
+        let objId = rectObj.id;
+        let labelName = rectObj._objects[1].text.trim();    // ラベル名
+
+        let canvasWidth = rectCanvas.width;     // キャンバスサイズ（幅）
+        let canvasHeight = rectCanvas.height;   // キャンバスサイズ（高さ）
+        let imageWidth = 426;   // 画像サイズ（幅） TODO 描画する画像サイズを取得
+        let imgaeHeight = 240   // 画像サイズ（高さ）
+        let xMagnification = canvasWidth / imageWidth;   // サイズ倍率(x)
+        let yMagnification = canvasHeight / imgaeHeight; // サイズ倍率(y)  
+
+        let x = Math.round(rectObj.left * imageWidth / canvasWidth);
+        let y = Math.round(rectObj.top * imgaeHeight / canvasHeight);
+        let w = Math.round(rectObj.width * imageWidth / canvasWidth);
+        let h = Math.round(rectObj.height * imgaeHeight / canvasHeight);
+
+
+        //let newRect = oldRect.concat();
+        //newRect[objId - 1] = [labelName, x, y, w, h];
+      });
+
+      // 描画されたバウンディングボックスの設定を変更（追加）する関数
+      // デフォルトは非選択状態とし、選択状態の時に各種変数を更新
+      function changeDrawnRect(rect, rectStatus) {
+        let rectStrokeWidth = 2;
+        let rectstroke = '#0BF';
+        let rectFill = 'rgba(174,230,255,0.1)';
+
+        // 選択状態の時、変数を更新
+        if (rectStatus == 'selected') {
+          rectStrokeWidth = 3;    // 線の幅
+          rectstroke = '#BF0';    // 線の色
+          rectFill = 'rgba(230,255,174,0.5)'; // 塗りつぶし色
+        }
+
+        // 変更
+        rect.set({
+          strokeWidth: rectStrokeWidth,  // 線の幅
+          stroke: rectstroke, // 線の色
+          fill: rectFill,     // 塗潰し色
+        }).setCoords();
+
+        // 変更したオブジェクトの描画
+        rectCanvas.renderAll();
+      }
+    }
+  }
   return (
     <div>
       <canvas id="image-area" style={style}></canvas>
       <canvas id="rect-area" className="lower-canvas" style={style}></canvas>
     </div>
   )
+
 }

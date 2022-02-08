@@ -8,6 +8,7 @@ export default function ModeProvider({ children }) {
 
   const makeEditMode = () =>
     setEditMode(true);
+    
   
   const makeViewMode = () =>
     setEditMode(false);

@@ -2,14 +2,14 @@
 import { useCurrent } from "./CurrentProvider"
 
 export default function SceneList({ videoId, sceneCount }) {  
-  const { currentNo, changeCurrent } = useCurrent();
+  const { currentScene, changeCurrentScene, changeCurrentLabel } = useCurrent();
 
   const list = [...Array(sceneCount).keys()].map(i => ++i).map(cnt => {
     const imgPath = '/result/thumbnail/' + videoId + '/thumbnail' + cnt + '.jpg'
 
     // 現在のシーンの枠に色付け
     let isColorRed = false
-    if (cnt === currentNo) {
+    if (cnt === currentScene) {
       isColorRed = true
     }
     return (
@@ -17,7 +17,7 @@ export default function SceneList({ videoId, sceneCount }) {
         <img data-scene_no={cnt}
           className="thumbnail"
           src={`${process.env.PUBLIC_URL}` + imgPath}
-          onClick={() => changeCurrent(cnt)}
+          onClick={() => {changeCurrentScene(cnt); changeCurrentLabel(0)}}
           style={isColorRed ? { borderColor: 'red' } : {}} />
       </li>
     )

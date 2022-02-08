@@ -23,7 +23,7 @@ ChartJS.register(
 )
 
 export default function FavoChart({ favoData }) {
-  const { currentNo, changeCurrent } = useCurrent();
+  const { currentScene, changeCurrentScene } = useCurrent();
 
   // 全角 → 半角に変換する関数
   function zenkaku2Hankaku(str) {
@@ -76,7 +76,7 @@ export default function FavoChart({ favoData }) {
       const clickedScene = elements[0].index + 1 // クリックしたシーン番号
 
       // クリックしたシーンに遷移
-      changeCurrent(clickedScene)
+      changeCurrentScene(clickedScene)
     },
   }
   // ポイントの大きさを設定（現在シーンには、大きくポイントを描画）
@@ -84,11 +84,14 @@ export default function FavoChart({ favoData }) {
     lineChartData.datasets[0].pointRadius[i] = 3
 
   }
-  lineChartData.datasets[0].pointRadius[currentNo - 1] = 10
+  lineChartData.datasets[0].pointRadius[currentScene - 1] = 10
 
   return (
-    <div className="favo-gragh">
-      <Line data={lineChartData} options={lineChartOption} />
-    </div>
+    <>
+      <h2 className="heading tag">このシーンの好感度</h2>
+      <div className="favo-gragh">
+        <Line data={lineChartData} options={lineChartOption} />
+      </div>
+    </>
   )
 }

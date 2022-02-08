@@ -4,13 +4,17 @@ const CurrentContext = createContext();
 export const useCurrent = () => useContext(CurrentContext);
 
 export default function CurrentProvider({ children }) {
-  const [currentNo, setCurrentNo] = useState(1);
+  const [currentScene, setCurrentScene] = useState(1);
+  const [currentLabel, setCurrentLabel] = useState(0);
 
-  const changeCurrent = (cnt) =>
-    setCurrentNo(cnt);
+  const changeCurrentScene = (cnt) =>
+    setCurrentScene(cnt);
+
+  const changeCurrentLabel = (cnt) =>
+    setCurrentLabel(cnt);
 
   return (
-    <CurrentContext.Provider value={{ currentNo, changeCurrent }}>
+    <CurrentContext.Provider value={{ currentScene, changeCurrentScene, currentLabel, changeCurrentLabel }}>
       {children}
     </CurrentContext.Provider>
   )

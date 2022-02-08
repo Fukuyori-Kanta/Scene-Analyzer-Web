@@ -754,6 +754,7 @@ video {
 }
 #input-area {
   margin: 10px;
+  margin-left: 20px;
   display: flex;
 }
 #input-area input[type="text"] {
