@@ -35,7 +35,7 @@ function ResultsPageContents({ data }) {
         <SearchArea />
       </div>
 
-      <VideoList dataList={data} id="video-list"/>
+      <VideoList dataList={data} />
     </div>
   );
 }

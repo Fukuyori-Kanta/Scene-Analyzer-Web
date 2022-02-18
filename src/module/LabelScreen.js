@@ -9,6 +9,7 @@ import { useAnnotation } from './AnnotationProvider'
 export default function LabelScreen({ data }) {
   let { currentScene, currentLabel } = useCurrent();
   const { changeLabelsData } = useAnnotation();
+  console.log(data)
 
   useEffect(() => {
     changeLabelsData(labelsData)

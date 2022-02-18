@@ -1,24 +1,24 @@
 ﻿import React, { useState, useEffect, useLayoutEffect } from "react"
 import { useCurrent } from "./CurrentProvider"
 import { fabric } from "fabric"
+import { useAnnotation } from "./AnnotationProvider";
 
 export default function Canvas({ videoId, data }) {
   const { currentScene, changeCurrentScene, currentLabel, changeCurrentLabel } = useCurrent();
-
+  const { Canvas, setCanvas } = useAnnotation();
   const [style, setStyle] = useState()
-  const [rectCanvas, setRectCanvas] = useState()
 
   useEffect(() => {
     const parentElements = document.getElementById('switch-screen').getBoundingClientRect()  // 親要素
     const width = parentElements['width'] - 3   // 画像表示領域の幅
     const height = parentElements['height'] - 2 // 画像表示領域の高さ
 
-    const style = {
+    const ScreenStyle = {
       width: width,
       height: height,
       marginLeft: '1px'
     }
-    setStyle(style)
+    setStyle(ScreenStyle)
   }, []);
 
   useEffect(() => {
@@ -139,6 +139,7 @@ export default function Canvas({ videoId, data }) {
 
       // オブジェクトの描画
       rectCanvas.renderAll()
+      //setCanvas(rectCanvas)
     }
 
     // 矩形選択時のイベントハンドラ
@@ -263,6 +264,113 @@ export default function Canvas({ videoId, data }) {
         // 変更したオブジェクトの描画
         rectCanvas.renderAll();
       }
+
+      /*   ---------------    */
+      //setCanvas(rectCanvas)
+      /*   ---------------    */
+
+
+
+      /*
+      // 新規矩形を描画する関数
+      function drawNewRectArea(labelName) {
+        let Canvas = $('#new-rect-area')[0];
+        let Context = Canvas.getContext('2d');
+        var RectEdgeColor = "#0BF";
+        var RectInnerColor = "rgba(174,230,255,0.3)";
+        var IndicatorColor = "rgba(0, 0, 0, 0.6)";
+        var index = 0;
+        var DrawingMemory = { 0: { x: null, y: null, w: null, h: null } };
+
+        Context.strokeStyle = IndicatorColor;
+        Context.fillStyle = RectInnerColor;
+        Context.lineWidth = 2;
+        var startPosition = { x: null, y: null };
+        var isDrag;
+
+        function dragStart(x, y) {
+          isDrag = true;
+          startPosition.x = x;
+          startPosition.y = y;
+        }
+
+        function dragEnd(x, y) {
+          if (isDrag) {
+            DrawingMemory[index] = { x: startPosition.x, y: startPosition.y, w: x - startPosition.x, h: y - startPosition.y };
+            index += 1;
+            drawFromMemory();
+          } else {
+            clear();
+            drawFromMemory();
+          }
+          isDrag = false;
+          $('#new-rect-area').remove();
+
+          let coordinate = [DrawingMemory[index - 1].x, DrawingMemory[index - 1].y, DrawingMemory[index - 1].w, DrawingMemory[index - 1].h]   // 引数にする座標データ
+          let objId = $('.label-item:last').data('labelId');  // オブジェクトID（ラベル表示要素に追加されたID）
+
+          // バウンディングボックスを描画
+          drawRect(objId, coordinate, labelName);
+          newRect = oldRect.concat();
+          newRect.push([labelName, DrawingMemory[index - 1].x, DrawingMemory[index - 1].y, DrawingMemory[index - 1].w, DrawingMemory[index - 1].h]);
+
+        }
+
+        function drawFromMemory() {
+          Context.strokeStyle = RectEdgeColor;
+
+          for (i = 0; i < index; i++) {
+            Context.fillRect(DrawingMemory[i].x, DrawingMemory[i].y, DrawingMemory[i].w, DrawingMemory[i].h);
+          }
+          for (i = 0; i < index; i++) {
+            Context.strokeRect(DrawingMemory[i].x, DrawingMemory[i].y, DrawingMemory[i].w, DrawingMemory[i].h);
+          }
+          Context.strokeStyle = IndicatorColor;
+        }
+
+        function draw(x, y) {
+          clear(); // Initialization.
+          drawFromMemory(); // Draw Bounding Boxes.
+
+          // Draw Indicator.
+          Context.beginPath();
+          Context.moveTo(0, y); // start
+          Context.lineTo(Canvas.width, y); // end
+          Context.moveTo(x, 0); // start
+          Context.lineTo(x, Canvas.height); // end
+          Context.closePath();
+          Context.stroke();
+
+          // Draw the current Bounding Box.
+          if (isDrag) {
+            Context.strokeStyle = RectEdgeColor;
+            Context.fillRect(startPosition.x, startPosition.y, x - startPosition.x, y - startPosition.y);
+            Context.strokeRect(startPosition.x, startPosition.y, x - startPosition.x, y - startPosition.y);
+            Context.strokeStyle = IndicatorColor;
+          }
+        }
+
+        function mouseHandler() {
+          Canvas.addEventListener('mousedown', function (e) {
+            dragStart(e.layerX, e.layerY);
+          });
+          Canvas.addEventListener('mouseup', function (e) {
+            dragEnd(e.layerX, e.layerY);
+          });
+          Canvas.addEventListener('mouseout', function (e) {
+            dragEnd(e.layerX, e.layerY);
+          });
+          Canvas.addEventListener('mousemove', function (e) {
+            draw(e.layerX, e.layerY);
+          });
+        }
+        mouseHandler();
+
+        function clear() {
+          Context.clearRect(0, 0, Canvas.width, Canvas.height);
+        }
+      }
+      */
     }
   }
   return (

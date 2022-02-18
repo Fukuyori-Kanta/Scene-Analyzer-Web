@@ -26,7 +26,8 @@ app.get("/history", function (req, res) {
     function (error, results) {
       if (error) throw error;
       res.send(results);
-    });
+    }
+  );
 });
 
 // "/results"に対してのルーティング
@@ -38,7 +39,8 @@ app.get("/results", function (req, res) {
     function (error, results) {
       if (error) throw error;
       res.send(results);
-    });
+    }
+  );
 });
 // "/results"に対してのルーティング
 app.get("/result/:id", function (req, res) {
@@ -56,7 +58,8 @@ app.get("/result/:id", function (req, res) {
       if (error) throw error
       console.log(results)
       res.send(results)
-    });
+    }
+  );
 });
 
 // "/statistics"に対してのルーティング
@@ -67,36 +70,44 @@ app.get("/category", function (req, res) {
     function (error, results) {
       if (error) throw error;
       res.send(results);
-    });
+    }
+  );
 });
 
 // "/statistics"に対してのルーティング
-app.get("/statistics/:category", function (req, res) {
-  const category = req.params.category
+app.get("/statistics", function (req, res) {
+  //const category = req.params.category
   pool.query(
     "SELECT * " +
-    "FROM ranking LEFT JOIN score_category ON ranking.category = score_category.category " +
-    "WHERE category_name = '" + category + "';",
+    "FROM ranking LEFT JOIN score_category ON ranking.category = score_category.category;",
     function (error, results) {
       if (error) throw error;
+      console.log(results)
       res.send(results);
-    });
+    }
+  );
 });
 
 // "/productName"に対してのルーティング
 app.get("/productName/:id", function (req, res) {
   const videoId = req.params.id
   pool.query(
-    "SELECT * " +
+    "SELECT product_name " +
     "FROM works_data " +
     "WHERE video_id = '" + videoId + "';",
     function (error, results) {
       if (error) throw error;
       res.send(results);
-    });
+    }
+  );
 });
-
-
+/*
+// anotation
+app.post('/annotation/', (req, res) => {
+  console.log(req.body);
+  res.send("Received POST Data!");
+});
+*/
 // DBへの再接続処理
 const handleDisconnect = () => {
   pool.connect((err) => {

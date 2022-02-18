@@ -983,7 +983,6 @@ video {
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(45deg, #7fc3ff, #6bb6ff);
   transition: all 1s;
   transform: translateX(-100%);
 }
