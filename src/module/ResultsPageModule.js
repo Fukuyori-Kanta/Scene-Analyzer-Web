@@ -6,8 +6,6 @@ import Breadcrumbs from './Breadcrumbs'
 import VideoList from './VideoList'
 
 export default function ResultsPage({ searchoption, searchWord }) {
-  //const [cmList, setCmList] = useState();
-  //const login = "moonhighway"
   return (
     <Fetch
       uri={`http://192.168.204.128/results`}
@@ -15,6 +13,7 @@ export default function ResultsPage({ searchoption, searchWord }) {
     />
   )
 }
+
 function ResultsPageContents({ data }) {
   return (
     <div id="result-list">
@@ -35,13 +34,13 @@ function ResultsPageContents({ data }) {
         <SearchArea />
       </div>
 
-      <VideoList dataList={data} />
+      <VideoList dataList={data} id='video-list' />
     </div>
   );
 }
 
 
-function SearchArea({ data }) {
+function SearchArea() {
   return (
     <form method="get" action="#" className="search_container grid">
       <div id="search-option">

@@ -1,7 +1,7 @@
 ﻿import React from 'react'
 import Thumbnail from './Thumbnail'
 
-export default function VideoList({ dataList }) {
+export default function VideoList({ dataList, id }) {
   // 動画一覧
   const thumbnails = dataList.map(data => {
     const videoId = data.video_id
@@ -12,7 +12,7 @@ export default function VideoList({ dataList }) {
     )
   })
   return (
-    <div id="video-list">
+    <div id={id}>
       {thumbnails}
     </div>
   )

@@ -568,10 +568,6 @@ height: 105%;
   background-color: #ffffff;
   width: 60vw;
   height: 58vh;
-  /*
-  border-width: thin;
-  border-style: solid;
-  */
   background-color: #000;
 }
 #switch-screen .edit-img {
@@ -1033,9 +1029,6 @@ video {
   font-weight: bold;
   text-align: right;
   z-index: 10;
-}
-.red-color {
-  color: #F00
 }
 @media screen and (min-width: 800px) {
 .chart-wrap .row {

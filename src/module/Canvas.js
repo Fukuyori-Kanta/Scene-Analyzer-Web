@@ -2,24 +2,35 @@
 import { useCurrent } from "./CurrentProvider"
 import { fabric } from "fabric"
 import { useAnnotation } from "./AnnotationProvider";
+import { useWindowDimensions } from './WindowDimensions'
 
 export default function Canvas({ videoId, data }) {
   const { currentScene, changeCurrentScene, currentLabel, changeCurrentLabel } = useCurrent();
   const { Canvas, setCanvas } = useAnnotation();
   const [style, setStyle] = useState()
+  const { width, height } = useWindowDimensions();
 
+  function getScreenSize(id) {
+    const parentElements = document.getElementById(id).getBoundingClientRect()  // 親要素
+    const screenWidth = parentElements['width'] - 3
+    const screenHeight = parentElements['height'] - 2
+
+    return [screenWidth, screenHeight]
+  }
   useEffect(() => {
-    const parentElements = document.getElementById('switch-screen').getBoundingClientRect()  // 親要素
-    const width = parentElements['width'] - 3   // 画像表示領域の幅
-    const height = parentElements['height'] - 2 // 画像表示領域の高さ
+    const screenSize = getScreenSize('switch-screen')
+    const screenWidth = screenSize[0]   // 画像表示領域の幅
+    const screenHeight = screenSize[1]  //画像表示領域の高さ
 
     const ScreenStyle = {
-      width: width,
-      height: height,
+      width: screenWidth,
+      height: screenHeight,
       marginLeft: '1px'
     }
     setStyle(ScreenStyle)
-  }, []);
+    
+    showCanvas()
+  }, [width, height]);
 
   useEffect(() => {
     showCanvas()
@@ -38,9 +49,9 @@ export default function Canvas({ videoId, data }) {
     const imageCanvas = document.getElementById("image-area")
     const Context = imageCanvas.getContext("2d")
 
-    const parentElements = document.getElementById('switch-screen').getBoundingClientRect()  // 親要素
-    const width = parentElements['width'] - 3   // 画像表示領域の幅
-    const height = parentElements['height'] - 2 // 画像表示領域の高さ
+    const screenSize = getScreenSize('switch-screen')  // 画面サイズを取得
+    const screenWidth = screenSize[0]   // 画像表示領域の幅
+    const screenHeight = screenSize[1]  // 画像表示領域の高さ
 
     let canvasWidth = imageCanvas.width     // キャンバスサイズ（幅）
     let canvasHeight = imageCanvas.height   // キャンバスサイズ（高さ）
@@ -54,7 +65,7 @@ export default function Canvas({ videoId, data }) {
       Context.drawImage(img, 0, 0, canvasWidth, canvasHeight)
     }
 
-    let rectCanvas = new fabric.Canvas('rect-area', { width: width, height: height })    // バウンディングボックスを描画するためのキャンバス
+    let rectCanvas = new fabric.Canvas('rect-area', { width: screenWidth, height: screenHeight })    // バウンディングボックスを描画するためのキャンバス
 
     let rectCanvasWidth = rectCanvas.width     // キャンバスサイズ（幅）
     let rectCanvasHeight = rectCanvas.height   // キャンバスサイズ（高さ）
