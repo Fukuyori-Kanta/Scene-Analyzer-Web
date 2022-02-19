@@ -15,8 +15,10 @@
     "fabric": "^3.6.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-horizontal-scroll-menu": "0.0.3",
     "react-router-dom": "^5.1.1",
     "react-scripts": "5.0.0",
+    "react-scroll-horizontal": "^1.6.6",
     "superagent": "^7.0.1",
     "web-vitals": "^2.1.3"
   },

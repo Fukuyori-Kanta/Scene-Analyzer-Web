@@ -28,7 +28,7 @@ const SceneAnalyzerApp = () => (
         <Route component={NotFound} />
       </Switch>
     </div>
-    <Footer />
+    {/* <Footer /> */}
   </Router>
 )
 
@@ -42,13 +42,14 @@ const Header = () => (
     <HamburgerMenu />
   </header>
 )
+/*
 // フッター
 const Footer = () => (
   <div style={styleHeader}>
     分析結果を確認するためのアプリです。
   </div>
 )
-
+*/
 const NotFound = () => {
   <div>
     <div><h1>Not Found</h1></div>
