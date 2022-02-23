@@ -6,6 +6,7 @@ import SceneList from './SceneList'
 import CurrentProvider from './CurrentProvider'
 import ModeProvider from './ModeProvider'
 import AnnotationProvider, { useAnnotation } from './AnnotationProvider'
+import CanvasProvider from "./CanvasProvider";
 import SwitchScreen from './SwitchScreen'
 import LabelScreen from "./LabelScreen"
 
@@ -13,16 +14,18 @@ export default function ResultDetailPage() {
   const videoId = useParams().id
 
   return (
-    <CurrentProvider>
-      <ModeProvider>
-        <AnnotationProvider>
-          <Fetch
-            uri={`http://192.168.204.128/result/` + videoId}
-            renderSuccess={ResultDetailPageContents}
-          />
-        </AnnotationProvider>
-      </ModeProvider>
-    </CurrentProvider>
+    <ModeProvider>
+      <CurrentProvider>
+        <CanvasProvider>
+          <AnnotationProvider>
+            <Fetch
+              uri={`http://192.168.204.128/result/` + videoId}
+              renderSuccess={ResultDetailPageContents}
+            />
+          </AnnotationProvider>
+        </CanvasProvider>
+      </CurrentProvider>
+    </ModeProvider>
   )
 }
 

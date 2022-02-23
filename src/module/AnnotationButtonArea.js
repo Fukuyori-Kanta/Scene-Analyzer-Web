@@ -9,8 +9,8 @@ export default function AnnotationButtonArea() {
   let { labelsData, setLabelsData, oldLabels, setOldLabels, newLables, setNewLabels } = useAnnotation();
   
   function sendAnnotationData() {
-    console.log('送信')
-    console.log(labelsData)
+    //console.log('送信')
+    //console.log(labelsData)
   }
 
   return (

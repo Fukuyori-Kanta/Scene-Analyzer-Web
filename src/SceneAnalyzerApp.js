@@ -16,18 +16,16 @@ import NewAnalysisPage from './module/NewAnalysisPageModule'
 const SceneAnalyzerApp = () => (
   <Router>
     <Header />
-    <div>
-      <Switch>
-        <Route exact path='/' component={TopPage} />
-        <Route path='/top' component={TopPage} />
-        <Route path='/results' component={ResultsPage} />
-        <Route path='/result/:id' component={ResultDetailPage} />
-        <Route path='/statistics' component={StatisticsPage} />
-        <Route path='/newAnalysis' component={NewAnalysisPage} />
-        <Route path='/test' component={TestPage} />
-        <Route component={NotFound} />
-      </Switch>
-    </div>
+    <Switch>
+      <Route exact path='/' component={TopPage} />
+      <Route path='/top' component={TopPage} />
+      <Route path='/results' component={ResultsPage} />
+      <Route path='/result/:id' component={ResultDetailPage} />
+      <Route path='/statistics' component={StatisticsPage} />
+      <Route path='/newAnalysis' component={NewAnalysisPage} />
+      <Route path='/test' component={TestPage} />
+      <Route component={NotFound} />
+    </Switch>
     {/* <Footer /> */}
   </Router>
 )

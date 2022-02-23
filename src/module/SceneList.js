@@ -42,6 +42,10 @@ export default function SceneList({ videoId, sceneCount }) {
           arrowLeft={<div style={ArrowStyle}>{" < "}</div>}
           arrowRight={<div style={ArrowStyle}>{" > "}</div>}
           alignCenter={false}
+          transition={1.25}
+          translate={1}
+          inertiaScrolling={true}
+          inertiaScrollingSlowdown={0.01}
           data={list}
         />
       </div>
