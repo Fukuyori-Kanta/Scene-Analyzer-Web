@@ -38,14 +38,6 @@ export default function Canvas({ videoId, data }) {
     showCanvas()
   }, [width, height]);
 
-  /* 2回showCanvas()を実行してしまうことによって、
-     2重のrectCanvasができてしまい、矩形が選択できないくなってしまう
-     → これは、シーン単位で保存を押してから切り替えることが必要になる */
-  // シーンが切り替わった時、該当シーンのキャンバスを描画
-  useEffect(() => {
-    //showCanvas()
-  }, [currentScene]);
-
   // 矩形描画キャンバスが宣言された時、各ラベルのバウンディングボックスを描画
   useEffect(() => {
     console.log("rectCanvas 変更")
