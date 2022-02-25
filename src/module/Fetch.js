@@ -4,7 +4,7 @@ import { useFetch } from "./hooks";
 export function Fetch({
   uri,
   renderSuccess,
-  loadingFallback = <p style={{margin: '10px', fontSize: '24px'}}>Loading...</p>,
+  loadingFallback = <div className="loader">Loading...</div>,
   renderError = error => <pre>{JSON.stringify(error, null, 2)}</pre>
 }) {
   const { loading, data, error } = useFetch(uri);

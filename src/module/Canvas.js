@@ -1,6 +1,5 @@
-﻿import React, { useState, useEffect, useLayoutEffect } from "react"
+﻿import React, { useState, useEffect } from "react"
 import { useCurrent } from "./CurrentProvider"
-import { fabric } from "fabric"
 import { useAnnotation } from "./AnnotationProvider"
 import { useWindowDimensions } from './WindowDimensions'
 import { useCanvas } from "./CanvasProvider"
@@ -9,7 +8,8 @@ export default function Canvas({ videoId, data }) {
   const { currentScene, changeCurrentScene, currentLabel, changeCurrentLabel } = useCurrent()
   const { imageCanvas, setImageCanvas, rectCanvas, setRectCanvas, drawCanvas, setDrawCanvas,
     initImageCanvas, initRectCanvas, resizeCoordinate, drawRect, rectSelectionEventHandler } = useCanvas()
-
+  
+  const { isDrawingActive, setIsDrawingActive } = useAnnotation()
   const [screenStyle, setScreenStyle] = useState()
   const { width, height } = useWindowDimensions()
 
@@ -25,7 +25,6 @@ export default function Canvas({ videoId, data }) {
 
   // 初期描画が終わった後 または サイズが変わった時、サイズを変えてキャンバスを描画
   useEffect(() => {
-    console.log("描画 幅×高さの変更")
     const { screenWidth, screenHeight } = getScreenSize('switch-screen')
 
     const ScreenStyle = {
@@ -40,7 +39,6 @@ export default function Canvas({ videoId, data }) {
 
   // 矩形描画キャンバスが宣言された時、各ラベルのバウンディングボックスを描画
   useEffect(() => {
-    console.log("rectCanvas 変更")
     if (rectCanvas !== null) {
 
       // 各ラベルのバウンディングボックスを描画
@@ -84,10 +82,7 @@ export default function Canvas({ videoId, data }) {
     const { screenWidth, screenHeight } = getScreenSize('switch-screen')
     initRectCanvas('rect-area', screenWidth, screenHeight)    // バウンディングボックスを描画するためのキャンバス
 
-    console.log(rectCanvas)
-    /* ---nullをどうするか---------------------------------------------------------------------- */
-    if (rectCanvas !== null) {
-      
+   if (rectCanvas !== null) {  
       // 各ラベルのバウンディングボックスを描画
       labelsData.map((data, index) => {
         const labelId = data.label_id    // ラベルID
@@ -111,6 +106,7 @@ export default function Canvas({ videoId, data }) {
     <div>
       <canvas id="image-area" style={screenStyle}></canvas>
       <canvas id="rect-area" className="lower-canvas" style={screenStyle}></canvas>
+      {isDrawingActive ? <canvas id="draw-area" style={screenStyle}></canvas> : <></>}
     </div>
   )
 }

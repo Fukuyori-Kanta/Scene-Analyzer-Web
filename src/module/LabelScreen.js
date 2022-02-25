@@ -5,10 +5,12 @@ import FavoChart from './FavoChart'
 import AnnotationButtonArea from './AnnotationButtonArea'
 import LabelInpuForm from './LabelInpuForm'
 import { useAnnotation } from './AnnotationProvider'
+import { useCanvas } from './CanvasProvider'
 
 export default function LabelScreen({ data }) {
-  let { currentScene, currentLabel } = useCurrent();
+  let { currentScene, currentLabel, changeCurrentLabel } = useCurrent();
   const { changeLabelsData } = useAnnotation();
+  const { changeDrawnRect } = useCanvas()
 
   useEffect(() => {
     changeLabelsData(labelsData)
@@ -24,7 +26,7 @@ export default function LabelScreen({ data }) {
   const labels = labelsData.map((label, index) => {
     if (currentLabel == index + 1) {
       return (
-        <div data-label_id={index + 1} className="label-item" key={index + 1} onClick={() => console.log('asd')}>
+        <div data-label_id={index + 1} className="label-item" key={index + 1} onClick={() => {changeCurrentLabel(index + 1); changeDrawnRect(index+1, 'selected')}}>
           <h3 className="label" style={{ border: '2px solid #F33' }}>{label.label_name_ja}</h3>
           <div className="delete-btn">
             <span>×</span>
@@ -33,7 +35,7 @@ export default function LabelScreen({ data }) {
       )
     } else {
       return (
-        <div data-label_id={index + 1} className="label-item" key={index + 1} onClick={() => console.log('asd')}>
+        <div data-label_id={index + 1} className="label-item" key={index + 1} onClick={() => {changeCurrentLabel(index + 1); changeDrawnRect(index+1, 'selected')}}>
           <h3 className="label">{label.label_name_ja}</h3>
         </div>
       )

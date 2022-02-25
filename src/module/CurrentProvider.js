@@ -25,8 +25,8 @@ export default function CurrentProvider({ children }) {
     else {
       setCurrentScene(cnt);
     }
-
   }
+
   const changeCurrentLabel = (cnt) =>
     setCurrentLabel(cnt);
 

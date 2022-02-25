@@ -1,5 +1,6 @@
-﻿import React, { createContext, useState, useContext } from "react"
+﻿import React, { createContext, useState, useEffect, useContext } from "react"
 import { useCurrent } from "./CurrentProvider"
+import { useAnnotation } from "./AnnotationProvider";
 import { fabric } from "fabric"
 
 const CanvasContext = createContext();
@@ -10,6 +11,109 @@ export default function CanvasProvider({ children }) {
   const [drawCanvas, setDrawCanvas] = useState(null)  // 新規矩形描画キャンバス
 
   const { currentScene, changeCurrentScene, currentLabel, changeCurrentLabel } = useCurrent()
+  //const { labelsData, changeLabelsData, oldLabels, setOldLabels, newLables, setNewLabels, isDrawingActive, setIsDrawingActive } = useAnnotation()
+  const { isDrawingActive, setIsDrawingActive } = useAnnotation()
+
+  useEffect(() => {
+    if (isDrawingActive) {
+      const Canvas = document.getElementById("draw-area")
+      const Context = Canvas.getContext("2d")
+      const labelName = 'asd'
+
+      var RectEdgeColor = "#0BF";
+      var RectInnerColor = "rgba(174,230,255,0.3)";
+      var IndicatorColor = "rgba(0, 0, 0, 0.6)";
+      var index = 0;
+      var DrawingMemory = { 0: { x: null, y: null, w: null, h: null } };
+
+      Context.strokeStyle = IndicatorColor;
+      Context.fillStyle = RectInnerColor;
+      Context.lineWidth = 2;
+      var startPosition = { x: null, y: null };
+      var isDrag;
+
+      function dragStart(x, y) {
+        isDrag = true;
+        startPosition.x = x;
+        startPosition.y = y;
+      }
+
+      function dragEnd(x, y) {
+        if (isDrag) {
+          DrawingMemory[index] = { x: startPosition.x, y: startPosition.y, w: x - startPosition.x, h: y - startPosition.y };
+          index += 1;
+          drawFromMemory();
+        } else {
+          clear();
+          drawFromMemory();
+        }
+        isDrag = false;
+
+        let coordinate = [DrawingMemory[index - 1].x, DrawingMemory[index - 1].y, DrawingMemory[index - 1].w, DrawingMemory[index - 1].h]   // 引数にする座標データ
+        let objId = 10
+
+        // バウンディングボックスを描画
+        drawRect(objId, coordinate, labelName);
+
+        // 新規描画を非アクティブ化
+        setIsDrawingActive(false)
+      }
+
+      function drawFromMemory() {
+        Context.strokeStyle = RectEdgeColor;
+
+        for (let i = 0; i < index; i++) {
+          Context.fillRect(DrawingMemory[i].x, DrawingMemory[i].y, DrawingMemory[i].w, DrawingMemory[i].h);
+        }
+        for (let i = 0; i < index; i++) {
+          Context.strokeRect(DrawingMemory[i].x, DrawingMemory[i].y, DrawingMemory[i].w, DrawingMemory[i].h);
+        }
+        Context.strokeStyle = IndicatorColor;
+      }
+
+      function draw(x, y) {
+        clear(); // Initialization.
+        drawFromMemory(); // Draw Bounding Boxes.
+
+        // Draw Indicator.
+        Context.beginPath();
+        Context.moveTo(0, y); // start
+        Context.lineTo(Canvas.width, y); // end
+        Context.moveTo(x, 0); // start
+        Context.lineTo(x, Canvas.height); // end
+        Context.closePath();
+        Context.stroke();
+
+        // Draw the current Bounding Box.
+        if (isDrag) {
+          Context.strokeStyle = RectEdgeColor;
+          Context.fillRect(startPosition.x, startPosition.y, x - startPosition.x, y - startPosition.y);
+          Context.strokeRect(startPosition.x, startPosition.y, x - startPosition.x, y - startPosition.y);
+          Context.strokeStyle = IndicatorColor;
+        }
+      }
+
+      function mouseHandler() {
+        Canvas.addEventListener('mousedown', function (e) {
+          dragStart(e.layerX, e.layerY);
+        });
+        Canvas.addEventListener('mouseup', function (e) {
+          dragEnd(e.layerX, e.layerY);
+        });
+        Canvas.addEventListener('mouseout', function (e) {
+          dragEnd(e.layerX, e.layerY);
+        });
+        Canvas.addEventListener('mousemove', function (e) {
+          draw(e.layerX, e.layerY);
+        });
+      }
+      mouseHandler();
+
+      function clear() {
+        Context.clearRect(0, 0, Canvas.width, Canvas.height);
+      }
+    }
+  }, [isDrawingActive])
 
   const initImageCanvas = (id, path) => {
     const imageCanvas = document.getElementById(id)
@@ -40,7 +144,7 @@ export default function CanvasProvider({ children }) {
     let imgaeHeight = 240   // 画像サイズ（高さ）
     let xMagnification = rectCanvasWidth / imageWidth   // サイズ倍率(x)
     let yMagnification = rectCanvasHeight / imgaeHeight // サイズ倍率(y)   
-    
+
     let re_x = x * xMagnification   // x軸の座標
     let re_y = y * yMagnification   // y軸の座標
     let re_w = w * xMagnification    // 幅
@@ -101,7 +205,31 @@ export default function CanvasProvider({ children }) {
     // オブジェクトの描画
     rectCanvas.renderAll()
   }
-  
+
+  // 描画されたバウンディングボックスの設定を変更（追加）する関数
+  // デフォルトは非選択状態とし、選択状態の時に各種変数を更新
+  const changeDrawnRect = (rect, rectStatus) => {
+    let rectStrokeWidth = 2;
+    let rectstroke = '#0BF';
+    let rectFill = 'rgba(174,230,255,0.1)';
+
+    // 選択状態の時、変数を更新
+    if (rectStatus == 'selected') {
+      rectStrokeWidth = 3;    // 線の幅
+      rectstroke = '#BF0';    // 線の色
+      rectFill = 'rgba(230,255,174,0.5)'; // 塗りつぶし色
+    }
+
+    // 変更
+    rect.set({
+      strokeWidth: rectStrokeWidth,  // 線の幅
+      stroke: rectstroke, // 線の色
+      fill: rectFill,     // 塗潰し色
+    }).setCoords();
+
+    // 変更したオブジェクトの描画
+    rectCanvas.renderAll();
+  }
 
   // 矩形選択時のイベントハンドラ
   const rectSelectionEventHandler = () => {
@@ -109,8 +237,6 @@ export default function CanvasProvider({ children }) {
     rectCanvas.on('selection:created', (e) => {
       let selectedObj = e.selected[0];            // 選択したオブジェクト
       let selectedRect = selectedObj._objects[0]; // 選択した矩形
-
-      console.log(selectedObj.id)
 
       // 現在の選択ラベルを変更
       changeCurrentLabel(selectedObj.id)
@@ -201,45 +327,24 @@ export default function CanvasProvider({ children }) {
       //newRect[objId - 1] = [labelName, x, y, w, h];
     });
 
-    // 描画されたバウンディングボックスの設定を変更（追加）する関数
-    // デフォルトは非選択状態とし、選択状態の時に各種変数を更新
-    const changeDrawnRect = (rect, rectStatus) => {
-      let rectStrokeWidth = 2;
-      let rectstroke = '#0BF';
-      let rectFill = 'rgba(174,230,255,0.1)';
 
-      // 選択状態の時、変数を更新
-      if (rectStatus == 'selected') {
-        rectStrokeWidth = 3;    // 線の幅
-        rectstroke = '#BF0';    // 線の色
-        rectFill = 'rgba(230,255,174,0.5)'; // 塗りつぶし色
-      }
-
-      // 変更
-      rect.set({
-        strokeWidth: rectStrokeWidth,  // 線の幅
-        stroke: rectstroke, // 線の色
-        fill: rectFill,     // 塗潰し色
-      }).setCoords();
-
-      // 変更したオブジェクトの描画
-      rectCanvas.renderAll();
-    }
   }
 
+
   return (
-    <CanvasContext.Provider value={{ 
-      imageCanvas, 
+    <CanvasContext.Provider value={{
+      imageCanvas,
       setImageCanvas,
-      rectCanvas, 
-      setRectCanvas, 
-      resizeCoordinate, 
-      drawCanvas, 
-      setDrawCanvas, 
-      initImageCanvas, 
-      initRectCanvas, 
-      drawRect, 
-      rectSelectionEventHandler
+      rectCanvas,
+      setRectCanvas,
+      resizeCoordinate,
+      drawCanvas,
+      setDrawCanvas,
+      initImageCanvas,
+      initRectCanvas,
+      drawRect,
+      rectSelectionEventHandler, 
+      changeDrawnRect
     }}>
       {children}
     </CanvasContext.Provider>

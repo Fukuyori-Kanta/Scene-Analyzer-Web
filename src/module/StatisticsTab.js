@@ -19,10 +19,15 @@ export default function StatisticsTab({ data }) {
     }
     return (
       <React.Fragment key={tabId}>
-        <input id={tabId} type="radio" name="TAB" className="tab-switch" defaultChecked={isChecked ? 'checked' : ''}/>
+        <input id={tabId} type="radio" name="TAB" className="tab-switch" defaultChecked={isChecked ? 'checked' : ''} />
         <label className="tab-label" htmlFor={tabId}>{catName}</label>
         <div className="tab-content">
-          <h3 className="margin-left">'{catName}' 上位，中位，下位 ラベル件数TOP10</h3>
+          <h3 className="margin-left">
+            '{catName}' 上位，中位，下位 ラベル件数TOP10
+            <span style={{ fontSize: "14px", color: "red", float: "right" }}>
+              ※赤字はその区分で多く付与されたラベル
+            </span>
+          </h3>
           <BarGraph id={graphId} values={values} />
         </div>
       </React.Fragment>

@@ -16,14 +16,14 @@ export default function ResultDetailPage() {
   return (
     <ModeProvider>
       <CurrentProvider>
-        <CanvasProvider>
-          <AnnotationProvider>
+        <AnnotationProvider>
+          <CanvasProvider>
             <Fetch
               uri={`http://192.168.204.128/result/` + videoId}
               renderSuccess={ResultDetailPageContents}
             />
-          </AnnotationProvider>
-        </CanvasProvider>
+          </CanvasProvider>
+        </AnnotationProvider>
       </CurrentProvider>
     </ModeProvider>
   )
