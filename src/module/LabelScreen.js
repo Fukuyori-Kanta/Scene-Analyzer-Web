@@ -10,11 +10,19 @@ import { useCanvas } from './CanvasProvider'
 export default function LabelScreen({ data }) {
   let { currentScene, currentLabel, changeCurrentLabel } = useCurrent();
   const { changeLabelsData } = useAnnotation();
-  const { changeDrawnRect } = useCanvas()
-
+  const { changeDrawnRect, checkedLabel } = useCanvas()
+  
+  const { isEditMode, makeEditMode, makeViewMode } = useMode();
   useEffect(() => {
     changeLabelsData(labelsData)
   }, [])
+
+  const dummyFunc = (currentId) => {
+    if (isEditMode) {
+      changeCurrentLabel(currentId) 
+      checkedLabel(currentId)
+     }
+  }
 
   // ラベルデータの抽出
   let labelsData = data.filter(item => item.scene_no == 'scene_' + currentScene)  // ラベルデータ
@@ -26,7 +34,10 @@ export default function LabelScreen({ data }) {
   const labels = labelsData.map((label, index) => {
     if (currentLabel == index + 1) {
       return (
-        <div data-label_id={index + 1} className="label-item" key={index + 1} onClick={() => {changeCurrentLabel(index + 1); changeDrawnRect(index+1, 'selected')}}>
+        <div data-label_id={index + 1} 
+             className="label-item" 
+             key={index + 1} 
+             onClick={() => dummyFunc(index+1)}>
           <h3 className="label" style={{ border: '2px solid #F33' }}>{label.label_name_ja}</h3>
           <div className="delete-btn">
             <span>×</span>
@@ -35,7 +46,10 @@ export default function LabelScreen({ data }) {
       )
     } else {
       return (
-        <div data-label_id={index + 1} className="label-item" key={index + 1} onClick={() => {changeCurrentLabel(index + 1); changeDrawnRect(index+1, 'selected')}}>
+        <div data-label_id={index + 1}
+             className="label-item" 
+             key={index + 1} 
+             onClick={() => dummyFunc(index+1)}>
           <h3 className="label">{label.label_name_ja}</h3>
         </div>
       )
