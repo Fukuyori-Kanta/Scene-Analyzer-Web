@@ -1,7 +1,7 @@
 ﻿import React from 'react'
-import { Fetch } from "./Fetch"
+import { Fetch } from "../Provider/Fetch"
 import TransitionButton from './TransitionButton'
-import VideoList from './VideoList'
+import VideoList from '../components/VideoList'
 
 export default function TopPage() {
   return (

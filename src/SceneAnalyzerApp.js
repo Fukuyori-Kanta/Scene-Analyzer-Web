@@ -5,13 +5,14 @@ import {
   Link,
   Switch
 } from 'react-router-dom'
-import './style.css'
-import TopPage from './module/TopPageModule'
-import TestPage from './module/TestPageModule'
-import ResultsPage from './module/ResultsPageModule'
-import ResultDetailPage from './module/ResultDetailPageModule'
-import StatisticsPage from './module/StatisticsPageModule'
-import NewAnalysisPage from './module/NewAnalysisPageModule'
+import './css/style.css'
+import TopPage from './TopPage/TopPageModule'
+import TestPage from './TestPage/TestPageModule'
+import ResultsPage from './ResultsPage/ResultsPageModule'
+import ResultDetailPage from './ResultDetailPage/ResultDetailPageModule'
+import StatisticsPage from './StatisticsPage/StatisticsPageModule'
+import NewAnalysisPage from './NewAnalysisPage/NewAnalysisPageModule'
+
 // React Routerを使ったメインコンポーネントの定義
 const SceneAnalyzerApp = () => (
   <Router>

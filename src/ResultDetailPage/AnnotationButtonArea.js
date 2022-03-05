@@ -1,7 +1,7 @@
 ﻿import React from "react"
-import { useMode } from './ModeProvider'
-import { useCurrent } from './CurrentProvider'
-import { useAnnotation } from './AnnotationProvider'
+import { useMode } from '../Provider/ModeProvider'
+import { useCurrent } from '../Provider/CurrentProvider'
+import { useAnnotation } from '../Provider/AnnotationProvider'
 
 export default function AnnotationButtonArea() {
   let { isEditMode, makeEditMode, makeViewMode } = useMode();

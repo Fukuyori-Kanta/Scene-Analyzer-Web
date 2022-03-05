@@ -1,12 +1,12 @@
 ﻿import React from "react"
-import { Fetch } from "./Fetch"
+import { Fetch } from "../Provider/Fetch"
 import { useParams } from 'react-router-dom'
-import Breadcrumbs from './Breadcrumbs'
+import Breadcrumbs from '../components/Breadcrumbs'
 import SceneList from './SceneList'
-import CurrentProvider from './CurrentProvider'
-import ModeProvider from './ModeProvider'
-import AnnotationProvider, { useAnnotation } from './AnnotationProvider'
-import CanvasProvider from "./CanvasProvider";
+import CurrentProvider from '../Provider/CurrentProvider'
+import ModeProvider from '../Provider/ModeProvider'
+import AnnotationProvider, { useAnnotation } from '../Provider/AnnotationProvider'
+import CanvasProvider from "../Provider/CanvasProvider";
 import SwitchScreen from './SwitchScreen'
 import LabelScreen from "./LabelScreen"
 

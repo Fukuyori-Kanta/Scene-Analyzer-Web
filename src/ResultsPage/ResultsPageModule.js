@@ -1,9 +1,9 @@
 ﻿import React from "react"
-import { Fetch } from "./Fetch"
+import { Fetch } from "../Provider/Fetch"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSearch } from "@fortawesome/free-solid-svg-icons"
-import Breadcrumbs from './Breadcrumbs'
-import VideoList from './VideoList'
+import Breadcrumbs from '../components/Breadcrumbs'
+import VideoList from '../components/VideoList'
 
 export default function ResultsPage({ searchoption, searchWord }) {
   return (

@@ -1,8 +1,8 @@
 ﻿import React, { useState, useEffect } from "react"
-import { useCurrent } from "./CurrentProvider"
-import { useAnnotation } from "./AnnotationProvider"
-import { useWindowDimensions } from './WindowDimensions'
-import { useCanvas } from "./CanvasProvider"
+import { useCurrent } from "../Provider/CurrentProvider"
+import { useAnnotation } from "../Provider/AnnotationProvider"
+import { useWindowDimensions } from '../Provider/WindowDimensions'
+import { useCanvas } from "../Provider/CanvasProvider"
 
 export default function Canvas({ videoId, data }) {
   const { currentScene, changeCurrentScene, currentLabel, changeCurrentLabel } = useCurrent()

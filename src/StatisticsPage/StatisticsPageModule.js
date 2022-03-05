@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from "react"
-import { Fetch } from "./Fetch"
-import Breadcrumbs from './Breadcrumbs'
+import { Fetch } from "../Provider/Fetch"
+import Breadcrumbs from '../components/Breadcrumbs'
 import StatisticsTab from './StatisticsTab'
 
 export default function StatisticsPage() {

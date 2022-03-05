@@ -1,5 +1,5 @@
 ﻿import React from "react"
-import { useCurrent } from "./CurrentProvider"
+import { useCurrent } from "../Provider/CurrentProvider"
 import ScrollMenu from 'react-horizontal-scroll-menu'
 
 export default function SceneList({ videoId, sceneCount }) {

@@ -1,6 +1,5 @@
 ﻿import React from 'react'
-import request from 'superagent'
-import Breadcrumbs from './Breadcrumbs'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 class NewAnalysisPage extends React.Component {
 	constructor(props) {

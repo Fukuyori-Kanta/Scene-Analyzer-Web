@@ -1,11 +1,11 @@
 ﻿import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { useCurrent } from './CurrentProvider'
-import { useMode } from "./ModeProvider"
+import { useCurrent } from '../Provider/CurrentProvider'
+import { useMode } from "../Provider/ModeProvider"
 import FavoChart from './FavoChart'
 import AnnotationButtonArea from './AnnotationButtonArea'
 import LabelInpuForm from './LabelInpuForm'
-import { useAnnotation } from './AnnotationProvider'
-import { useCanvas } from './CanvasProvider'
+import { useAnnotation } from '../Provider/AnnotationProvider'
+import { useCanvas } from '../Provider/CanvasProvider'
 
 export default function LabelScreen({ data }) {
   let { currentScene, currentLabel, changeCurrentLabel } = useCurrent();

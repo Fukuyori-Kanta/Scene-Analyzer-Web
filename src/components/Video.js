@@ -1,5 +1,5 @@
 ﻿import React from "react"
-import { useCurrent } from "./CurrentProvider"
+import { useCurrent } from "../Provider/CurrentProvider"
 
 export default function Video({ videoId }) {
   const { currentScene } = useCurrent();

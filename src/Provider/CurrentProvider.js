@@ -1,6 +1,6 @@
 ﻿import React, { createContext, useState, useContext } from "react";
 import { useMode } from "./ModeProvider"
-import AlertError from "./Alert/Error"
+import AlertError from "../components/Alert/Error"
 
 const CurrentContext = createContext();
 export const useCurrent = () => useContext(CurrentContext);

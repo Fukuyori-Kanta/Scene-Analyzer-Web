@@ -1,7 +1,7 @@
 ﻿import React from "react"
-import Video from './Video'
+import Video from '../components/Video'
 import Canvas from './Canvas'
-import { useMode } from "./ModeProvider"
+import { useMode } from "../Provider/ModeProvider"
 
 export default function SwitchScreen({ videoId, data }) {
   
