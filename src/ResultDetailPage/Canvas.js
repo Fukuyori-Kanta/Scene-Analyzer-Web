@@ -75,7 +75,7 @@ export default function Canvas({ videoId, data }) {
 
   // サムネ画像の表示
   function showCanvas() {
-    const thumbnailPath = '/result/thumbnail/' + videoId + '/thumbnail' + currentScene + '.jpg' // サムネ画像のパス
+    const thumbnailPath = './result/thumbnail/' + videoId + '/thumbnail' + currentScene + '.jpg' // サムネ画像のパス
     initImageCanvas('image-area', thumbnailPath)
 
     // 矩形キャンバスを描画

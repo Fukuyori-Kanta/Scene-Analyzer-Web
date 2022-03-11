@@ -6,7 +6,7 @@ import StatisticsTab from './StatisticsTab'
 export default function StatisticsPage() {
   return (
     <Fetch
-      uri={`http://192.168.204.128/statistics`}
+      uri={`/api/statistics`}
       renderSuccess={StatisticsPageContents}
     />
   )

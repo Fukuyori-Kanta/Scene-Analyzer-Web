@@ -19,7 +19,7 @@ export default function ResultDetailPage() {
         <AnnotationProvider>
           <CanvasProvider>
             <Fetch
-              uri={`http://192.168.204.128/result/` + videoId}
+              uri={`/api/result/` + videoId}
               renderSuccess={ResultDetailPageContents}
             />
           </CanvasProvider>

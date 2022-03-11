@@ -7,7 +7,7 @@ export default function SceneList({ videoId, sceneCount }) {
 
   // シーン一覧
   const list = [...Array(sceneCount).keys()].map(i => ++i).map(cnt => {
-    const imgPath = '/result/thumbnail/' + videoId + '/thumbnail' + cnt + '.jpg'
+    const imgPath = './result/thumbnail/' + videoId + '/thumbnail' + cnt + '.jpg'
 
     // 現在のシーンの枠に色付け
     let isColorRed = false
@@ -18,7 +18,7 @@ export default function SceneList({ videoId, sceneCount }) {
       <li className="item" key={cnt}>
         <img data-scene_no={cnt}
           className="thumbnail"
-          src={`${process.env.PUBLIC_URL}` + imgPath}
+          src={imgPath}
           onClick={() => { changeCurrentScene(cnt); changeCurrentLabel(0) }}
           style={isColorRed ? { borderColor: 'red' } : {}} />
       </li>

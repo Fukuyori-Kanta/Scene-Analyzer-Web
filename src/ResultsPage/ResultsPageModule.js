@@ -8,13 +8,14 @@ import VideoList from '../components/VideoList'
 export default function ResultsPage({ searchoption, searchWord }) {
   return (
     <Fetch
-      uri={`http://192.168.204.128/results`}
+      uri={`/api/results`}
       renderSuccess={ResultsPageContents}
     />
   )
 }
 
 function ResultsPageContents({ data }) {
+  console.log(data)
   return (
     <div id="result-list">
       <Breadcrumbs />

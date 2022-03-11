@@ -6,7 +6,7 @@ export default function VideoList({ dataList, id }) {
   const thumbnails = dataList.map(data => {
     const videoId = data.video_id
     const productName = data.product_name
-    const imgPath = '/result/thumbnail/' + videoId + '/thumbnail1.jpg'
+    const imgPath = './result/thumbnail/' + videoId + '/thumbnail1.jpg'
     return (
       <Thumbnail videoId={videoId} productName={productName} imgPath={imgPath} key={videoId} />
     )

@@ -6,13 +6,14 @@ import VideoList from '../components/VideoList'
 export default function TopPage() {
   return (
     <Fetch
-      uri={`http://192.168.204.128/history`}
+      uri={`/api/history`}
       renderSuccess={TopPageContents}
     />
   )
 }
 
 function TopPageContents({ data }) {
+  console.log(data)
   return (
     <div id="index">
       <section id="page-transition">
