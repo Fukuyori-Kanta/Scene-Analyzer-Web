@@ -5,9 +5,7 @@ import SceneAnalyzerApp from './SceneAnalyzerApp'
 
 ReactDOM.render(
   <React.StrictMode>
-
     <SceneAnalyzerApp />
-    {/*<img src="./result/thumbnail/A211079486/thumbnail1.jpg" />*/}
   </React.StrictMode>, 
   document.getElementById('root')
 );
