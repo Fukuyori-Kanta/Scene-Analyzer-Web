@@ -3,7 +3,7 @@ import { Fetch } from "../Provider/Fetch"
 import { useParams } from 'react-router-dom'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SceneList from './SceneList'
-import CurrentProvider, { useCurrent } from '../Provider/CurrentProvider'
+import CurrentProvider from '../Provider/CurrentProvider'
 import ModeProvider from '../Provider/ModeProvider'
 import AnnotationProvider, { useAnnotation } from '../Provider/AnnotationProvider'
 import CanvasProvider from "../Provider/CanvasProvider";
@@ -33,7 +33,6 @@ function ResultDetailPageContents({ data }) {
   const videoId = data[0].video_id
   const productName = data[0].product_name
   const sceneCount = [...new Set(data.map(item => item.scene_no))].length
-  //const { currentScene } = useCurrent()
 
   /* 各種データの表示 */
   return (
@@ -44,6 +43,7 @@ function ResultDetailPageContents({ data }) {
         <div id="file-name">{productName}</div>
         {/* <div id="scene-no">{currentScene}シーン目</div> */}
       </div>
+
 
       <div id="result-screen">
         <SwitchScreen videoId={videoId} data={data} />
