@@ -146,3 +146,4 @@ app.use('/test', express.static('./public'))
 app.use('/', (req, res) => {
   res.redirect(302, '/top')
 })
+//app.use(express.static('./public'))
