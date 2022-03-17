@@ -13,7 +13,6 @@ export default function TopPage() {
 }
 
 function TopPageContents({ data }) {
-  console.log(data)
   return (
     <div id="index">
       <section id="page-transition">

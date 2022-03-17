@@ -8,30 +8,54 @@ import PaginationProvider, { usePagination } from '../Provider/PaginationProvide
 import ReactPaginate from 'react-paginate'
 import HelpIcon from '../components/HelpIcon'
 import SubTitle from "../components/SubTitle"
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
+import SearchArea from './SearchArea'
+import SearchProvider from "../Provider/SearchProvider"
 
-export default function ResultsPage({ searchoption, searchWord }) {
+export default function ResultsPage() {
+  const selectedOption = useParams().option // 検索オプション
+  const searchWord = useParams().words  // 検索ワード
+
+  if (!searchWord) {
+    console.log("全部")
+  }
+  else {
+    console.log("検索")
+  }
+
   return (
-    <PaginationProvider>
-      <Fetch
-        uri={`/api/results`}
-        renderSuccess={ResultsPageContents}
-      />
-    </PaginationProvider>
+    <SearchProvider>
+      <PaginationProvider>
+        {
+          !searchWord
+            ?
+            <Fetch
+              uri={`/api/results`}
+              renderSuccess={ResultsPageContents}
+            />
+            :
+            <Fetch
+              uri={`/api/results/` + selectedOption + `/` + decodeURI(searchWord)}
+              renderSuccess={ResultsPageContents}
+            />
+        }
+      </PaginationProvider>
+    </SearchProvider>
   )
 }
 
 function ResultsPageContents({ data }) {
+  console.log(data)
   const { currentPage, setCurrentPage, perPage, handlePaginate } = usePagination()  // ページネーション用の変数・関数
   const offset = (currentPage - 1) * perPage  // 何番目のアイテムから表示するか
 
   // 遷移先からのhistory-back(ブラウザバック)に対応
   let location = useLocation()  // 現在のURL
-  let page = location.search.substring(location.search.indexOf('=')+1)  // ページ番号
+  let page = location.search.substring(location.search.indexOf('=') + 1)  // ページ番号
 
   if (page != '' && currentPage == 1) {
     setCurrentPage(page)
-  } 
+  }
 
   return (
     <div id="result-list">
@@ -43,7 +67,7 @@ function ResultsPageContents({ data }) {
 
       <div className="grid-container">
         <ReactPaginate
-          forcePage={currentPage-1}
+          forcePage={currentPage - 1}
           previousLabel={'<'}
           nextLabel={'>'}
           breakLabel={'...'}
@@ -66,7 +90,7 @@ function ResultsPageContents({ data }) {
     </div >
   );
 }
-
+/*
 function SearchArea() {
   return (
     <form method="get" action="#" className="search_container grid">
@@ -85,3 +109,4 @@ function SearchArea() {
     </form>
   )
 }
+*/

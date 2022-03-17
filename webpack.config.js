@@ -1,4 +1,5 @@
 const path = require('path')
+
 module.exports = {
   entry: path.join(__dirname, 'src/index.js'),
   output: {
@@ -12,28 +13,42 @@ module.exports = {
         test: /.js$/,
         loader: 'babel-loader',
         options: {
-          presets: ["@babel/preset-env","@babel/preset-react"]
+          presets: ["@babel/preset-env", "@babel/preset-react"]
           //presets: ["@babel/preset-env"]
         }
-      }, 
-      { 
-        test: /\.css$/, 
+      },
+      {
+        test: /\.css$/,
         use: [
-          'style-loader', 
+          'style-loader',
           {
-            loader: 'css-loader', 
+            loader: 'css-loader',
             options: {
               url: false
             }
-	  }
-        ], 
+          }
+        ],
       },
-    ]/*, 
-    plugins: [
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('development')
-      })
-    ]*/
-  }
+    ]
+  },
+  cache: {
+    type: 'filesystem',
+    buildDependencies: {
+      config: [__filename]
+    }
+  },/*
+  // モード値を production に設定すると最適化された状態で、
+  // development に設定するとソースマップ有効でJSファイルが出力される
+  mode: "development",
+
+  // ローカル開発用環境を立ち上げる
+  // 実行時にブラウザが自動的に localhost を開く
+  devServer: {
+    static: {
+      directory: path.resolve(__dirname, 'public'),
+    },
+    open: true, 
+    port: 3001
+  }*/
 }
 
