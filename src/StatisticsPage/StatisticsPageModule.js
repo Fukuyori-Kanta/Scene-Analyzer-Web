@@ -2,6 +2,7 @@
 import { Fetch } from "../Provider/Fetch"
 import Breadcrumbs from '../components/Breadcrumbs'
 import StatisticsTab from './StatisticsTab'
+import SubTitle from '../components/SubTitle'
 
 export default function StatisticsPage() {
   return (
@@ -16,8 +17,8 @@ function StatisticsPageContents({ data }) {
   return (
     <div id="statistics">
       <Breadcrumbs />
-
-      <h2 className="heading margin-left">統計データ</h2>
+      <SubTitle heading="統計データ" />
+      
       <StatisticsTab data={data} />
     </div>
   )
