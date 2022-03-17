@@ -25,17 +25,13 @@ function ResultsPageContents({ data }) {
   const { currentPage, setCurrentPage, perPage, handlePaginate } = usePagination()  // ページネーション用の変数・関数
   const offset = (currentPage - 1) * perPage  // 何番目のアイテムから表示するか
 
+  // 遷移先からのhistory-back(ブラウザバック)に対応
   let location = useLocation()  // 現在のURL
   let page = location.search.substring(location.search.indexOf('=')+1)  // ページ番号
-  // console.log(page)
-  // console.log(currentPage)
-  // if (page != '' && page != currentPage) {
-  //   console.log("変えるよ")
-  //   setCurrentPage(page)
-  //   //history.pushState({}, '', `?page=${page}`)
-  //   //console.log("何もないよ")
-  // } 
-  
+
+  if (page != '' && currentPage == 1) {
+    setCurrentPage(page)
+  } 
 
   return (
     <div id="result-list">
