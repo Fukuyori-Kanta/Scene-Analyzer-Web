@@ -4,42 +4,72 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSearch } from "@fortawesome/free-solid-svg-icons"
 import Breadcrumbs from '../components/Breadcrumbs'
 import VideoList from '../components/VideoList'
+import PaginationProvider, { usePagination } from '../Provider/PaginationProvider'
+import ReactPaginate from 'react-paginate'
+import HelpIcon from '../components/HelpIcon'
+import SubTitle from "../components/SubTitle"
+import { useLocation } from 'react-router-dom'
 
 export default function ResultsPage({ searchoption, searchWord }) {
   return (
-    <Fetch
-      uri={`/api/results`}
-      renderSuccess={ResultsPageContents}
-    />
+    <PaginationProvider>
+      <Fetch
+        uri={`/api/results`}
+        renderSuccess={ResultsPageContents}
+      />
+    </PaginationProvider>
   )
 }
 
 function ResultsPageContents({ data }) {
-  console.log(data)
+  const { currentPage, setCurrentPage, perPage, handlePaginate } = usePagination()  // ページネーション用の変数・関数
+  const offset = (currentPage - 1) * perPage  // 何番目のアイテムから表示するか
+
+  let location = useLocation()  // 現在のURL
+  let page = location.search.substring(location.search.indexOf('=')+1)  // ページ番号
+  // console.log(page)
+  // console.log(currentPage)
+  // if (page != '' && page != currentPage) {
+  //   console.log("変えるよ")
+  //   setCurrentPage(page)
+  //   //history.pushState({}, '', `?page=${page}`)
+  //   //console.log("何もないよ")
+  // } 
+  
+
   return (
     <div id="result-list">
       <Breadcrumbs />
+      <div className="flex">
+        <SubTitle heading={"結果一覧　" + data.length + " 件"} />
+        <HelpIcon />
+      </div>
 
-      <div className="container">
-        <div className="left-side">
-          <h2 className="heading">結果一覧<span id="scene-count">{data.length}</span>件</h2>
-          <div className="help-area">
-            <div className="help-icon">?</div>
-            <div className="tooltip">
-              これまで分析してきた１０００ＣＭの分析結果を閲覧できます。<br />
-                気になるＣＭがあればクリックして確認してみてください。
-                <a href="/help">詳細</a>
-            </div>
-          </div>
-        </div>
+      <div className="grid-container">
+        <ReactPaginate
+          forcePage={currentPage-1}
+          previousLabel={'<'}
+          nextLabel={'>'}
+          breakLabel={'...'}
+          pageCount={Math.ceil(data.length / perPage)} // 全部のページ数。端数の場合も考えて切り上げに。
+          marginPagesDisplayed={2} // 一番最初と最後を基準にして、そこからいくつページ数を表示するか
+          pageRangeDisplayed={3} // アクティブなページを基準にして、そこからいくつページ数を表示するか
+          onPageChange={handlePaginate} // クリック時のfunction
+          containerClassName={'pagination'} // ページネーションであるulに着くクラス名
+          subContainerClassName={'pages pagination'}
+          activeClassName={'active'} // アクティブなページのliに着くクラス名
+          previousClassName={'pagination__previous'} // 「<」のliに着けるクラス名
+          nextClassName={'pagination__next'} // 「>」のliに着けるクラス名
+          disabledClassName={'pagination__disabled'} // 使用不可の「<,>」に着くクラス名
+        />
+
         <SearchArea />
       </div>
 
-      <VideoList dataList={data} id='video-list' />
-    </div>
+      <VideoList dataList={data.slice(offset, offset + perPage)} id='video-list' />
+    </div >
   );
 }
-
 
 function SearchArea() {
   return (
