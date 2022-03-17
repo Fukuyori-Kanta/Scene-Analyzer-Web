@@ -21,6 +21,7 @@ const SceneAnalyzerApp = () => (
       <Route exact path='/' component={TopPage} />
       <Route path='/top' component={TopPage} />
       <Route path='/results' component={ResultsPage} />
+      <Route path='/search/:option/:words' component={ResultsPage} />
       <Route path='/result/:id' component={ResultDetailPage} />
       <Route path='/statistics' component={StatisticsPage} />
       <Route path='/newAnalysis' component={NewAnalysisPage} />
