@@ -671,7 +671,7 @@ video {
 }
 .favo-gragh {
   margin-left: 30px;
-  width:  calc(90% - 40px);
+  width:  calc(90% - 50px);
   overflow: hidden;
 }
 
@@ -702,7 +702,7 @@ video {
 }
 .tag{
   border-left: solid 6px #2d8fdd;/*左側の線*/
-  margin-bottom: 3px;/*下のバーとの余白*/
+  margin: 5px 0 0 5px;
   line-height: 1.2;
   padding: 0.5em;
   list-style-type: none!important;/*ポチ消す*/

@@ -22,6 +22,8 @@ export default function Breadcrumbs({ productName = '' }) {
         return '統計'
       case '/newAnalysis':
         return '新規分析'
+      case '/search':
+        return '結果一覧'
       default:
         return 'テスト'
     }
@@ -30,8 +32,8 @@ export default function Breadcrumbs({ productName = '' }) {
     <div className="bread">
       <ul>
         <>
-          <li><Link to={'/top'}>トップ</Link></li>
-          <li><Link to={currentPath}>{pageList(currentPath)}</Link></li>
+          <li><Link to={'/top/'}>トップ</Link></li>
+          <li><Link to={currentPath + '/'}>{pageList(currentPath)}</Link></li>
           {productName && <li>{productName}</li>}
         </>
       </ul>

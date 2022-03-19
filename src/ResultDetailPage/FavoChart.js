@@ -88,7 +88,7 @@ export default function FavoChart({ favoData }) {
 
   return (
     <>
-      <h2 className="heading tag">このシーンの好感度</h2>
+      <h2 className="tag">このシーンの好感度</h2>
       <div className="favo-gragh">
         <Line data={lineChartData} options={lineChartOption} />
       </div>
