@@ -3,12 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSearch } from "@fortawesome/free-solid-svg-icons"
 import { useSearch } from "../Provider/SearchProvider"
 import { useHistory } from "react-router"
+import { usePagination } from '../Provider/PaginationProvider'
 
 export default function SearchArea() {
   const { searchWord, setSearchWord, selectedOption, setSelectedOption } = useSearch()
+  const { setCurrentPage } = usePagination()
   const history = useHistory()
 
-  // 
+  // 検索欄に文字入力した時の処理
   const handleChange = (event) => {
     setSearchWord(event.target.value);
   }
@@ -18,14 +20,14 @@ export default function SearchArea() {
     setSelectedOption(event.target.value)
   }
 
+  // 検索実行した時の処理
   const formSubmit = (event) => {
     event.preventDefault();
-    history.push(`/search/` + selectedOption + `/` + searchWord)
+    history.push(`/search/` + selectedOption + `/` + searchWord + `/`)
+    
+    // ページ番号を1に戻す
+    setCurrentPage(1)
   }
-
-  // useEffect(() => {
-  //   console.log(searchWord)
-  // }, [searchWord])
 
   return (
     <form className="search_container grid" onSubmit={formSubmit} >

@@ -4,6 +4,7 @@ module.exports = {
   entry: path.join(__dirname, 'src/index.js'),
   output: {
     path: path.join(__dirname, 'public'),
+    publicPath: 'auto',
     filename: 'bundle.js'
   },
   devtool: 'inline-source-map',
@@ -14,7 +15,6 @@ module.exports = {
         loader: 'babel-loader',
         options: {
           presets: ["@babel/preset-env", "@babel/preset-react"]
-          //presets: ["@babel/preset-env"]
         }
       },
       {
@@ -29,6 +29,14 @@ module.exports = {
           }
         ],
       },
+      {
+        //ローダの処理対象ファイル
+        test:/\.(png|jpg|gif)$/i,
+        //ローダの処理対象となるディレクトリ
+        include: path.resolve(__dirname, 'public'),
+        //利用するローダー
+        loader: 'url-loader'
+      }
     ]
   },
   cache: {

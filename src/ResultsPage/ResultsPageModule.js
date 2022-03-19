@@ -15,14 +15,7 @@ import SearchProvider from "../Provider/SearchProvider"
 export default function ResultsPage() {
   const selectedOption = useParams().option // 検索オプション
   const searchWord = useParams().words  // 検索ワード
-
-  if (!searchWord) {
-    console.log("全部")
-  }
-  else {
-    console.log("検索")
-  }
-
+  console.log(useParams())
   return (
     <SearchProvider>
       <PaginationProvider>
@@ -45,7 +38,6 @@ export default function ResultsPage() {
 }
 
 function ResultsPageContents({ data }) {
-  console.log(data)
   const { currentPage, setCurrentPage, perPage, handlePaginate } = usePagination()  // ページネーション用の変数・関数
   const offset = (currentPage - 1) * perPage  // 何番目のアイテムから表示するか
 
@@ -88,25 +80,5 @@ function ResultsPageContents({ data }) {
 
       <VideoList dataList={data.slice(offset, offset + perPage)} id='video-list' />
     </div >
-  );
-}
-/*
-function SearchArea() {
-  return (
-    <form method="get" action="#" className="search_container grid">
-      <div id="search-option">
-        <input type="radio" name="search-option" value="video-name" id="video-name" />
-        <label htmlFor="video-name" className="radio-label">動画名</label>
-
-        <input type="radio" name="search-option" value="label-name" id="label-name" />
-        <label htmlFor="label-name" className="radio-label">ラベル名</label>
-      </div>
-
-      <div id="search-area">
-        <input id="search-word" type="text" size="25" placeholder="動画名を検索" />
-        <FontAwesomeIcon id="search-button" icon={faSearch} />
-      </div>
-    </form>
   )
 }
-*/
