@@ -13,7 +13,7 @@ export default function CanvasProvider({ children }) {
   const { currentScene, changeCurrentScene, currentLabel, changeCurrentLabel } = useCurrent()
   //const { labelsData, changeLabelsData, oldLabels, setOldLabels, newLables, setNewLabels, isDrawingActive, setIsDrawingActive } = useAnnotation()
   const { isDrawingActive, setIsDrawingActive, inputWord, setInputWord } = useAnnotation()
-  
+
   const canvasRef = useRef(null);
   const [context, setContext] = useState(null);
 
@@ -30,6 +30,9 @@ export default function CanvasProvider({ children }) {
   useEffect(() => {
     if (isDrawingActive) {
       drawNewRectArea(inputWord)
+      
+      // 入力単語（ラベル）初期化
+      setInputWord('')
     }
   }, [isDrawingActive])
 
@@ -74,9 +77,6 @@ export default function CanvasProvider({ children }) {
 
       // 新規描画を非アクティブ化
       setIsDrawingActive(false)
-
-      // 入力単語（ラベル）初期化
-      setInputWord('')  
     }
 
     function drawFromMemory() {
@@ -228,7 +228,7 @@ export default function CanvasProvider({ children }) {
   // 描画されたバウンディングボックスの設定を変更（追加）する関数
   // デフォルトは非選択状態とし、選択状態の時に各種変数を更新
   const changeDrawnRect = (rect) => {
-    
+
     // 全矩形を非選択状態にする
     makeUnselectedAll()
 
@@ -258,8 +258,8 @@ export default function CanvasProvider({ children }) {
         stroke: rectstroke, // 線の色
         fill: rectFill,     // 塗潰し色
       }).setCoords();
-    }) 
-    
+    })
+
     // 変更したオブジェクトの描画
     rectCanvas.renderAll()
   }

@@ -5,7 +5,7 @@ import { fabric } from "fabric"
 
 export default function LabelInpuForm() {
   let { isEditMode } = useMode();
-  const { labelsData, changeLabelsData, oldLabels, setOldLabels, newLables, setNewLabels, isDrawingActive, setIsDrawingActive, inputWord, setInputWord } = useAnnotation()
+  const { labelsData, addLabelsData, oldLabels, setOldLabels, newLables, setNewLabels, isDrawingActive, setIsDrawingActive, inputWord, setInputWord } = useAnnotation()
 
   /*
   function fetchPost() {
@@ -37,21 +37,17 @@ export default function LabelInpuForm() {
   }
   */
 
-  useEffect(() => {
-    if (isDrawingActive) {
-      console.log("追加")
-    }
-  }, [isDrawingActive])
-
   // 検索欄に文字入力した時の処理
   const changeHandler = (event) => {
-    console.log(event.target.value)
-    console.log(inputWord)
     setInputWord(event.target.value)
   }
 
   // 追加ボタンを押した時の処理
   const clickHandler = () => {
+    // ラベルを追加
+    addLabelsData(inputWord)
+
+    // 新規描画を開始
     setIsDrawingActive(true)
   }
 
@@ -59,8 +55,8 @@ export default function LabelInpuForm() {
   // 追加ボタン押下と同じ処理
   const EnterHandler = (event) => {
     if (event.key == 'Enter') {
-      clickHandler()    
-    }    
+      clickHandler()
+    }
   }
 
   return (
