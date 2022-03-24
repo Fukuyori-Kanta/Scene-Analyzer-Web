@@ -6,39 +6,79 @@ import AnnotationButtonArea from './AnnotationButtonArea'
 import LabelInpuForm from './LabelInpuForm'
 import { useAnnotation } from '../Provider/AnnotationProvider'
 import { useCanvas } from '../Provider/CanvasProvider'
+import { v4 as uuidv4 } from 'uuid'
 
 export default function LabelScreen({ data }) {
+  const [fireVal, setFireVal] = useState({})  // 発火用変数
   let { currentScene, currentLabel, changeCurrentLabel } = useCurrent();
-  const { changeLabelsData } = useAnnotation();
+  const { labelsData, setLabelsData, changeLabelsData, oldLabels, setOldLabels, preprocessingLabels } = useAnnotation();
   const { changeDrawnRect, checkedLabel } = useCanvas()
-  
+
   const { isEditMode, makeEditMode, makeViewMode } = useMode();
+
   useEffect(() => {
-    changeLabelsData(labelsData)
-  }, [])
+    setOldLabels(fireVal)
+    setLabelsData(fireVal)
+  }, [fireVal])
+
+  useEffect(() => {  
+    setFireVal(l)
+  }, [preprocessingData])
 
   const dummyFunc = (currentId) => {
     if (isEditMode) {
-      changeCurrentLabel(currentId) 
+      changeCurrentLabel(currentId)
       checkedLabel(currentId)
-     }
+    }
   }
 
   // ラベルデータの抽出
-  let labelsData = data.filter(item => item.scene_no == 'scene_' + currentScene)  // ラベルデータ
+  let preprocessingData = data.filter(item => item.scene_no == 'scene_' + currentScene)  // ラベルデータ
 
   // 並び替え（名詞が先、動詞が後）
-  labelsData = labelsData.filter(item => item.label_id[0] == 'N').concat(labelsData.filter(item => item.label_id[0] == 'V'))
+  preprocessingData = preprocessingData.filter(item => item.label_id[0] == 'N').concat(preprocessingData.filter(item => item.label_id[0] == 'V'))
+
+  // ラベルデータを更新
+  let l = {}
+  preprocessingData.forEach(d => {
+    l[uuidv4()] = d.label_name_ja
+  });
 
   // ラベルデータの表示
-  const labels = labelsData.map((label, index) => {
+  // const labels = labelsData.map((label, index) => {
+  //   if (currentLabel == index + 1) {
+  //     return (
+  //       <div data-label_id={index + 1}
+  //         className="label-item"
+  //         key={index + 1}
+  //         onClick={() => dummyFunc(index + 1)}>
+  //         <h3 className="label" style={{ border: '2px solid #F33' }}>{label.label_name_ja}</h3>
+  //         <div className="delete-btn">
+  //           <span>×</span>
+  //         </div>
+  //       </div>
+  //     )
+  //   } else {
+  //     return (
+  //       <div data-label_id={index + 1}
+  //         className="label-item"
+  //         key={index + 1}
+  //         onClick={() => dummyFunc(index + 1)}>
+  //         <h3 className="label">{label.label_name_ja}</h3>
+  //       </div>
+  //     )
+  //   }
+  // })
+  let labels = Object.keys(labelsData).map((key, index) => {
+    console.log(key, labelsData[key])
+
     if (currentLabel == index + 1) {
       return (
-        <div data-label_id={index + 1} 
-             className="label-item" 
-             key={index + 1} 
-             onClick={() => dummyFunc(index+1)}>
-          <h3 className="label" style={{ border: '2px solid #F33' }}>{label.label_name_ja}</h3>
+        <div data-label_id={index + 1}
+          className="label-item"
+          key={index + 1}
+          onClick={() => dummyFunc(index + 1)}>
+          <h3 className="label" style={{ border: '2px solid #F33', color: Object.keys(oldLabels).includes(key) ? '#000' : '#4699ca' }}>{labelsData[key]}</h3>
           <div className="delete-btn">
             <span>×</span>
           </div>
@@ -47,15 +87,15 @@ export default function LabelScreen({ data }) {
     } else {
       return (
         <div data-label_id={index + 1}
-             className="label-item" 
-             key={index + 1} 
-             onClick={() => dummyFunc(index+1)}>
-          <h3 className="label">{label.label_name_ja}</h3>
+          className="label-item"
+          key={index + 1}
+          onClick={() => dummyFunc(index + 1)}>
+          <h3 className="label" style={{ color: Object.keys(oldLabels).includes(key) ? '#000' : '#4699ca' }}>{labelsData[key]}</h3>
         </div>
       )
     }
   })
-  
+
   // 好感度データの抽出
   const sceneCount = [...new Set(data.map(item => item.scene_no))].length
   const favoData = [...Array(sceneCount).keys()].map(i => ++i).map(cnt => {
