@@ -10,6 +10,9 @@ export default function AnnotationProvider({ children }) {
   const [oldLabels, setOldLabels] = useState();
   const [newLables, setNewLabels] = useState();
   const [isDrawingActive, setIsDrawingActive] = useState(false);  
+  const [inputWord, setInputWord] = useState('')  // 入力単語（ラベル名）
+
+
 
   /*
   const changeAnnotationScene = (cnt) =>
@@ -20,11 +23,21 @@ export default function AnnotationProvider({ children }) {
 
   */
 
-    const changeLabelsData = (data) =>
-      setLabelsData(data);
+    useEffect(() => {
+      console.log(inputWord)
+    }, [inputWord])
 
+    const changeLabelsData = (data) => {
+      setLabelsData(data)
+    }
+
+    // 新規ラベルの追加処理
+    // const addLabel = () => {
+    //   setLabelsData()
+    // }
+      
   return (
-    <AnnotationContext.Provider value={{ labelsData, changeLabelsData, oldLabels, setOldLabels, newLables, setNewLabels, isDrawingActive, setIsDrawingActive }}>
+    <AnnotationContext.Provider value={{ labelsData, changeLabelsData, oldLabels, setOldLabels, newLables, setNewLabels, isDrawingActive, setIsDrawingActive, inputWord, setInputWord }}>
       {children}
     </AnnotationContext.Provider>
   )

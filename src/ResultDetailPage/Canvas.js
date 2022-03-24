@@ -7,11 +7,13 @@ import { useCanvas } from "../Provider/CanvasProvider"
 export default function Canvas({ videoId, data }) {
   const { currentScene, changeCurrentScene, currentLabel, changeCurrentLabel } = useCurrent()
   const { imageCanvas, setImageCanvas, rectCanvas, setRectCanvas, drawCanvas, setDrawCanvas,
-    initImageCanvas, initRectCanvas, resizeCoordinate, drawRect, rectSelectionEventHandler } = useCanvas()
+    initImageCanvas, initRectCanvas, resizeCoordinate, drawRect, rectSelectionEventHandler, canvasRef } = useCanvas()
   
   const { isDrawingActive, setIsDrawingActive } = useAnnotation()
   const [screenStyle, setScreenStyle] = useState()
   const { width, height } = useWindowDimensions()
+  let [drawWidth, setDrawWidth] = useState()
+  let [drawHeight, setDrawHeight] = useState()
 
   // ラベルデータ
   const labelsData = []
@@ -33,6 +35,9 @@ export default function Canvas({ videoId, data }) {
       marginLeft: '1px'
     }
     setScreenStyle(ScreenStyle)
+
+    setDrawWidth(screenWidth)
+    setDrawHeight(screenHeight)
 
     showCanvas()
   }, [width, height]);
@@ -106,7 +111,7 @@ export default function Canvas({ videoId, data }) {
     <div>
       <canvas id="image-area" style={screenStyle}></canvas>
       <canvas id="rect-area" className="lower-canvas" style={screenStyle}></canvas>
-      {isDrawingActive ? <canvas id="draw-area" style={screenStyle}></canvas> : <></>}
+      {isDrawingActive ? <canvas id="draw-area" width={drawWidth} height={drawHeight} ref={canvasRef}></canvas> : <></>}
     </div>
   )
 }
