@@ -5,7 +5,7 @@ import { fabric } from "fabric"
 
 export default function LabelInpuForm() {
   let { isEditMode } = useMode();
-  const { labelsData, changeLabelsData, oldLabels, setOldLabels, newLables, setNewLabels, isDrawingActive, setIsDrawingActive } = useAnnotation()
+  const { labelsData, changeLabelsData, oldLabels, setOldLabels, newLables, setNewLabels, isDrawingActive, setIsDrawingActive, inputWord, setInputWord } = useAnnotation()
 
   /*
   function fetchPost() {
@@ -43,12 +43,40 @@ export default function LabelInpuForm() {
     }
   }, [isDrawingActive])
 
+  // 検索欄に文字入力した時の処理
+  const changeHandler = (event) => {
+    console.log(event.target.value)
+    console.log(inputWord)
+    setInputWord(event.target.value)
+  }
+
+  // 追加ボタンを押した時の処理
+  const clickHandler = () => {
+    setIsDrawingActive(true)
+  }
+
+  // 入力欄でEnterキーを押した時の処理
+  // 追加ボタン押下と同じ処理
+  const EnterHandler = (event) => {
+    if (event.key == 'Enter') {
+      clickHandler()    
+    }    
+  }
+
   return (
     <div id="input-area">
       {isEditMode
         ? <>
-          <input id="input-word" type="text" size="25" placeholder="ラベル名を入力して下さい" />
-          <div className="add-btn" onClick={() => setIsDrawingActive(true)}><p>追加</p></div>
+          <input
+            id="input-word"
+            type="text"
+            size="25"
+            placeholder="ラベル名を入力して下さい"
+            onChange={changeHandler}
+            onKeyPress={EnterHandler}
+            value={inputWord}
+          />
+          <div className="add-btn" onClick={clickHandler}><p>追加</p></div>
         </>
         : <>
         </>

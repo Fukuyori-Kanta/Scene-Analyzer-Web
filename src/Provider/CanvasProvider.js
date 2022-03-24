@@ -1,4 +1,4 @@
-﻿import React, { createContext, useState, useEffect, useContext } from "react"
+﻿import React, { createContext, useState, useEffect, useContext, useRef } from "react"
 import { useCurrent } from "./CurrentProvider"
 import { useAnnotation } from "./AnnotationProvider";
 import { fabric } from "fabric"
@@ -12,18 +12,30 @@ export default function CanvasProvider({ children }) {
 
   const { currentScene, changeCurrentScene, currentLabel, changeCurrentLabel } = useCurrent()
   //const { labelsData, changeLabelsData, oldLabels, setOldLabels, newLables, setNewLabels, isDrawingActive, setIsDrawingActive } = useAnnotation()
-  const { isDrawingActive, setIsDrawingActive } = useAnnotation()
+  const { isDrawingActive, setIsDrawingActive, inputWord, setInputWord } = useAnnotation()
+  
+  const canvasRef = useRef(null);
+  const [context, setContext] = useState(null);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      const renderCtx = canvasRef.current.getContext('2d');
+
+      if (renderCtx) {
+        setContext(renderCtx);
+      }
+    }
+  }, [context])
 
   useEffect(() => {
     if (isDrawingActive) {
-      drawNewRectArea('女性')
+      drawNewRectArea(inputWord)
     }
   }, [isDrawingActive])
 
   const drawNewRectArea = (labelName) => {
-    const Canvas = document.getElementById("draw-area")
+    const Canvas = canvasRef.current
     const Context = Canvas.getContext("2d")
-    //const labelName = 'asd'
 
     var RectEdgeColor = "#0BF";
     var RectInnerColor = "rgba(174,230,255,0.3)";
@@ -62,6 +74,9 @@ export default function CanvasProvider({ children }) {
 
       // 新規描画を非アクティブ化
       setIsDrawingActive(false)
+
+      // 入力単語（ラベル）初期化
+      setInputWord('')  
     }
 
     function drawFromMemory() {
@@ -100,16 +115,16 @@ export default function CanvasProvider({ children }) {
 
     function mouseHandler() {
       Canvas.addEventListener('mousedown', function (e) {
-        dragStart(e.layerX, e.layerY);
+        dragStart(e.layerX - canvasRef.current.offsetLeft, e.layerY - canvasRef.current.offsetTop);
       });
       Canvas.addEventListener('mouseup', function (e) {
-        dragEnd(e.layerX, e.layerY);
+        dragEnd(e.layerX - canvasRef.current.offsetLeft, e.layerY - canvasRef.current.offsetTop);
       });
       Canvas.addEventListener('mouseout', function (e) {
-        dragEnd(e.layerX, e.layerY);
+        dragEnd(e.layerX - canvasRef.current.offsetLeft, e.layerY - canvasRef.current.offsetTop);
       });
       Canvas.addEventListener('mousemove', function (e) {
-        draw(e.layerX, e.layerY);
+        draw(e.layerX - canvasRef.current.offsetLeft, e.layerY - canvasRef.current.offsetTop);
       });
     }
     mouseHandler();
@@ -366,10 +381,7 @@ export default function CanvasProvider({ children }) {
       //let newRect = oldRect.concat();
       //newRect[objId - 1] = [labelName, x, y, w, h];
     });
-
-
   }
-
 
   return (
     <CanvasContext.Provider value={{
@@ -385,7 +397,8 @@ export default function CanvasProvider({ children }) {
       drawRect,
       rectSelectionEventHandler,
       changeDrawnRect,
-      checkedLabel
+      checkedLabel,
+      canvasRef
     }}>
       {children}
     </CanvasContext.Provider>
