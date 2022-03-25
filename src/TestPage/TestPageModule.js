@@ -2,9 +2,9 @@
 import { Fetch } from "../Provider/Fetch"
 import Breadcrumbs from '../components/Breadcrumbs'
 import SceneList from '../ResultDetailPage/SceneList'
-import CurrentProvider, { useCurrent } from '../Provider/CurrentProvider'
+import CurrentProvider from '../Provider/CurrentProvider'
 import ModeProvider from '../Provider/ModeProvider'
-import AnnotationProvider, { useAnnotation } from '../Provider/AnnotationProvider'
+import AnnotationProvider from '../Provider/AnnotationProvider'
 import CanvasProvider from "../Provider/CanvasProvider";
 import SwitchScreen from '../ResultDetailPage/SwitchScreen'
 import LabelScreen from "../ResultDetailPage/LabelScreen"
@@ -32,7 +32,6 @@ function TestPageContents({ data }) {
   const videoId = data[0].video_id
   const productName = data[0].product_name
   const sceneCount = [...new Set(data.map(item => item.scene_no))].length
-  //const { currentScene } = useCurrent()
 
   /* 各種データの表示 */
   return (
