@@ -5,25 +5,14 @@ import { useWindowDimensions } from '../Provider/WindowDimensions'
 import { useCanvas } from "../Provider/CanvasProvider"
 
 export default function Canvas({ videoId, data }) {
-  const { currentScene, changeCurrentScene, currentLabel, changeCurrentLabel } = useCurrent()
-  const { imageCanvas, setImageCanvas, rectCanvas, setRectCanvas, drawCanvas, setDrawCanvas,
-    initImageCanvas, initRectCanvas, resizeCoordinate, drawRect, rectSelectionEventHandler, canvasRef } = useCanvas()
-  
-  const { isDrawingActive, setIsDrawingActive } = useAnnotation()
   const [screenStyle, setScreenStyle] = useState()
-  const { width, height } = useWindowDimensions()
   let [drawWidth, setDrawWidth] = useState()
   let [drawHeight, setDrawHeight] = useState()
 
-  // ラベルデータ
-  const labelsData = []
-  data.filter(item => {
-    if (item.scene_no == 'scene_' + currentScene) {
-      labelsData.push(item)
-    }
-  })
-
-  //const { Canvas, setCanvas } = useAnnotation();
+  const { currentScene } = useCurrent()
+  const { rectCanvas, initImageCanvas, initRectCanvas, resizeCoordinate, drawRect, rectSelectionEventHandler, canvasRef } = useCanvas()
+  const { labelsData, setLabelsData, isDrawingActive } = useAnnotation()
+  const { width, height } = useWindowDimensions()
 
   // 初期描画が終わった後 または サイズが変わった時、サイズを変えてキャンバスを描画
   useEffect(() => {
@@ -47,8 +36,9 @@ export default function Canvas({ videoId, data }) {
     if (rectCanvas !== null) {
 
       // 各ラベルのバウンディングボックスを描画
-      labelsData.map((data, index) => {
-        const labelId = data.label_id    // ラベルID
+      Object.keys(labelsData).map((key) => {
+        const data = labelsData[key]  // 該当データ
+        const labelId = data.label_id // ラベルID
         // 物体ラベルの場合のみ描画
         if (labelId.slice(0, 1) == 'N') {
 
@@ -59,7 +49,7 @@ export default function Canvas({ videoId, data }) {
           const coordinate = resizeCoordinate(data.x_axis, data.y_axis, data.width, data.height)
 
           // バウンディングボックスを描画
-          drawRect(index, coordinate, labelName)
+          drawRect(key, coordinate, labelName)
         }
       })
 
@@ -87,9 +77,27 @@ export default function Canvas({ videoId, data }) {
     const { screenWidth, screenHeight } = getScreenSize('switch-screen')
     initRectCanvas('rect-area', screenWidth, screenHeight)    // バウンディングボックスを描画するためのキャンバス
 
-   if (rectCanvas !== null) {  
+    if (rectCanvas !== null) {
       // 各ラベルのバウンディングボックスを描画
-      labelsData.map((data, index) => {
+      // labelsData.map((data, index) => {
+      //   const labelId = data.label_id    // ラベルID
+      //   // 物体ラベルの場合のみ描画
+      //   if (labelId.slice(0, 1) == 'N') {
+
+      //     const labelName = data.label_name_ja // ラベル名（日本語）
+      //     const score = data.recognition_score // 認識スコア
+
+      //     // 画面比率に合わせるため座標データをリサイズ
+      //     const coordinate = resizeCoordinate(data.x_axis, data.y_axis, data.width, data.height)
+
+      //     // バウンディングボックスを描画
+      //     drawRect(index, coordinate, labelName)
+      //   }
+      // })
+
+      Object.keys(labelsData).map((key) => {
+        const data = labelsData[key]  // 該当データ
+        console.log(data)
         const labelId = data.label_id    // ラベルID
         // 物体ラベルの場合のみ描画
         if (labelId.slice(0, 1) == 'N') {
@@ -101,7 +109,7 @@ export default function Canvas({ videoId, data }) {
           const coordinate = resizeCoordinate(data.x_axis, data.y_axis, data.width, data.height)
 
           // バウンディングボックスを描画
-          drawRect(index, coordinate, labelName)
+          drawRect(key, coordinate, labelName)
         }
       })
     }

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react"
+﻿import React from "react"
 import { Fetch } from "../Provider/Fetch"
 import Breadcrumbs from '../components/Breadcrumbs'
 import StatisticsTab from './StatisticsTab'

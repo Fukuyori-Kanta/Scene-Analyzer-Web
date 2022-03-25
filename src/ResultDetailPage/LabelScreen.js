@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useLayoutEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react'
 import { useCurrent } from '../Provider/CurrentProvider'
 import { useMode } from "../Provider/ModeProvider"
 import FavoChart from './FavoChart'
@@ -9,88 +9,82 @@ import { useCanvas } from '../Provider/CanvasProvider'
 import { v4 as uuidv4 } from 'uuid'
 
 export default function LabelScreen({ data }) {
-  const [fireVal, setFireVal] = useState({})  // 発火用変数
-  let { currentScene, currentLabel, changeCurrentLabel } = useCurrent();
-  const { labelsData, setLabelsData, changeLabelsData, oldLabels, setOldLabels, preprocessingLabels } = useAnnotation();
-  const { changeDrawnRect, checkedLabel } = useCanvas()
 
-  const { isEditMode, makeEditMode, makeViewMode } = useMode();
+  const { currentScene, currentLabel, changeCurrentLabel } = useCurrent()
+  const { labelsData, setLabelsData, oldLabels, setOldLabels, deleteLabelData } = useAnnotation()
+  const { checkedLabel, deleteRect } = useCanvas()
+  const { isEditMode } = useMode()
+
+  let l = {}
 
   useEffect(() => {
-    setOldLabels(fireVal)
-    setLabelsData(fireVal)
-  }, [fireVal])
+    // ラベルデータの抽出
+    let preprocessingData = data.filter(item => item.scene_no == 'scene_' + currentScene)  // ラベルデータ
 
-  useEffect(() => {  
-    setFireVal(l)
-  }, [preprocessingData])
+    // 並び替え（物体ラベルが先、動作ラベルが後）
+    preprocessingData = preprocessingData.filter(item => item.label_id[0] == 'N').concat(preprocessingData.filter(item => item.label_id[0] == 'V'))
 
-  const dummyFunc = (currentId) => {
+    // ラベルデータを更新
+    preprocessingData.forEach(d => {
+      l[uuidv4()] = d
+    });
+
+    setLabelsData(l)
+    setOldLabels(l)
+    l = {}
+  }, [currentScene])
+
+  // ラベルクリック時の処理
+  const changeHandler = (labelId, currentId) => {
     if (isEditMode) {
+      // 現在の選択ラベルを変更
       changeCurrentLabel(currentId)
-      checkedLabel(currentId)
+
+      // 物体ラベルの時、矩形も選択状態にする
+      if (labelId[0] == 'N') {
+        checkedLabel(currentId)
+      }
     }
   }
 
-  // ラベルデータの抽出
-  let preprocessingData = data.filter(item => item.scene_no == 'scene_' + currentScene)  // ラベルデータ
+  // ラベル削除時の処理
+  const deleteHandler = (labelId, key) => {
+    // 表示しているラベルを削除
+    deleteLabelData(key)
 
-  // 並び替え（名詞が先、動詞が後）
-  preprocessingData = preprocessingData.filter(item => item.label_id[0] == 'N').concat(preprocessingData.filter(item => item.label_id[0] == 'V'))
-
-  // ラベルデータを更新
-  let l = {}
-  preprocessingData.forEach(d => {
-    l[uuidv4()] = d.label_name_ja
-  });
+    // 物体ラベルの時、矩形も削除する
+    if (labelId[0] == 'N') {
+      deleteRect(key)
+    }
+  }
 
   // ラベルデータの表示
-  // const labels = labelsData.map((label, index) => {
-  //   if (currentLabel == index + 1) {
-  //     return (
-  //       <div data-label_id={index + 1}
-  //         className="label-item"
-  //         key={index + 1}
-  //         onClick={() => dummyFunc(index + 1)}>
-  //         <h3 className="label" style={{ border: '2px solid #F33' }}>{label.label_name_ja}</h3>
-  //         <div className="delete-btn">
-  //           <span>×</span>
-  //         </div>
-  //       </div>
-  //     )
-  //   } else {
-  //     return (
-  //       <div data-label_id={index + 1}
-  //         className="label-item"
-  //         key={index + 1}
-  //         onClick={() => dummyFunc(index + 1)}>
-  //         <h3 className="label">{label.label_name_ja}</h3>
-  //       </div>
-  //     )
-  //   }
-  // })
   let labels = Object.keys(labelsData).map((key, index) => {
-    console.log(key, labelsData[key])
+    const labelId = labelsData[key].label_id[0] // ラベルID
 
     if (currentLabel == index + 1) {
       return (
-        <div data-label_id={index + 1}
-          className="label-item"
+        <div className="label-item" data-label_id={index + 1}
           key={index + 1}
-          onClick={() => dummyFunc(index + 1)}>
-          <h3 className="label" style={{ border: '2px solid #F33', color: Object.keys(oldLabels).includes(key) ? '#000' : '#4699ca' }}>{labelsData[key]}</h3>
-          <div className="delete-btn">
+          onClick={() => changeHandler(labelId, index + 1)}>
+          <h3 className={(labelId[0] == 'V') ? "action-label" : "label"}
+            style={{ border: '2px solid #F33', color: Object.keys(oldLabels).includes(key) ? '#000' : '#4699ca' }}>
+            {labelsData[key].label_name_ja}
+          </h3>
+          <div className="delete-btn" onClick={() => deleteHandler(labelId, key)}>
             <span>×</span>
           </div>
         </div>
       )
     } else {
       return (
-        <div data-label_id={index + 1}
-          className="label-item"
+        <div className="label-item" data-label_id={index + 1}
           key={index + 1}
-          onClick={() => dummyFunc(index + 1)}>
-          <h3 className="label" style={{ color: Object.keys(oldLabels).includes(key) ? '#000' : '#4699ca' }}>{labelsData[key]}</h3>
+          onClick={() => changeHandler(labelId, index + 1)}>
+          <h3 className={(labelId[0] == 'V') ? "action-label" : "label"}
+            style={{ color: Object.keys(oldLabels).includes(key) ? '#000' : '#4699ca' }}>
+            {labelsData[key].label_name_ja}
+          </h3>
         </div>
       )
     }
@@ -112,5 +106,4 @@ export default function LabelScreen({ data }) {
       <FavoChart favoData={favoData} />
     </div>
   )
-
 }

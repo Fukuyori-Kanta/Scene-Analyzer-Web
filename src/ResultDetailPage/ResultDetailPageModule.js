@@ -9,6 +9,7 @@ import AnnotationProvider, { useAnnotation } from '../Provider/AnnotationProvide
 import CanvasProvider from "../Provider/CanvasProvider";
 import SwitchScreen from './SwitchScreen'
 import LabelScreen from "./LabelScreen"
+import CurrentScene from './CurrentScene'
 
 export default function ResultDetailPage() {
   const videoId = useParams().id
@@ -33,7 +34,6 @@ function ResultDetailPageContents({ data }) {
   const videoId = data[0].video_id
   const productName = data[0].product_name
   const sceneCount = [...new Set(data.map(item => item.scene_no))].length
-  //const { currentScene } = useCurrent()
 
   /* 各種データの表示 */
   return (
@@ -42,7 +42,7 @@ function ResultDetailPageContents({ data }) {
 
       <div className="video-info">
         <div id="file-name">{productName}</div>
-        {/* <div id="scene-no">{currentScene}シーン目</div> */}
+        <CurrentScene />
       </div>
 
       <div id="result-screen">

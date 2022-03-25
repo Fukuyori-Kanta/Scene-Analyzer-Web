@@ -1,7 +1,6 @@
-﻿import React, { useEffect } from "react"
+﻿import React from "react"
 import { useMode } from '../Provider/ModeProvider'
 import { useAnnotation } from "../Provider/AnnotationProvider"
-import { fabric } from "fabric"
 
 export default function LabelInpuForm() {
   let { isEditMode } = useMode();

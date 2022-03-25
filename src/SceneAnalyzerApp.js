@@ -39,7 +39,7 @@ const Header = () => (
       title="SceneAnalyzer"
       values="結果一覧,統計,新規分析"
       herf="/results,/statistics,/newAnalysis" />
-    <HamburgerMenu />
+    {/* <HamburgerMenu /> */}
   </header>
 )
 /*
@@ -105,20 +105,20 @@ class NaviMenu extends React.Component {
 }
 
 // ハンバーガーメニュー
-const HamburgerMenu = () => {
-  return (
-    <div className="right-side">
-      <div className="menu-btn">
-        <i className="fa fa-bars" aria-hidden="true"></i>
-      </div>
-      <ul className="menu">
-        <li className="menu-item">アカウント</li>
-        <li className="menu-item">スコア</li>
-        <li className="menu-item">ランキング</li>
-        <li className="menu-item"><a href="/help">ヘルプ</a></li>
-        <li className="menu-item">お問い合わせ</li>
-      </ul>
-    </div>
-  )
-}
+// const HamburgerMenu = () => {
+//   return (
+//     <div className="right-side">
+//       <div className="menu-btn">
+//         <i className="fa fa-bars" aria-hidden="true"></i>
+//       </div>
+//       <ul className="menu">
+//         <li className="menu-item">アカウント</li>
+//         <li className="menu-item">スコア</li>
+//         <li className="menu-item">ランキング</li>
+//         <li className="menu-item"><a href="/help">ヘルプ</a></li>
+//         <li className="menu-item">お問い合わせ</li>
+//       </ul>
+//     </div>
+//   )
+// }
 export default SceneAnalyzerApp
