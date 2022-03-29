@@ -1,5 +1,5 @@
-﻿import React from "react"
-import { Fetch } from "../Provider/Fetch"
+﻿import React from 'react'
+import { Fetch } from '../Provider/Fetch'
 import Breadcrumbs from '../components/Breadcrumbs'
 import StatisticsTab from './StatisticsTab'
 import SubTitle from '../components/SubTitle'

@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from "react"
+﻿import React, { useEffect } from 'react'
 import VideoList from '../components/VideoList'
 import { usePagination } from '../Provider/PaginationProvider'
 import ReactPaginate from 'react-paginate'
@@ -11,9 +11,9 @@ export default function Contents({ data }) {
   // 遷移先からのhistory-back(ブラウザバック)に対応
   let location = useLocation()  // 現在のURL
   let page = location.search.substring(location.search.indexOf('=') + 1)  // ページ番号
-
   const offset = (currentPage - 1) * perPage  // 何番目のアイテムから表示するか
   
+  // ページ変更時に現在のページ数を変更
   useEffect(() => {
     // 前のページの状態があるなら
     if (page != '' && currentPage == 1) {
@@ -24,6 +24,7 @@ export default function Contents({ data }) {
   return (
     <>
       <div className="grid-container">
+        {/* ページネーション */}
         <ReactPaginate
           forcePage={currentPage - 1}
           previousLabel={'<'}
@@ -41,10 +42,12 @@ export default function Contents({ data }) {
           disabledClassName={'pagination__disabled'} // 使用不可の「<,>」に着くクラス名
         />
 
+        {/* 検索エリア */}
         <SearchArea />
       </div>
 
-      <VideoList dataList={data.slice(offset, offset + perPage)} id='video-list' />
+      {/* 動画コンテンツ一覧 */}
+      <VideoList dataList={data.slice(offset, offset + perPage)} id="video-list" />
     </>
   )
 }
