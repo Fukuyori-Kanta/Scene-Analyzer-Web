@@ -1,20 +1,19 @@
-﻿import React, { createContext, useState, useContext } from "react";
+﻿import React, { createContext, useState, useContext, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
-const AnnotationContext = createContext();
-export const useAnnotation = () => useContext(AnnotationContext);
+const AnnotationContext = createContext()
+export const useAnnotation = () => useContext(AnnotationContext)
 
 export default function AnnotationProvider({ children }) {
+  const [labelsData, setLabelsData] = useState({})   // ラベルデータ
+  const [oldLabels, setOldLabels] = useState({})     // ラベルデータの初期値
 
-  const [labelsData, setLabelsData] = useState({})
-  const [oldLabels, setOldLabels] = useState({});
-  
-  const [isDrawingActive, setIsDrawingActive] = useState(false);
+  const [isDrawingActive, setIsDrawingActive] = useState(false) // 新規描画を行うかどうか
   const [inputWord, setInputWord] = useState('')  // 入力単語（ラベル名）
 
   // ラベルの追加処理
-  const addLabelsData = (data) => {
-    setLabelsData({ ...labelsData, [uuidv4()]: data })
+  const addLabelsData = (addingLabel) => {
+    setLabelsData({ ...labelsData, [uuidv4()]: addingLabel })
   }
 
   // ラベルデータを初期化
@@ -22,15 +21,38 @@ export default function AnnotationProvider({ children }) {
     setLabelsData(oldLabels)
   }
 
-  // 特定のラベルデータを削除する
+  // 特定のラベルデータを削除
   const deleteLabelData = (id) => {
-    let tempData = {...labelsData}  // ラベルデータのコピー
+    let tempData = { ...labelsData }  // ラベルデータのコピー
     delete tempData[id] // 該当IDのラベルを削除
     setLabelsData(tempData)
   }
 
+  // ラベル一覧に存在するか判定
+  const checkWhetherAdd = async (labelName) => {
+    let res = await fetch(`/api/isAddable/` + labelName)
+    let results = await res.json()
+
+    // 追加できる場合はラベル一覧のデータを返し、
+    // 追加できない場合は空の配列を返す
+    return results[0]
+  }
+
   return (
-    <AnnotationContext.Provider value={{ labelsData, setLabelsData, addLabelsData, oldLabels, setOldLabels, isDrawingActive, setIsDrawingActive, inputWord, setInputWord, resetLabelData, deleteLabelData }}>
+    <AnnotationContext.Provider value={{
+      labelsData,
+      setLabelsData,
+      oldLabels,
+      setOldLabels,
+      isDrawingActive,
+      setIsDrawingActive,
+      inputWord,
+      setInputWord,
+      addLabelsData,
+      resetLabelData,
+      deleteLabelData,
+      checkWhetherAdd
+    }}>
       {children}
     </AnnotationContext.Provider>
   )

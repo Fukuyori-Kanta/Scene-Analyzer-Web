@@ -2,7 +2,7 @@
 import { useCurrent } from '../Provider/CurrentProvider'
 
 export default function CurrentScene() {
-  const { currentScene } = useCurrent()
+  const { currentScene } = useCurrent() // 現在のシーン数
   
   return (
     <div id="scene-no">

@@ -1,53 +1,41 @@
-﻿import React from "react"
+﻿import React from 'react'
 import { useMode } from '../Provider/ModeProvider'
-import { useAnnotation } from "../Provider/AnnotationProvider"
+import { useAnnotation } from '../Provider/AnnotationProvider'
+import AlertError from '../components/Alert/Error'
 
 export default function LabelInpuForm() {
-  let { isEditMode } = useMode();
-  const { labelsData, addLabelsData, oldLabels, setOldLabels, newLables, setNewLabels, isDrawingActive, setIsDrawingActive, inputWord, setInputWord } = useAnnotation()
-
-  /*
-  function fetchPost() {
-    fetch('http://192.168.204.128/annotation/', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        user: 'user',
-        data: 'data'
-      })
-    })
-      .then(response => {
-        if (response.status === 200) {
-          return response.json()
-        } else {
-          console.warn('Something went wrong on api server!');
-        }
-      })
-      .then(json => {
-        //return callback(json)
-        console.log(json)
-      })
-      .catch(error => {
-        console.error(error);
-      })
-  }
-  */
+  let { isEditMode } = useMode()  // 現在のモード
+  const { addLabelsData, setIsDrawingActive, inputWord, setInputWord, checkWhetherAdd } = useAnnotation()
 
   // 検索欄に文字入力した時の処理
   const changeHandler = (event) => {
+    // 入力単語を設定
     setInputWord(event.target.value)
   }
 
   // 追加ボタンを押した時の処理
-  const clickHandler = () => {
-    // ラベルを追加
-    addLabelsData(inputWord)
+  const clickHandler = async () => {
+    // 追加するかチェック（入力単語がラベル一覧に存在するか判定）
+    const addingLabel = await checkWhetherAdd(inputWord)
 
-    // 新規描画を開始
-    setIsDrawingActive(true)
+    // 追加できる場合
+    if (addingLabel) {
+      // 入力ラベルを追加
+      addLabelsData(addingLabel)
+
+      // 新規描画を開始
+      setIsDrawingActive(true)
+    }
+    // 追加できない場合
+    else {
+      const errorData = {
+        title: '入力したラベルは追加できません',
+        icon: 'error',
+        text: '他のラベル名で追加するか、追加しなくても大丈夫なラベルです。'
+      }
+      // エラーメッセージを表示
+      AlertError(errorData)
+    }
   }
 
   // 入力欄でEnterキーを押した時の処理

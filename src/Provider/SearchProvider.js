@@ -1,7 +1,7 @@
-﻿import React, { createContext, useState, useContext } from "react";
+﻿import React, { createContext, useState, useContext } from "react"
 
-const SearchContext = createContext();
-export const useSearch = () => useContext(SearchContext);
+const SearchContext = createContext()
+export const useSearch = () => useContext(SearchContext)
 
 export default function SearchProvider({ children }) {
   const [searchWord, setSearchWord] = useState('')  // 検索ワード（最大3単語）
