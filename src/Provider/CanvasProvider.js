@@ -1,9 +1,10 @@
-﻿import React, { createContext, useState, useEffect, useContext, useRef } from "react"
-import { useCurrent } from "./CurrentProvider"
-import { useAnnotation } from "./AnnotationProvider";
-import { fabric } from "fabric"
+﻿import React, { createContext, useState, useEffect, useContext, useRef } from 'react'
+import { useCurrent } from './CurrentProvider'
+import { useAnnotation } from './AnnotationProvider'
+import { fabric } from 'fabric'
+import { v4 as uuidv4 } from 'uuid'
 
-const CanvasContext = createContext();
+const CanvasContext = createContext()
 export const useCanvas = () => useContext(CanvasContext)
 
 export default function CanvasProvider({ children }) {
@@ -11,12 +12,13 @@ export default function CanvasProvider({ children }) {
   const [rectCanvas, setRectCanvas] = useState(null)    // 矩形描画キャンバス
   const [drawCanvas, setDrawCanvas] = useState(null)    // 新規矩形描画キャンバス
 
-  const { changeCurrentLabel } = useCurrent()
+  const { changeCurrentLabel, initCurrentLabel } = useCurrent()
   const { isDrawingActive, setIsDrawingActive, inputWord, setInputWord } = useAnnotation()
 
-  const canvasRef = useRef(null)
-  const [context, setContext] = useState(null)
+  const canvasRef = useRef(null)  // 新規矩形描画キャンバスの要素を参照
+  const [context, setContext] = useState(null)  // キャンバス管理用（2D レンダリングコンテキスト）
 
+  // 2D レンダリングコンテキストが設定された時の処理
   useEffect(() => {
     if (canvasRef.current) {
       const renderCtx = canvasRef.current.getContext('2d')
@@ -27,23 +29,48 @@ export default function CanvasProvider({ children }) {
     }
   }, [context])
 
+  // 新規矩形が描画開始になった時の処理
   useEffect(() => {
     if (isDrawingActive) {
       // 新規矩形描画を開始
-      drawNewRectArea(inputWord)
+      drawNewRectCanvas(inputWord)
 
       // 入力単語（ラベル）初期化
       setInputWord('')
     }
   }, [isDrawingActive])
 
-  const drawNewRectArea = (labelName) => {
-    const Canvas = canvasRef.current
-    const Context = Canvas.getContext("2d")
+  // 背景キャンバスを描画する関数
+  const drawImageCanvas = (id, path) => {
+    const imageCanvas = document.getElementById(id)
+    const Context = imageCanvas.getContext('2d')
 
-    var RectEdgeColor = "#0BF"
-    var RectInnerColor = "rgba(174,230,255,0.3)"
-    var IndicatorColor = "rgba(0, 0, 0, 0.6)"
+    let canvasWidth = imageCanvas.width     // キャンバスサイズ（幅）
+    let canvasHeight = imageCanvas.height   // キャンバスサイズ（高さ）
+
+    // サムネ画像（背景）を描画
+    let img = new Image()
+    img.src = path
+    img.onload = function () {
+      Context.drawImage(img, 0, 0, canvasWidth, canvasHeight)
+    }
+    setImageCanvas(imageCanvas)
+  }
+
+  // 矩形描画キャンバスを描画する関数
+  function drawRectCanvas(id, width, height) {
+    const rectCanvas = new fabric.Canvas(id, { width: width, height: height })
+    setRectCanvas(rectCanvas)
+  }
+
+  // 新規矩形を描画する関数
+  const drawNewRectCanvas = (labelName) => {
+    const NewRectCanvas = canvasRef.current
+    const Context = NewRectCanvas.getContext('2d')
+
+    var RectEdgeColor = '#0BF'
+    var RectInnerColor = 'rgba(174,230,255,0.3)'
+    var IndicatorColor = 'rgba(0, 0, 0, 0.6)'
     var index = 0
     var DrawingMemory = { 0: { x: null, y: null, w: null, h: null } }
 
@@ -53,13 +80,15 @@ export default function CanvasProvider({ children }) {
     var startPosition = { x: null, y: null }
     var isDrag
 
-    function dragStart(x, y) {
+    // ドラッグ開始時
+    const dragStart = (x, y) => {
       isDrag = true
       startPosition.x = x
       startPosition.y = y
     }
 
-    function dragEnd(x, y) {
+    // ドラッグ終了時
+    const dragEnd = (x, y) => {
       if (isDrag) {
         DrawingMemory[index] = { x: startPosition.x, y: startPosition.y, w: x - startPosition.x, h: y - startPosition.y }
         index += 1
@@ -70,8 +99,10 @@ export default function CanvasProvider({ children }) {
       }
       isDrag = false
 
-      let coordinate = [DrawingMemory[index - 1].x, DrawingMemory[index - 1].y, DrawingMemory[index - 1].w, DrawingMemory[index - 1].h]   // 引数にする座標データ
-      let objId = 10
+      let coordinate = [DrawingMemory[index - 1].x, DrawingMemory[index - 1].y, DrawingMemory[index - 1].w, DrawingMemory[index - 1].h]   // 座標データ
+      let objId = uuidv4()  // オブジェクトID
+
+      /* labelsDataに 座標データ等を設定する　--------------------------- */      
 
       // バウンディングボックスを描画
       drawRect(objId, coordinate, labelName)
@@ -80,7 +111,8 @@ export default function CanvasProvider({ children }) {
       setIsDrawingActive(false)
     }
 
-    function drawFromMemory() {
+    // ドラッグ時
+    const drawFromMemory = () => {
       Context.strokeStyle = RectEdgeColor
 
       for (let i = 0; i < index; i++) {
@@ -92,15 +124,16 @@ export default function CanvasProvider({ children }) {
       Context.strokeStyle = IndicatorColor
     }
 
-    function draw(x, y) {
+    // マウス座標の可視化
+    const draw = (x, y) => {
       clear()
       drawFromMemory()
 
       Context.beginPath()
       Context.moveTo(0, y)
-      Context.lineTo(Canvas.width, y)
+      Context.lineTo(NewRectCanvas.width, y)
       Context.moveTo(x, 0)
-      Context.lineTo(x, Canvas.height)
+      Context.lineTo(x, NewRectCanvas.height)
       Context.closePath()
       Context.stroke()
 
@@ -112,46 +145,27 @@ export default function CanvasProvider({ children }) {
       }
     }
 
-    function mouseHandler() {
-      Canvas.addEventListener('mousedown', function (e) {
+    // 初期化
+    const clear = () => {
+      Context.clearRect(0, 0, NewRectCanvas.width, NewRectCanvas.height)
+    }
+
+    // マウスのイベントハンドラ
+    const mouseHandler = () => {
+      NewRectCanvas.addEventListener('mousedown', function (e) {
         dragStart(e.layerX - canvasRef.current.offsetLeft, e.layerY - canvasRef.current.offsetTop)
       })
-      Canvas.addEventListener('mouseup', function (e) {
+      NewRectCanvas.addEventListener('mouseup', function (e) {
         dragEnd(e.layerX - canvasRef.current.offsetLeft, e.layerY - canvasRef.current.offsetTop)
       })
-      Canvas.addEventListener('mouseout', function (e) {
+      NewRectCanvas.addEventListener('mouseout', function (e) {
         dragEnd(e.layerX - canvasRef.current.offsetLeft, e.layerY - canvasRef.current.offsetTop)
       })
-      Canvas.addEventListener('mousemove', function (e) {
+      NewRectCanvas.addEventListener('mousemove', function (e) {
         draw(e.layerX - canvasRef.current.offsetLeft, e.layerY - canvasRef.current.offsetTop)
       })
     }
     mouseHandler()
-
-    function clear() {
-      Context.clearRect(0, 0, Canvas.width, Canvas.height)
-    }
-  }
-
-  const initImageCanvas = (id, path) => {
-    const imageCanvas = document.getElementById(id)
-    const Context = imageCanvas.getContext("2d")
-
-    let canvasWidth = imageCanvas.width     // キャンバスサイズ（幅）
-    let canvasHeight = imageCanvas.height   // キャンバスサイズ（高さ）
-
-    // サムネ画像を描画
-    let img = new Image()
-    img.src = path
-    img.onload = function () {
-      Context.drawImage(img, 0, 0, canvasWidth, canvasHeight)
-    }
-
-    setImageCanvas(imageCanvas)
-  }
-
-  function initRectCanvas(id, width, height) {
-    setRectCanvas(new fabric.Canvas(id, { width: width, height: height }))
   }
 
   // バウンディングボックスの座標をリサイズして返す関数
@@ -231,162 +245,143 @@ export default function CanvasProvider({ children }) {
     // 全矩形を非選択状態にする
     makeUnselectedAll()
 
-    const rectStrokeWidth = 3;
-    const rectstroke = '#BF0';
-    const rectFill = 'rgba(230,255,174,0.5)';
+    const rectStrokeWidth = 3
+    const rectstroke = '#BF0'
+    const rectFill = 'rgba(230,255,174,0.5)'
 
     // 変更
     rect.set({
       strokeWidth: rectStrokeWidth,  // 線の幅
       stroke: rectstroke, // 線の色
       fill: rectFill,     // 塗潰し色
-    }).setCoords();
+    }).setCoords()
 
     // 変更したオブジェクトの描画
-    rectCanvas.renderAll();
+    rectCanvas.renderAll()
   }
 
+  // 全矩形を非選択状態にする関数
   const makeUnselectedAll = () => {
-    let rectStrokeWidth = 2;
-    let rectstroke = '#0BF';
-    let rectFill = 'rgba(174,230,255,0.1)';
+    let rectStrokeWidth = 2
+    let rectstroke = '#0BF'
+    let rectFill = 'rgba(174,230,255,0.1)'
 
     rectCanvas._objects.map(rect => {
       rect._objects[0].set({
         strokeWidth: rectStrokeWidth,  // 線の幅
         stroke: rectstroke, // 線の色
         fill: rectFill,     // 塗潰し色
-      }).setCoords();
+      }).setCoords()
     })
 
     // 変更したオブジェクトの描画
     rectCanvas.renderAll()
   }
 
+  // ラベルクリック時に該当矩形を選択状態にする関数
   const checkedLabel = (currentId) => {
     // 全矩形を非選択状態にする
     makeUnselectedAll()
 
     // 選択された矩形を選択状態にする
-    const selectedObj = rectCanvas._objects[currentId - 1]
+    const selectedObj = rectCanvas.getObjects().find(obj => obj.id === currentId) // 選択されたオブジェクト
     const selectedRect = selectedObj._objects[0]
 
-    const rectStrokeWidth = 3;    // 線の幅
-    const rectstroke = '#BF0';    // 線の色
-    const rectFill = 'rgba(230,255,174,0.5)'; // 塗りつぶし色
+    const rectStrokeWidth = 3    // 線の幅
+    const rectstroke = '#BF0'    // 線の色
+    const rectFill = 'rgba(230,255,174,0.5)' // 塗りつぶし色
 
     // 変更
     selectedRect.set({
       strokeWidth: rectStrokeWidth,  // 線の幅
       stroke: rectstroke, // 線の色
       fill: rectFill,     // 塗潰し色
-    }).setCoords();
+    }).setCoords()
 
     // 変更したオブジェクトの描画
     rectCanvas.renderAll()
   }
 
-  const deleteRect = (id) => {
-    // console.log('消します')
-    // console.log(id)
-    // console.log(rectCanvas._objects)
-    // object = _.find(rectCanvas._objects, function(o) { return o.id === id })
-    // console.log(object)
-    // rectCanvas.remove(object);
-    console.log(rectCanvas._objects)
-    let obj = rectCanvas.getObjects().find(obj => obj.id === id);
-    console.log(obj)
-    rectCanvas.remove(obj);
+  // 削除ボタン押下時に該当矩形を削除する関数
+  const deleteRect = (currentId) => {
+    const obj = rectCanvas.getObjects().find(obj => obj.id === currentId) // 削除するオブジェクト
+    rectCanvas.remove(obj)
   }
 
   // 矩形選択時のイベントハンドラ
   const rectSelectionEventHandler = () => {
     // 何も選択していない状態で矩形をクリックした時の処理
     rectCanvas.on('selection:created', (e) => {
-      let selectedObj = e.selected[0];            // 選択したオブジェクト
-      let selectedRect = selectedObj._objects[0]; // 選択した矩形
-
-      // 現在の選択ラベルを変更
-      changeCurrentLabel(selectedObj.id)
-
-      changeDrawnRect(selectedRect);
-    })
-
-    // 選択状態で他の矩形をクリックした時の処理
-    rectCanvas.on('selection:updated', (e) => {
-      let selectedObj = e.selected[0];            // 選択したオブジェクト
-      let selectedRect = selectedObj._objects[0]; // 選択した矩形
+      let selectedObj = e.selected[0]            // 選択したオブジェクト
+      let selectedRect = selectedObj._objects[0] // 選択した矩形
 
       // 現在の選択ラベルを変更
       changeCurrentLabel(selectedObj.id)
 
       // 矩形の設定を変更
-      changeDrawnRect(selectedRect);
+      changeDrawnRect(selectedRect)
+    })
 
-      // 選択した該当ラベルを強調
-      //emphasizeLabel(selectedObj.id);
+    // 選択状態で他の矩形をクリックした時の処理
+    rectCanvas.on('selection:updated', (e) => {
+      let selectedObj = e.selected[0]            // 選択したオブジェクト
+      let selectedRect = selectedObj._objects[0] // 選択した矩形
 
-      // [削除]ボタンを追加        
-      //addDeleteBtn(selectedObj.id, deselectedObj.id);
+      // 現在の選択ラベルを変更
+      changeCurrentLabel(selectedObj.id)
 
-      // [削除]ボタンの削除
-      //removeDeleteBtn(deselectedObj.id);
-    });
+      // 矩形の設定を変更
+      changeDrawnRect(selectedRect)
+    })
 
     // 選択状態で背景をクリックしたときの処理
-    rectCanvas.on('before:selection:cleared', (e) => {
+    rectCanvas.on('before:selection:cleared', () => {
       // 現在の選択ラベルを初期値に設定
-      changeCurrentLabel(0)
+      initCurrentLabel()
 
       // 全矩形を非選択状態にする
       makeUnselectedAll()
-
-      // ラベルの強調を終了
-      //endLabelEmphasis();
-
-      // [削除]ボタンの削除
-      //removeDeleteBtn(deselectedObj.id);
-    });
+    })
 
     // 拡大縮小時のテキストボックスのサイズ固定処理
     rectCanvas.on({
       'object:scaling': onChange
-    });
+    })
     function onChange(obj) {
-      let textbox = obj.target.item(1);
-      let group = obj.target;
-      let scaleX = group.width / (group.width * group.scaleX);
-      let scaleY = group.height / (group.height * group.scaleY);
+      let textbox = obj.target.item(1)
+      let group = obj.target
+      let scaleX = group.width / (group.width * group.scaleX)
+      let scaleY = group.height / (group.height * group.scaleY)
       textbox.set({
         scaleX: scaleX,
         scaleY: scaleY
-      });
+      })
     }
 
     // 矩形修正時の更新処理
     // rectCanvas.on('object:modified', (e) => {
-    //   let rectObj = e.target;
-    //   let rect = rectObj._objects[0]; // 矩形
+    //   let rectObj = e.target
+    //   let rect = rectObj._objects[0] // 矩形
 
-    //   let objId = rectObj.id;
-    //   let labelName = rectObj._objects[1].text.trim();    // ラベル名
+    //   let objId = rectObj.id
+    //   let labelName = rectObj._objects[1].text.trim()    // ラベル名
 
-    //   let canvasWidth = rectCanvas.width;     // キャンバスサイズ（幅）
-    //   let canvasHeight = rectCanvas.height;   // キャンバスサイズ（高さ）
-    //   let imageWidth = 426;   // 画像サイズ（幅） TODO 描画する画像サイズを取得
+    //   let canvasWidth = rectCanvas.width     // キャンバスサイズ（幅）
+    //   let canvasHeight = rectCanvas.height   // キャンバスサイズ（高さ）
+    //   let imageWidth = 426   // 画像サイズ（幅） TODO 描画する画像サイズを取得
     //   let imgaeHeight = 240   // 画像サイズ（高さ）
-    //   let xMagnification = canvasWidth / imageWidth;   // サイズ倍率(x)
-    //   let yMagnification = canvasHeight / imgaeHeight; // サイズ倍率(y)  
+    //   let xMagnification = canvasWidth / imageWidth   // サイズ倍率(x)
+    //   let yMagnification = canvasHeight / imgaeHeight // サイズ倍率(y)  
 
-    //   let x = Math.round(rectObj.left * imageWidth / canvasWidth);
-    //   let y = Math.round(rectObj.top * imgaeHeight / canvasHeight);
-    //   let w = Math.round(rectObj.width * imageWidth / canvasWidth);
-    //   let h = Math.round(rectObj.height * imgaeHeight / canvasHeight);
+    //   let x = Math.round(rectObj.left * imageWidth / canvasWidth)
+    //   let y = Math.round(rectObj.top * imgaeHeight / canvasHeight)
+    //   let w = Math.round(rectObj.width * imageWidth / canvasWidth)
+    //   let h = Math.round(rectObj.height * imgaeHeight / canvasHeight)
 
 
-    //   //let newRect = oldRect.concat();
-    //   //newRect[objId - 1] = [labelName, x, y, w, h];
-    // });
+    //   //let newRect = oldRect.concat()
+    //   //newRect[objId - 1] = [labelName, x, y, w, h]
+    // })
   }
 
   return (
@@ -395,19 +390,20 @@ export default function CanvasProvider({ children }) {
       setImageCanvas,
       rectCanvas,
       setRectCanvas,
-      resizeCoordinate,
       drawCanvas,
       setDrawCanvas,
-      initImageCanvas,
-      initRectCanvas,
-      drawRect,
-      rectSelectionEventHandler,
+      canvasRef, 
+      drawImageCanvas,
+      drawRectCanvas,
+      drawNewRectCanvas,
+      resizeCoordinate,
+      drawRect,      
       changeDrawnRect,
       checkedLabel,
-      canvasRef,
-      deleteRect
+      deleteRect,
+      rectSelectionEventHandler,
     }}>
       {children}
     </CanvasContext.Provider>
-  );
+  )
 }

@@ -1,17 +1,12 @@
-﻿import React from "react"
+﻿import React from 'react'
 import { useMode } from '../Provider/ModeProvider'
 import { useCurrent } from '../Provider/CurrentProvider'
 import { useAnnotation } from '../Provider/AnnotationProvider'
 
 export default function AnnotationButtonArea() {
-  let { isEditMode, makeEditMode, makeViewMode } = useMode()
-  let { changeCurrentLabel } = useCurrent()
-  let { resetLabelData } = useAnnotation()
-  
-  function sendAnnotationData() {
-    //console.log('送信')
-    //console.log(labelsData)
-  }
+  let { isEditMode, makeEditMode, makeViewMode } = useMode()  //  現在のモード
+  let { initCurrentLabel } = useCurrent()   // 現在選択されているラベル
+  let { resetLabelData } = useAnnotation()  // ラベルデータ
 
   // [編集]ボタンクリック時の処理
   const clickEditBtn = () => {
@@ -25,7 +20,7 @@ export default function AnnotationButtonArea() {
     makeViewMode()
 
     // ラベル選択IDを初期化
-    changeCurrentLabel(0)
+    initCurrentLabel()
     
     // アノテーション結果を送信
     sendAnnotationData()
@@ -34,10 +29,10 @@ export default function AnnotationButtonArea() {
   // [キャンセル]ボタンクリック時の処理
   const clickCancelBtn = () => {
     // 表示モードに変更
-    makeViewMode();
+    makeViewMode()
     
     // ラベル選択IDを初期化
-    changeCurrentLabel(0)
+    initCurrentLabel()
     
     // ラベルデータを初期化
     resetLabelData()

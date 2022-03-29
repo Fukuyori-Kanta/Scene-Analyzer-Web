@@ -669,6 +669,42 @@ video {
 
   font-size: 20px;
 }
+/* 認識スコア */
+#labels .label-item {
+  position: relative;
+}
+.score {
+  display: none;
+  width: 60px;
+  position: absolute;
+  top: -40px;
+  left: 10px;
+  padding: 7px;
+  border-radius: 5px;
+  background: #5b5f5e;
+  color: #fff;
+  font-size: 12px;
+  z-index: 5;
+}
+.score:after {
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: 0;
+  bottom: -19px;
+  margin-left: 10px;
+  border: solid transparent;
+  border-color: rgba(51, 204, 153, 0);
+  border-top-color: #5b5f5e;
+  border-width: 10px;
+  pointer-events: none;
+  content: " ";
+}
+.label:hover+.score {
+  display: block;
+}
+
+/* 好感度グラフ */
 .favo-gragh {
   margin-left: 30px;
   width:  calc(90% - 50px);

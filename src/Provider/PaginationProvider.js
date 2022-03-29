@@ -5,7 +5,7 @@ export const usePagination = () => useContext(PaginationContext)
 
 export default function PaginationProvider({ children }) {
   const perPage = 20  // 1ページあたりの表示アイテム数
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     history.pushState({}, '', `?page=${currentPage}`)

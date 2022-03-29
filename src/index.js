@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import SceneAnalyzerApp from './SceneAnalyzerApp'
+import "core-js/stable"
+import "regenerator-runtime/runtime"
 //import reportWebVitals from './reportWebVitals'
 
 ReactDOM.render(

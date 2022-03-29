@@ -216,6 +216,22 @@ app.get("/api/productName/:id", function (req, res) {
     }
   )
 })
+
+// 入力ラベルと同じラベル一覧情報を返すAPI
+app.get("/api/isAddable/:label", function (req, res) {
+  const labelName= req.params.label // ラベル名
+  pool.query(
+    "SELECT * " +
+    "FROM label_list " +
+    "WHERE label_name_ja = '" + labelName + "';",
+    function (error, results) {
+      if (error) throw error
+      res.send(results)
+    }
+  )
+})
+
+
 /*
 // anotation
 app.post('/annotation/', (req, res) => {

@@ -1,5 +1,5 @@
-﻿import React from "react"
-import { useCurrent } from "../Provider/CurrentProvider"
+﻿import React from 'react'
+import { useCurrent } from '../Provider/CurrentProvider'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -23,24 +23,24 @@ ChartJS.register(
 )
 
 export default function FavoChart({ favoData }) {
-  const { currentScene, changeCurrentScene } = useCurrent();
+  const { currentScene, changeCurrentScene } = useCurrent()
 
   // 全角 → 半角に変換する関数
   function zenkaku2Hankaku(str) {
     return str.replace(/[A-Za-z0-9]/g, function (s) {
-      return String.fromCharCode(s.charCodeAt(0) + 0xFEE0);
-    });
+      return String.fromCharCode(s.charCodeAt(0) + 0xFEE0)
+    })
   }
 
   // x軸ラベル（シーン〇  〇は全角数字）
-  const xAxisLabels = [...Array(favoData.length).keys()].map((d) => { return "シーン" + zenkaku2Hankaku(String(d + 1)); });
+  const xAxisLabels = [...Array(favoData.length).keys()].map((d) => { return "シーン" + zenkaku2Hankaku(String(d + 1)); })
 
   // 描画するグラフのデータ
   const lineChartData = {
     labels: xAxisLabels,
     datasets: [
       {
-        label: "好感度",
+        label: '好感度',
         lineTension: 0,
         data: favoData,
         borderColor: '#00a0dcff',
