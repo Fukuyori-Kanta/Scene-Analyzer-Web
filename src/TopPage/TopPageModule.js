@@ -1,5 +1,5 @@
 ﻿import React from 'react'
-import { Fetch } from "../Provider/Fetch"
+import { Fetch } from '../Provider/Fetch'
 import TransitionButton from './TransitionButton'
 import VideoList from '../components/VideoList'
 
@@ -15,6 +15,7 @@ export default function TopPage() {
 function TopPageContents({ data }) {
   return (
     <div id="index">
+      {/* 遷移ボタン */}
       <section id="page-transition">
         <div className="btn-wrapper">
           <TransitionButton herf="/results" value="結果一覧" />
@@ -23,6 +24,7 @@ function TopPageContents({ data }) {
         </div>
       </section>
 
+      {/* 閲覧履歴 */}
       <section id="recent-videos" className="border-line-vertical">
         <div id="history-heading">
           <h3 className="bgc-gray text-center">閲 覧 履 歴</h3>
