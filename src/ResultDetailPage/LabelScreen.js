@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid'
 export default function LabelScreen({ data }) {
   const { currentScene, currentLabel, changeCurrentLabel } = useCurrent()
   const { labelsData, setLabelsData, oldLabels, setOldLabels, deleteLabelData } = useAnnotation()
-  const { checkedLabel, deleteRect } = useCanvas()
+  const { checkedLabel, deleteRect, makeUnselectedAll } = useCanvas()
   const { isEditMode } = useMode()
 
   let LabelsDataForSetting = {} // 設定用のラベルデータ
@@ -46,6 +46,10 @@ export default function LabelScreen({ data }) {
       // 物体ラベルの時、矩形も選択状態にする
       if (labelId[0] == 'N') {
         checkedLabel(currentId)
+      }
+      else {
+        // 全矩形非選択状態にする
+        makeUnselectedAll()
       }
     }
   }

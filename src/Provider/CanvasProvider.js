@@ -2,7 +2,6 @@
 import { useCurrent } from './CurrentProvider'
 import { useAnnotation } from './AnnotationProvider'
 import { fabric } from 'fabric'
-import { v4 as uuidv4 } from 'uuid'
 
 const CanvasContext = createContext()
 export const useCanvas = () => useContext(CanvasContext)
@@ -13,10 +12,14 @@ export default function CanvasProvider({ children }) {
   const [drawCanvas, setDrawCanvas] = useState(null)    // 新規矩形描画キャンバス
 
   const { changeCurrentLabel, initCurrentLabel } = useCurrent()
-  const { isDrawingActive, setIsDrawingActive, inputWord, setInputWord } = useAnnotation()
+  const { labelsData, setLabelsData, isDrawingActive, setIsDrawingActive, inputWord, setInputWord } = useAnnotation()
 
   const canvasRef = useRef(null)  // 新規矩形描画キャンバスの要素を参照
   const [context, setContext] = useState(null)  // キャンバス管理用（2D レンダリングコンテキスト）
+
+  useEffect(() => {
+    console.log(labelsData)
+  }, [labelsData])
 
   // 2D レンダリングコンテキストが設定された時の処理
   useEffect(() => {
@@ -93,16 +96,33 @@ export default function CanvasProvider({ children }) {
         DrawingMemory[index] = { x: startPosition.x, y: startPosition.y, w: x - startPosition.x, h: y - startPosition.y }
         index += 1
         drawFromMemory()
-      } else {
+      } 
+      else {
         clear()
         drawFromMemory()
       }
       isDrag = false
 
       let coordinate = [DrawingMemory[index - 1].x, DrawingMemory[index - 1].y, DrawingMemory[index - 1].w, DrawingMemory[index - 1].h]   // 座標データ
-      let objId = uuidv4()  // オブジェクトID
 
-      /* labelsDataに 座標データ等を設定する　--------------------------- */      
+      // labelsDataに座標データを設定する
+      const copiedLabelsData = { ...labelsData }  // ラベルデータ
+      const keysArray = Object.keys(copiedLabelsData) // key配列
+      const len = keysArray.length
+      const objId = keysArray[len - 1]  // オブジェクトID
+
+      // 表示用の座標から画像データ用の座標にリサイズする
+      const resizedCoordinate = CanvasSize2ImageSize(coordinate[0], coordinate[1], coordinate[2], coordinate[3])
+
+      // リサイズ後座標を格納
+      let updateLabelData = copiedLabelsData[objId] // 更新用ラベルデータ
+      updateLabelData["x_axis"] = resizedCoordinate[0]
+      updateLabelData["y_axis"] = resizedCoordinate[1]
+      updateLabelData["width"]  = resizedCoordinate[2]
+      updateLabelData["height"] = resizedCoordinate[3]
+
+      // 座標データを設定
+      setLabelsData({ ...labelsData, [objId]: updateLabelData })
 
       // バウンディングボックスを描画
       drawRect(objId, coordinate, labelName)
@@ -168,19 +188,36 @@ export default function CanvasProvider({ children }) {
     mouseHandler()
   }
 
-  // バウンディングボックスの座標をリサイズして返す関数
-  const resizeCoordinate = (x, y, w, h) => {
+  // バウンディングボックスの座標をリサイズして返す関数（画像サイズ → キャンバスサイズ）
+  const ImageSize2CanvasSize = (x, y, w, h) => {
     let rectCanvasWidth = rectCanvas.width     // キャンバスサイズ（幅）
     let rectCanvasHeight = rectCanvas.height   // キャンバスサイズ（高さ）
-    let imageWidth = 426   // 画像サイズ（幅） TODO 描画する画像サイズを取得
-    let imgaeHeight = 240   // 画像サイズ（高さ）
+    let imageWidth = 426   // 画像サイズ（幅）
+    let imgaeHeight = 240  // 画像サイズ（高さ）
     let xMagnification = rectCanvasWidth / imageWidth   // サイズ倍率(x)
     let yMagnification = rectCanvasHeight / imgaeHeight // サイズ倍率(y)   
 
     let re_x = x * xMagnification   // x軸の座標
     let re_y = y * yMagnification   // y軸の座標
-    let re_w = w * xMagnification    // 幅
+    let re_w = w * xMagnification   // 幅
     let re_h = h * yMagnification   // 高さ
+
+    return [re_x, re_y, re_w, re_h]   // リサイズした座標データ
+  }
+
+  // バウンディングボックスの座標をリサイズして返す関数（キャンバスサイズ → 画像サイズ）
+  const CanvasSize2ImageSize = (x, y, w, h) => {
+    let rectCanvasWidth = rectCanvas.width     // キャンバスサイズ（幅）
+    let rectCanvasHeight = rectCanvas.height   // キャンバスサイズ（高さ）
+    let imageWidth = 426   // 画像サイズ（幅）
+    let imgaeHeight = 240  // 画像サイズ（高さ）
+    let xMagnification = imageWidth / rectCanvasWidth   // サイズ倍率(x)
+    let yMagnification = imgaeHeight / rectCanvasHeight // サイズ倍率(y)   
+
+    let re_x = Math.round(x * xMagnification)   // x軸の座標
+    let re_y = Math.round(y * yMagnification)   // y軸の座標
+    let re_w = Math.round(w * xMagnification)   // 幅
+    let re_h = Math.round(h * yMagnification)   // 高さ
 
     return [re_x, re_y, re_w, re_h]   // リサイズした座標データ
   }
@@ -392,12 +429,13 @@ export default function CanvasProvider({ children }) {
       setRectCanvas,
       drawCanvas,
       setDrawCanvas,
-      canvasRef, 
+      canvasRef,
       drawImageCanvas,
       drawRectCanvas,
       drawNewRectCanvas,
-      resizeCoordinate,
-      drawRect,      
+      ImageSize2CanvasSize,
+      makeUnselectedAll, 
+      drawRect,
       changeDrawnRect,
       checkedLabel,
       deleteRect,
