@@ -10,7 +10,7 @@ export default function Canvas({ videoId }) {
   let [drawHeight, setDrawHeight] = useState()      // 新規描画キャンバスの高さ
 
   const { currentScene } = useCurrent()
-  const { rectCanvas, drawImageCanvas, drawRectCanvas, resizeCoordinate, drawRect, rectSelectionEventHandler, canvasRef } = useCanvas()
+  const { rectCanvas, drawImageCanvas, drawRectCanvas, ImageSize2CanvasSize, drawRect, rectSelectionEventHandler, canvasRef } = useCanvas()
   const { labelsData, isDrawingActive } = useAnnotation()
   const { width, height } = useWindowDimensions()
 
@@ -84,7 +84,7 @@ export default function Canvas({ videoId }) {
         const labelName = data.label_name_ja // ラベル名（日本語）
 
         // 画面比率に合わせるため座標データをリサイズ
-        const coordinate = resizeCoordinate(data.x_axis, data.y_axis, data.width, data.height)
+        const coordinate = ImageSize2CanvasSize(data.x_axis, data.y_axis, data.width, data.height)
 
         // バウンディングボックスを描画
         drawRect(key, coordinate, labelName)
