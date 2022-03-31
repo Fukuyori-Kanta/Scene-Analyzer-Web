@@ -339,10 +339,32 @@ export default function CanvasProvider({ children }) {
     rectCanvas.renderAll()
   }
 
+  const updateRect = (currentId, labelName) => {
+    const updateObj = rectCanvas.getObjects().find(obj => obj.id === currentId) // 更新するオブジェクト
+    const updateTextBox = updateObj._objects[1]  // 更新するテキストボックス
+    const height = updateTextBox.height // 高さ
+
+    updateTextBox.set({
+      text: ' ' + labelName + ' ',
+    }).setCoords()
+
+    // 変更したオブジェクトの描画
+    rectCanvas.renderAll()
+
+    // ※ 何故か更新するとテキストボックスの高さが変更されてしまうため、
+    // 　 一度更新してから高さを設定して再度更新する
+    updateTextBox.set({
+      height: height,
+    }).setCoords()
+
+    // 変更したオブジェクトの描画
+    rectCanvas.renderAll()
+  }
+
   // 削除ボタン押下時に該当矩形を削除する関数
   const deleteRect = (currentId) => {
-    const obj = rectCanvas.getObjects().find(obj => obj.id === currentId) // 削除するオブジェクト
-    rectCanvas.remove(obj)
+    const deleteObj = rectCanvas.getObjects().find(obj => obj.id === currentId) // 削除するオブジェクト
+    rectCanvas.remove(deleteObj)
   }
 
   // 矩形選択時のイベントハンドラ
@@ -438,6 +460,7 @@ export default function CanvasProvider({ children }) {
       drawRect,
       changeDrawnRect,
       checkedLabel,
+      updateRect, 
       deleteRect,
       rectSelectionEventHandler,
     }}>
