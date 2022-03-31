@@ -12,7 +12,7 @@ export default function CanvasProvider({ children }) {
   const [drawCanvas, setDrawCanvas] = useState(null)    // 新規矩形描画キャンバス
 
   const { changeCurrentLabel, initCurrentLabel } = useCurrent()
-  const { labelsData, setLabelsData, isDrawingActive, setIsDrawingActive, inputWord, setInputWord } = useAnnotation()
+  const { labelsData, setLabelsData, isDrawingActive, setIsDrawingActive, inputWord, setInputWord, updateRectData } = useAnnotation()
 
   const canvasRef = useRef(null)  // 新規矩形描画キャンバスの要素を参照
   const [context, setContext] = useState(null)  // キャンバス管理用（2D レンダリングコンテキスト）
@@ -261,6 +261,8 @@ export default function CanvasProvider({ children }) {
       id: objId,
       left: x,
       top: y,
+      width: w,
+      height: h,
       hasRotatingPoint: false, // 回転の無効化            
       lockScalingFlip: true,    // 裏返しをロック
 
@@ -339,7 +341,8 @@ export default function CanvasProvider({ children }) {
     rectCanvas.renderAll()
   }
 
-  const updateRect = (currentId, labelName) => {
+  // ラベル変更時に該当テキストボックスを更新する関数
+  const updateLabel = (currentId, labelName) => {
     const updateObj = rectCanvas.getObjects().find(obj => obj.id === currentId) // 更新するオブジェクト
     const updateTextBox = updateObj._objects[1]  // 更新するテキストボックス
     const height = updateTextBox.height // 高さ
@@ -423,7 +426,6 @@ export default function CanvasProvider({ children }) {
       }
     })
 
-    
     // 拡大時に表示領域の範囲外に出ないように設定
     let left = 0
     let top = 0
@@ -463,30 +465,18 @@ export default function CanvasProvider({ children }) {
       })
     })
 
-    // 矩形修正時の更新処理
-    // rectCanvas.on('object:modified', (e) => {
-    //   let rectObj = e.target
-    //   let rect = rectObj._objects[0] // 矩形
+    // 矩形更新時（移動・拡大縮小）の更新処理
+    rectCanvas.on('object:modified', (e) => {
+      let updateObj = e.target  // 更新するオブジェクト
+      let objId = updateObj.id  // オブジェクトID
+      
+      // 座標を表示用からデータ用に変換
+      let coordinate = CanvasSize2ImageSize(updateObj.left, updateObj.top, updateObj.width * updateObj.scaleX, updateObj.height * updateObj.scaleY)
+      
+      // 更新情報を設定
+      updateRectData(objId, coordinate)
+    })
 
-    //   let objId = rectObj.id
-    //   let labelName = rectObj._objects[1].text.trim()    // ラベル名
-
-    //   let canvasWidth = rectCanvas.width     // キャンバスサイズ（幅）
-    //   let canvasHeight = rectCanvas.height   // キャンバスサイズ（高さ）
-    //   let imageWidth = 426   // 画像サイズ（幅） TODO 描画する画像サイズを取得
-    //   let imgaeHeight = 240   // 画像サイズ（高さ）
-    //   let xMagnification = canvasWidth / imageWidth   // サイズ倍率(x)
-    //   let yMagnification = canvasHeight / imgaeHeight // サイズ倍率(y)  
-
-    //   let x = Math.round(rectObj.left * imageWidth / canvasWidth)
-    //   let y = Math.round(rectObj.top * imgaeHeight / canvasHeight)
-    //   let w = Math.round(rectObj.width * imageWidth / canvasWidth)
-    //   let h = Math.round(rectObj.height * imgaeHeight / canvasHeight)
-
-
-    //   //let newRect = oldRect.concat()
-    //   //newRect[objId - 1] = [labelName, x, y, w, h]
-    // })
   }
 
   return (
@@ -506,7 +496,7 @@ export default function CanvasProvider({ children }) {
       drawRect,
       changeDrawnRect,
       checkedLabel,
-      updateRect, 
+      updateLabel, 
       deleteRect,
       rectSelectionEventHandler,
     }}>

@@ -6,7 +6,7 @@ import { useAnnotation } from '../Provider/AnnotationProvider'
 export default function AnnotationButtonArea() {
   let { isEditMode, makeEditMode, makeViewMode } = useMode()  //  現在のモード
   let { initCurrentLabel } = useCurrent()   // 現在選択されているラベル
-  let { resetLabelData } = useAnnotation()  // ラベルデータ
+  let { resetLabelData, sendAnnotationData } = useAnnotation()  // ラベルデータ
 
   // [編集]ボタンクリック時の処理
   const clickEditBtn = () => {

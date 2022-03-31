@@ -46,6 +46,19 @@ export default function Canvas({ videoId }) {
     }
   }, [rectCanvas])
 
+  // 右クリック許可
+  // useEffect(() => {
+  //   if (rectCanvas !== null) {
+  //     // console.log(document.getElementById('canvas-screen'))
+  //     // document.getElementById('canvas-screen').oncontextmenu = function () { return true }
+
+  //     // 右クリックを禁止する
+  //     document.oncontextmenu = function () {
+  //       return true
+  //     }
+  //   }
+  // }, [rectCanvas])
+
   // 画面サイズを取得する関数
   const getScreenSize = id => {
     const parentElements = document.getElementById(id).getBoundingClientRect()  // 親要素
@@ -93,7 +106,7 @@ export default function Canvas({ videoId }) {
   }
 
   return (
-    <div>
+    <div id="canvas-screen">
       <canvas id="image-area" style={screenStyle}></canvas>
       <canvas id="rect-area" className="lower-canvas" style={screenStyle}></canvas>
       {isDrawingActive ? <canvas id="draw-area" width={drawWidth} height={drawHeight} ref={canvasRef}></canvas> : <></>}
