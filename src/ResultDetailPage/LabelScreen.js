@@ -16,7 +16,7 @@ export default function LabelScreen({ data }) {
 
   const { currentScene, currentLabel, changeCurrentLabel } = useCurrent()
   const { labelsData, setLabelsData, oldLabels, setOldLabels, updateLabelsData, deleteLabelData, checkWhetherAdd } = useAnnotation()
-  const { checkedLabel, updateRect, deleteRect, makeUnselectedAll } = useCanvas()
+  const { checkedLabel, updateLabel, deleteRect, makeUnselectedAll } = useCanvas()
   const { isEditMode } = useMode()
 
   let LabelsDataForSetting = {} // 設定用のラベルデータ
@@ -120,7 +120,7 @@ export default function LabelScreen({ data }) {
         updateLabelsData(currentId, editingLabel)
 
         // バウンディングボックスのテキスト内容を更新
-        updateRect(currentId, editingLabel.label_name_ja)
+        updateLabel(currentId, editingLabel.label_name_ja)
       }
       // 追加できない場合
       else {
