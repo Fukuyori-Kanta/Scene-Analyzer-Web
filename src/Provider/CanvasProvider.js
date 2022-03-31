@@ -402,20 +402,66 @@ export default function CanvasProvider({ children }) {
       makeUnselectedAll()
     })
 
-    // 拡大縮小時のテキストボックスのサイズ固定処理
-    rectCanvas.on({
-      'object:scaling': onChange
+    // 移動時に表示領域の範囲外に出ないように設定
+    rectCanvas.on('object:moving', function (e) {
+      let obj = e.target  // 該当オブジェクト
+
+      // 矩形が範囲より大きい場合は移動不可
+      if (obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width) {
+        return
+      }
+      obj.setCoords()
+      // 上側、左側
+      if (obj.getBoundingRect().top < 0 || obj.getBoundingRect().left < 0) {
+        obj.top = Math.max(obj.top, obj.top - obj.getBoundingRect().top)
+        obj.left = Math.max(obj.left, obj.left - obj.getBoundingRect().left)
+      }
+      // 下側、右側
+      if (obj.getBoundingRect().top + obj.getBoundingRect().height > obj.canvas.height || obj.getBoundingRect().left + obj.getBoundingRect().width > obj.canvas.width) {
+        obj.top = Math.min(obj.top, obj.canvas.height - obj.getBoundingRect().height + obj.top - obj.getBoundingRect().top)
+        obj.left = Math.min(obj.left, obj.canvas.width - obj.getBoundingRect().width + obj.left - obj.getBoundingRect().left)
+      }
     })
-    function onChange(obj) {
-      let textbox = obj.target.item(1)
-      let group = obj.target
-      let scaleX = group.width / (group.width * group.scaleX)
-      let scaleY = group.height / (group.height * group.scaleY)
+
+    
+    // 拡大時に表示領域の範囲外に出ないように設定
+    let left = 0
+    let top = 0
+    let width = 0
+    let height = 0
+    let scaleX = 0
+    let scaleY = 0
+    rectCanvas.on('object:scaling', function (e) {
+      let obj = e.target  // 該当オブジェクト
+      obj.setCoords()
+      let brNew = obj.getBoundingRect() // 変更後の矩形
+
+      if (((brNew.width + brNew.left) >= obj.canvas.width) || ((brNew.height + brNew.top) >= obj.canvas.height) || ((brNew.left < 0) || (brNew.top < 0))) {
+        obj.left = left
+        obj.top = top
+        obj.scaleX = scaleX
+        obj.scaleY = scaleY
+        obj.width = width
+        obj.height = height
+      }
+      else {
+        left = obj.left
+        top = obj.top
+        scaleX = obj.scaleX
+        scaleY = obj.scaleY
+        width = obj.width
+        height = obj.height
+      }
+
+      // 拡大縮小時にテキストボックスのサイズは固定にする
+      let textbox = obj.item(1)
+      let textBoxScaleX = obj.width / (obj.width * obj.scaleX)
+      let textBoxScaleY = obj.height / (obj.height * obj.scaleY)
       textbox.set({
-        scaleX: scaleX,
-        scaleY: scaleY
+        scaleX: textBoxScaleX,
+        scaleY: textBoxScaleY
       })
-    }
+    })
 
     // 矩形修正時の更新処理
     // rectCanvas.on('object:modified', (e) => {
