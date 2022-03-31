@@ -16,6 +16,22 @@ export default function AnnotationProvider({ children }) {
     setLabelsData({ ...labelsData, [uuidv4()]: addingLabel })
   }
 
+  // ラベルの更新処理
+  const updateLabelsData = (id, editingLabel) => {
+    let tempData = { ...labelsData }  // ラベルデータのコピー
+    
+    // 同じラベルなら何もしない
+    if (tempData[id].label_id == editingLabel.label_id) {
+      return 
+    }
+
+    // ラベル情報を更新
+    tempData[id].label_id = editingLabel.label_id
+    tempData[id].label_name_ja = editingLabel.label_name_ja
+    tempData[id].label_name_en = editingLabel.label_name_en
+    setLabelsData(tempData)
+  }
+
   // ラベルデータを初期化
   const resetLabelData = () => {
     setLabelsData(oldLabels)
@@ -49,6 +65,7 @@ export default function AnnotationProvider({ children }) {
       inputWord,
       setInputWord,
       addLabelsData,
+      updateLabelsData, 
       resetLabelData,
       deleteLabelData,
       checkWhetherAdd

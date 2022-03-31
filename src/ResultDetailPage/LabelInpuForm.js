@@ -5,7 +5,7 @@ import AlertError from '../components/Alert/Error'
 
 export default function LabelInpuForm() {
   let { isEditMode } = useMode()  // 現在のモード
-  const { addLabelsData, setIsDrawingActive, inputWord, setInputWord, checkWhetherAdd } = useAnnotation()
+  const { addLabelsData, setIsDrawingActive, inputWord, setInputWord, checkWhetherAdd, isDrawingActive } = useAnnotation()
 
   // 検索欄に文字入力した時の処理
   const changeHandler = (event) => {
@@ -15,26 +15,39 @@ export default function LabelInpuForm() {
 
   // 追加ボタンを押した時の処理
   const clickHandler = async () => {
-    // 追加するかチェック（入力単語がラベル一覧に存在するか判定）
-    const addingLabel = await checkWhetherAdd(inputWord)
+    // 入力単語が設定されている かつ 新規矩形描画を行っていない場合のみ
+    if (inputWord && !isDrawingActive) {
+      // 追加するかチェック（入力単語がラベル一覧に存在するか判定）
+      const addingLabel = await checkWhetherAdd(inputWord)
 
-    // 追加できる場合
-    if (addingLabel) {
-      // 入力ラベルを追加
-      addLabelsData(addingLabel)
+      // 追加できる場合
+      if (addingLabel) {
+        // 入力ラベルを追加
+        addLabelsData(addingLabel)
 
-      // 新規描画を開始
-      setIsDrawingActive(true)
-    }
-    // 追加できない場合
-    else {
-      const errorData = {
-        title: '入力したラベルは追加できません',
-        icon: 'error',
-        text: '他のラベル名で追加するか、追加しなくても大丈夫なラベルです。'
+        // 新規描画を開始
+        setIsDrawingActive(true)
       }
-      // エラーメッセージを表示
-      AlertError(errorData)
+      // 追加できない場合
+      else {
+        const errorData = {
+          title: '入力したラベルは追加できません',
+          icon: 'error',
+          text: '他のラベル名で追加するか、追加しなくても大丈夫なラベルです。'
+        }
+        // エラーメッセージを表示
+        AlertError(errorData)
+      }
+    }
+    // 新規矩形の描画中の時は警告
+    if (isDrawingActive) {
+      const warningData = {
+        title: '描画中のラベルがあります',
+        icon: 'warning',
+        text: '追加中のラベルを描画するまで、新たに追加することはできません。'
+      }
+      // 警告メッセージを表示
+      AlertError(warningData)
     }
   }
 
