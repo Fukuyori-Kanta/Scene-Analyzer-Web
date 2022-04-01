@@ -127,7 +127,8 @@ export default function LabelScreen({ data }) {
         const errorData = {
           title: '編集したラベルは更新できません',
           icon: 'error',
-          text: '他のラベル名で編集して下さい。'
+          text: '他のラベル名で編集して下さい。', 
+          footer: '<a href="/test">ラベル一覧</a>'
         }
         // エラーメッセージを表示
         AlertError(errorData)
