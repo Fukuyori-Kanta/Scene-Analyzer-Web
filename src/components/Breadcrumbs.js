@@ -24,6 +24,8 @@ export default function Breadcrumbs({ productName = '' }) {
         return '新規分析'
       case '/search':
         return '結果一覧'
+      case '/labelList':
+        return 'ラベル一覧'
       default:
         return 'テスト'
     }

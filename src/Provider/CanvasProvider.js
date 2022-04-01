@@ -284,13 +284,11 @@ export default function CanvasProvider({ children }) {
     // 全矩形を非選択状態にする
     makeUnselectedAll()
 
-    const rectStrokeWidth = 3
     const rectstroke = '#BF0'
     const rectFill = 'rgba(230,255,174,0.5)'
 
     // 変更
     rect.set({
-      strokeWidth: rectStrokeWidth,  // 線の幅
       stroke: rectstroke, // 線の色
       fill: rectFill,     // 塗潰し色
     }).setCoords()
@@ -301,13 +299,11 @@ export default function CanvasProvider({ children }) {
 
   // 全矩形を非選択状態にする関数
   const makeUnselectedAll = () => {
-    let rectStrokeWidth = 2
     let rectstroke = '#0BF'
     let rectFill = 'rgba(174,230,255,0.1)'
 
     rectCanvas._objects.map(rect => {
       rect._objects[0].set({
-        strokeWidth: rectStrokeWidth,  // 線の幅
         stroke: rectstroke, // 線の色
         fill: rectFill,     // 塗潰し色
       }).setCoords()
@@ -326,13 +322,11 @@ export default function CanvasProvider({ children }) {
     const selectedObj = rectCanvas.getObjects().find(obj => obj.id === currentId) // 選択されたオブジェクト
     const selectedRect = selectedObj._objects[0]
 
-    const rectStrokeWidth = 3    // 線の幅
     const rectstroke = '#BF0'    // 線の色
     const rectFill = 'rgba(230,255,174,0.5)' // 塗りつぶし色
 
     // 変更
     selectedRect.set({
-      strokeWidth: rectStrokeWidth,  // 線の幅
       stroke: rectstroke, // 線の色
       fill: rectFill,     // 塗潰し色
     }).setCoords()

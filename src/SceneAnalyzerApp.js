@@ -12,6 +12,7 @@ import ResultsPage from './ResultsPage/ResultsPageModule'
 import ResultDetailPage from './ResultDetailPage/ResultDetailPageModule'
 import StatisticsPage from './StatisticsPage/StatisticsPageModule'
 import NewAnalysisPage from './NewAnalysisPage/NewAnalysisPageModule'
+import LabelListPage from './LabelListPage/LabelListPageModule'
 
 // React Routerを使ったメインコンポーネントの定義
 const SceneAnalyzerApp = () => (
@@ -25,7 +26,8 @@ const SceneAnalyzerApp = () => (
       <Route path='/result/:id' component={ResultDetailPage} />
       <Route path='/statistics' component={StatisticsPage} />
       <Route path='/newAnalysis' component={NewAnalysisPage} />
-      <Route path='/test' component={TestPage} />
+      <Route path='/test' component={LabelListPage} />
+      {/* <Route path='/test' component={TestPage} /> */}
       <Route component={NotFound} />
     </Switch>
     {/* <Footer /> */}
@@ -37,8 +39,8 @@ const Header = () => (
   <header className="page-header">
     <NaviMenu
       title="SceneAnalyzer"
-      values="結果一覧,統計,新規分析"
-      herf="/results,/statistics,/newAnalysis" />
+      values="結果一覧,統計,新規分析,ラベル一覧"
+      herf="/results,/statistics,/newAnalysis,/test" />
     {/* <HamburgerMenu /> */}
   </header>
 )

@@ -33,7 +33,8 @@ export default function LabelInpuForm() {
         const errorData = {
           title: '入力したラベルは追加できません',
           icon: 'error',
-          text: '他のラベル名で追加するか、追加しなくても大丈夫なラベルです。'
+          text: '他のラベル名で追加するか、追加しなくても大丈夫なラベルです。', 
+          footer: '<a href="/test">ラベル一覧</a>'
         }
         // エラーメッセージを表示
         AlertError(errorData)

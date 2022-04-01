@@ -177,6 +177,28 @@ app.get("/api/result/:id", function (req, res) {
   )
 })
 
+// 該当動画IDの分析結果を返すAPI
+// app.get("/api/result/:id", function (req, res) {
+//   const videoId = req.params.id
+//   pool.query(
+//     "SELECT * " +
+//     "FROM scene_data " +
+//     "LEFT JOIN works_data ON scene_data.video_id = works_data.video_id  " +
+//     "LEFT JOIN scene_label ON scene_label.scene_label_id = scene_data.scene_label_id " +
+//     "LEFT JOIN label_list ON scene_label.label_id = label_list.label_id " +
+//     "LEFT JOIN scene_favo ON scene_favo.scene_favo_id = scene_data.scene_favo_id " +
+//     "LEFT JOIN score_category ON scene_favo.category = score_category.category " +
+//     "WHERE scene_data.video_id='" + videoId + "' AND score_category.category = 'F' " +
+//     "AND label_list.is_cm_specialization = true;",
+//     function (error, results) {
+//       if (error) throw error
+//       console.log(results)
+//       res.send(results)
+//     }
+//   )
+// })
+
+
 // 好感度カテゴリを返すAPI
 app.get("/api/category", function (req, res) {
   pool.query(
@@ -223,7 +245,8 @@ app.get("/api/isAddable/:label", function (req, res) {
   pool.query(
     "SELECT * " +
     "FROM label_list " +
-    "WHERE label_name_ja = '" + labelName + "';",
+    "WHERE label_name_ja = '" + labelName + "' " + 
+    "AND is_cm_specialization = true;", 
     function (error, results) {
       if (error) throw error
       res.send(results)
@@ -231,6 +254,18 @@ app.get("/api/isAddable/:label", function (req, res) {
   )
 })
 
+// CM特化ラベル一覧を返すAPI
+app.get("/api/CM_Label", function (req, res) {
+  pool.query(
+    "SELECT * " +
+    "FROM label_list " +
+    "WHERE is_cm_specialization = true;",
+    function (error, results) {
+      if (error) throw error
+      res.send(results)
+    }
+  )
+})
 
 /*
 // anotation
