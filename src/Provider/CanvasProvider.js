@@ -2,6 +2,7 @@
 import { useCurrent } from './CurrentProvider'
 import { useAnnotation } from './AnnotationProvider'
 import { fabric } from 'fabric'
+import { useContextMenu } from '../Provider/ContextMenuProvider'
 
 const CanvasContext = createContext()
 export const useCanvas = () => useContext(CanvasContext)
@@ -11,6 +12,7 @@ export default function CanvasProvider({ children }) {
   const [rectCanvas, setRectCanvas] = useState(null)    // 矩形描画キャンバス
   const [drawCanvas, setDrawCanvas] = useState(null)    // 新規矩形描画キャンバス
 
+  const { setIsMenuOpen } = useContextMenu()
   const { changeCurrentLabel, initCurrentLabel } = useCurrent()
   const { labelsData, setLabelsData, isDrawingActive, setIsDrawingActive, inputWord, setInputWord, updateRectData } = useAnnotation()
 
@@ -62,7 +64,7 @@ export default function CanvasProvider({ children }) {
 
   // 矩形描画キャンバスを描画する関数
   function drawRectCanvas(id, width, height) {
-    const rectCanvas = new fabric.Canvas(id, { width: width, height: height })
+    const rectCanvas = new fabric.Canvas(id, { width: width, height: height, fireRightClick: true })
     setRectCanvas(rectCanvas)
   }
 
@@ -322,6 +324,9 @@ export default function CanvasProvider({ children }) {
     const selectedObj = rectCanvas.getObjects().find(obj => obj.id === currentId) // 選択されたオブジェクト
     const selectedRect = selectedObj._objects[0]
 
+    // 最前面に設定
+    selectedObj.bringToFront()
+
     const rectstroke = '#BF0'    // 線の色
     const rectFill = 'rgba(230,255,174,0.5)' // 塗りつぶし色
 
@@ -362,6 +367,58 @@ export default function CanvasProvider({ children }) {
   const deleteRect = (currentId) => {
     const deleteObj = rectCanvas.getObjects().find(obj => obj.id === currentId) // 削除するオブジェクト
     rectCanvas.remove(deleteObj)
+  }
+
+  // アクティブオブジェクトをコピー&ペーストをする関数
+  const copyAndPaste = () => {
+    let _clipboard  // クリップボード
+
+    // コピー
+    rectCanvas.getActiveObject().clone((cloned) => {
+      _clipboard = cloned
+    })
+
+    // ペースト
+    _clipboard.clone((clonedObj) => {
+      rectCanvas.discardActiveObject()
+      clonedObj.set({
+        left: clonedObj.left + 10,
+        top: clonedObj.top + 10,
+        evented: true,
+      })
+      if (clonedObj.type === 'activeSelection') {
+        clonedObj.rectCanvas = rectCanvas
+        clonedObj.forEachObject((obj) => {
+          rectCanvas.add(obj)
+        })
+        clonedObj.setCoords()
+      } else {
+        rectCanvas.add(clonedObj)
+      }
+      _clipboard.top += 10
+      _clipboard.left += 10
+      rectCanvas.setActiveObject(clonedObj)
+      rectCanvas.requestRenderAll()
+    })
+  }
+
+  // アクティブオブジェクトを最背面にする関数
+  const make_back = () => {
+    const obj = rectCanvas.getActiveObjects()[0]
+    obj.sendToBack()
+    rectCanvas.discardActiveObject()
+    rectCanvas.renderAll()
+  }
+
+  // アクティブオブジェクトに有名人情報を追加する関数
+  const setFamousPerson = () => {
+    console.log(rectCanvas)
+  }
+
+  // アクティブオブジェクトを削除する関数
+  const deleteObject = () => {
+    const obj = rectCanvas.getActiveObjects()[0]
+    deleteRect(obj.id)
   }
 
   // 矩形選択時のイベントハンドラ
@@ -471,6 +528,25 @@ export default function CanvasProvider({ children }) {
       updateRectData(objId, coordinate)
     })
 
+    // オブジェクトを右クリックした時の処理
+    rectCanvas._objects.forEach(element => {
+      // 選択オブジェクトを右クリックしたか判定
+      element.on('mousedown', (event) => {
+        let activeObjects = rectCanvas.getActiveObjects()
+        if (event.button === 3 && activeObjects.length == 1 && activeObjects[0] == element) {
+          // コンテキストメニューを表示
+          setIsMenuOpen(true)
+        }
+      })
+    })
+
+    // コンテキストメニューを非表示にする処理
+    rectCanvas.on('mouse:down', () => {
+      let activeObjects = rectCanvas.getActiveObjects()
+      if (activeObjects.length == 0) {
+        setIsMenuOpen(false)
+      }
+    })
   }
 
   return (
@@ -492,6 +568,10 @@ export default function CanvasProvider({ children }) {
       checkedLabel,
       updateLabel, 
       deleteRect,
+      copyAndPaste, 
+      make_back, 
+      setFamousPerson, 
+      deleteObject, 
       rectSelectionEventHandler,
     }}>
       {children}

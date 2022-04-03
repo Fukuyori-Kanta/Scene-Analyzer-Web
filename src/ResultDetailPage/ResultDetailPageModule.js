@@ -3,13 +3,14 @@ import { Fetch } from '../Provider/Fetch'
 import { useParams } from 'react-router-dom'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SceneList from './SceneList'
-import CurrentProvider, { useCurrent } from '../Provider/CurrentProvider'
+import CurrentProvider from '../Provider/CurrentProvider'
 import ModeProvider from '../Provider/ModeProvider'
-import AnnotationProvider, { useAnnotation } from '../Provider/AnnotationProvider'
+import AnnotationProvider from '../Provider/AnnotationProvider'
 import CanvasProvider from '../Provider/CanvasProvider'
 import SwitchScreen from './SwitchScreen'
 import LabelScreen from './LabelScreen'
 import CurrentScene from './CurrentScene'
+import ContextMenuProvider from '../Provider/ContextMenuProvider'
 
 export default function ResultDetailPage() {
   const videoId = useParams().id  // 動画ID
@@ -17,14 +18,16 @@ export default function ResultDetailPage() {
   return (
     <ModeProvider>
       <CurrentProvider>
-        <AnnotationProvider>
-          <CanvasProvider>
-            <Fetch
-              uri={`/api/result/` + videoId}
-              renderSuccess={ResultDetailPageContents}
-            />
-          </CanvasProvider>
-        </AnnotationProvider>
+        <ContextMenuProvider>
+          <AnnotationProvider>
+            <CanvasProvider>
+              <Fetch
+                uri={`/api/result/` + videoId}
+                renderSuccess={ResultDetailPageContents}
+              />
+            </CanvasProvider>
+          </AnnotationProvider>
+        </ContextMenuProvider>
       </CurrentProvider>
     </ModeProvider>
   )

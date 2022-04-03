@@ -1,18 +1,22 @@
 ﻿import React, { useState, useEffect } from 'react'
+import { ContextMenuTrigger } from 'react-contextmenu'
 import { useCurrent } from '../Provider/CurrentProvider'
 import { useAnnotation } from '../Provider/AnnotationProvider'
 import { useWindowDimensions } from '../Provider/WindowDimensions'
 import { useCanvas } from '../Provider/CanvasProvider'
+import { useContextMenu } from '../Provider/ContextMenuProvider'
+import ContextMenuBody from './ContextMenuBody'
 
 export default function Canvas({ videoId }) {
-  const [screenStyle, setScreenStyle] = useState()  // 表示領域のスタイル
-  let [drawWidth, setDrawWidth] = useState()        // 新規描画キャンバスの幅
-  let [drawHeight, setDrawHeight] = useState()      // 新規描画キャンバスの高さ
-
+  const [screenStyle, setScreenStyle] = useState()    // 表示領域のスタイル
+  const [drawWidth, setDrawWidth] = useState()        // 新規描画キャンバスの幅
+  const [drawHeight, setDrawHeight] = useState()      // 新規描画キャンバスの高さ
+  
   const { currentScene } = useCurrent()
   const { rectCanvas, drawImageCanvas, drawRectCanvas, ImageSize2CanvasSize, drawRect, rectSelectionEventHandler, canvasRef } = useCanvas()
   const { labelsData, isDrawingActive } = useAnnotation()
   const { width, height } = useWindowDimensions()
+  const { isMenuOpen } = useContextMenu()
 
   // 初期描画が終わった後 または サイズが変わった時、サイズを変えてキャンバスを描画
   useEffect(() => {
@@ -45,19 +49,6 @@ export default function Canvas({ videoId }) {
       rectSelectionEventHandler()
     }
   }, [rectCanvas])
-
-  // 右クリック許可
-  // useEffect(() => {
-  //   if (rectCanvas !== null) {
-  //     // console.log(document.getElementById('canvas-screen'))
-  //     // document.getElementById('canvas-screen').oncontextmenu = function () { return true }
-
-  //     // 右クリックを禁止する
-  //     document.oncontextmenu = function () {
-  //       return true
-  //     }
-  //   }
-  // }, [rectCanvas])
 
   // 画面サイズを取得する関数
   const getScreenSize = id => {
@@ -108,8 +99,15 @@ export default function Canvas({ videoId }) {
   return (
     <div id="canvas-screen">
       <canvas id="image-area" style={screenStyle}></canvas>
-      <canvas id="rect-area" className="lower-canvas" style={screenStyle}></canvas>
+      <ContextMenuTrigger id="contextmenu" disable={!isMenuOpen} >
+        <canvas id="rect-area" className="lower-canvas" style={screenStyle}></canvas>
+      </ContextMenuTrigger>
       {isDrawingActive ? <canvas id="draw-area" width={drawWidth} height={drawHeight} ref={canvasRef}></canvas> : <></>}
+
+      <ContextMenuBody />
     </div>
+
+
+
   )
 }
