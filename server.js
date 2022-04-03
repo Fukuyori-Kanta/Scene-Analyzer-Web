@@ -92,45 +92,45 @@ app.get("/api/results/label-name/:words", function (req, res) {
   const words = searchWord.replace(/(\s|&nbsp;)+/g, " ").split(' ');   // 検索ワード
   let query = ''  // 実行クエリ
 
-  let qry1 =  "SELECT works_data.video_id, works_data.product_name " +
-              "FROM scene_data INNER JOIN works_data ON scene_data.video_id = works_data.video_id " +
-              "WHERE scene_data.scene_label_id IN ( " +
-                "SELECT scene_label.scene_label_id " +
-                "FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
-                "WHERE scene_label.scene_label_id in ( " +
-                  "SELECT DISTINCT(scene_label_id) FROM scene_label " +
-                  "WHERE label_name_ja = '" + words[0] + "')) " +
-              "GROUP BY works_data.video_id; ";
+  let qry1 = "SELECT works_data.video_id, works_data.product_name " +
+    "FROM scene_data INNER JOIN works_data ON scene_data.video_id = works_data.video_id " +
+    "WHERE scene_data.scene_label_id IN ( " +
+    "SELECT scene_label.scene_label_id " +
+    "FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
+    "WHERE scene_label.scene_label_id in ( " +
+    "SELECT DISTINCT(scene_label_id) FROM scene_label " +
+    "WHERE label_name_ja = '" + words[0] + "')) " +
+    "GROUP BY works_data.video_id; ";
 
-  let qry2 =  "SELECT works_data.video_id, works_data.product_name  " +
-              "FROM scene_data INNER JOIN works_data ON scene_data.video_id = works_data.video_id " +
-              "WHERE scene_data.scene_label_id IN ( " +
-                "SELECT scene_label.scene_label_id " +
-                "FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
-                "WHERE scene_label.scene_label_id in ( " +
-                  "SELECT t1.scene_label_id FROM " +
-                    "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
-                    "WHERE label_list.label_name_ja = '" + words[0] + "') As t1, " +
-                    "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
-                    "WHERE label_list.label_name_ja = '" + words[1] + "') As t2 " +
-                  "WHERE t1.scene_label_id = t2.scene_label_id )) " +
-              "GROUP BY works_data.video_id; ";
+  let qry2 = "SELECT works_data.video_id, works_data.product_name  " +
+    "FROM scene_data INNER JOIN works_data ON scene_data.video_id = works_data.video_id " +
+    "WHERE scene_data.scene_label_id IN ( " +
+    "SELECT scene_label.scene_label_id " +
+    "FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
+    "WHERE scene_label.scene_label_id in ( " +
+    "SELECT t1.scene_label_id FROM " +
+    "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
+    "WHERE label_list.label_name_ja = '" + words[0] + "') As t1, " +
+    "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
+    "WHERE label_list.label_name_ja = '" + words[1] + "') As t2 " +
+    "WHERE t1.scene_label_id = t2.scene_label_id )) " +
+    "GROUP BY works_data.video_id; ";
 
-  let qry3 =  "SELECT works_data.video_id, works_data.product_name " +
-              "FROM scene_data INNER JOIN works_data ON scene_data.video_id = works_data.video_id " +
-              "WHERE scene_data.scene_label_id IN ( " +
-                "SELECT scene_label.scene_label_id " +
-                "FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
-                "WHERE scene_label.scene_label_id in ( " +
-                  "SELECT t1.scene_label_id FROM " +
-                    "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
-                    "WHERE label_list.label_name_ja = '" + words[0] + "') As t1, " +
-                    "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
-                    "WHERE label_list.label_name_ja = '" + words[1] + "') As t2,  " +
-                    "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
-                    "WHERE label_list.label_name_ja = '" + words[2] + "') As t3 " +
-                  "WHERE t1.scene_label_id = t2.scene_label_id AND t2.scene_label_id = t3.scene_label_id)) " +
-              "GROUP BY works_data.video_id; ";
+  let qry3 = "SELECT works_data.video_id, works_data.product_name " +
+    "FROM scene_data INNER JOIN works_data ON scene_data.video_id = works_data.video_id " +
+    "WHERE scene_data.scene_label_id IN ( " +
+    "SELECT scene_label.scene_label_id " +
+    "FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
+    "WHERE scene_label.scene_label_id in ( " +
+    "SELECT t1.scene_label_id FROM " +
+    "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
+    "WHERE label_list.label_name_ja = '" + words[0] + "') As t1, " +
+    "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
+    "WHERE label_list.label_name_ja = '" + words[1] + "') As t2,  " +
+    "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
+    "WHERE label_list.label_name_ja = '" + words[2] + "') As t3 " +
+    "WHERE t1.scene_label_id = t2.scene_label_id AND t2.scene_label_id = t3.scene_label_id)) " +
+    "GROUP BY works_data.video_id; ";
 
   // 単語数による判定
   switch (words.length) {
@@ -145,8 +145,8 @@ app.get("/api/results/label-name/:words", function (req, res) {
       break;
     default:
       query = 'SELECT video_id, product_name ' +
-              'FROM works_data ' +
-              'ORDER BY video_id;'
+        'FROM works_data ' +
+        'ORDER BY video_id;'
   }
   console.log(query)
   pool.query(query,
@@ -177,27 +177,40 @@ app.get("/api/result/:id", function (req, res) {
   )
 })
 
-// 該当動画IDの分析結果を返すAPI
-// app.get("/api/result/:id", function (req, res) {
-//   const videoId = req.params.id
-//   pool.query(
-//     "SELECT * " +
-//     "FROM scene_data " +
-//     "LEFT JOIN works_data ON scene_data.video_id = works_data.video_id  " +
-//     "LEFT JOIN scene_label ON scene_label.scene_label_id = scene_data.scene_label_id " +
-//     "LEFT JOIN label_list ON scene_label.label_id = label_list.label_id " +
-//     "LEFT JOIN scene_favo ON scene_favo.scene_favo_id = scene_data.scene_favo_id " +
-//     "LEFT JOIN score_category ON scene_favo.category = score_category.category " +
-//     "WHERE scene_data.video_id='" + videoId + "' AND score_category.category = 'F' " +
-//     "AND label_list.is_cm_specialization = true;",
-//     function (error, results) {
-//       if (error) throw error
-//       console.log(results)
-//       res.send(results)
-//     }
-//   )
-// })
+// 該当動画IDのラベル結果を返すAPI
+app.get("/api/resultLabels/:id", function (req, res) {
+  const videoId = req.params.id
+  pool.query(
+    "SELECT * " +
+    "FROM scene_data " +
+    "LEFT JOIN scene_label ON scene_label.scene_label_id = scene_data.scene_label_id " +
+    "LEFT JOIN label_list ON scene_label.label_id = label_list.label_id " +
+    "WHERE scene_data.video_id='" + videoId + "' " + 
+    "AND label_list.is_cm_specialization = true;",
+    function (error, results) {
+      if (error) throw error
+      console.log(results)
+      res.send(results)
+    }
+  )
+})
 
+// 該当動画IDの好感度の結果を返すAPI
+app.get("/api/resultFavo/:id", function (req, res) {
+  const videoId = req.params.id
+  pool.query(
+    "SELECT scene_favo.favo " +
+    "FROM scene_favo " +
+    "LEFT JOIN scene_data ON scene_favo.scene_favo_id = scene_data.scene_favo_id " +
+    "LEFT JOIN score_category ON scene_favo.category = score_category.category " +
+    "WHERE scene_data.video_id='" + videoId + "' AND score_category.category = 'F';",
+    function (error, results) {
+      if (error) throw error
+      console.log(results)
+      res.send(results)
+    }
+  )
+})
 
 // 好感度カテゴリを返すAPI
 app.get("/api/category", function (req, res) {
@@ -241,12 +254,12 @@ app.get("/api/productName/:id", function (req, res) {
 
 // 入力ラベルと同じラベル一覧情報を返すAPI
 app.get("/api/isAddable/:label", function (req, res) {
-  const labelName= req.params.label // ラベル名
+  const labelName = req.params.label // ラベル名
   pool.query(
     "SELECT * " +
     "FROM label_list " +
-    "WHERE label_name_ja = '" + labelName + "' " + 
-    "AND is_cm_specialization = true;", 
+    "WHERE label_name_ja = '" + labelName + "' " +
+    "AND is_cm_specialization = true;",
     function (error, results) {
       if (error) throw error
       res.send(results)
@@ -267,13 +280,23 @@ app.get("/api/CM_Label", function (req, res) {
   )
 })
 
-/*
+
+
+
 // anotation
-app.post('/annotation/', (req, res) => {
-  console.log(req.body)
-  res.send("Received POST Data!")
-})
-*/
+// app.post('/api/sendAnnotation/:user', (req, res) => {
+
+//   pool.query(
+//     "SELECT * " +
+//     "FROM label_list " +
+//     "WHERE is_cm_specialization = true;",
+//     function (error, results) {
+//       if (error) throw error
+//       res.send(results)
+//     }
+//   )
+// })
+
 
 // 静的ファイルを自動的に返すようルーティング
 app.use('/top', express.static('./public'))

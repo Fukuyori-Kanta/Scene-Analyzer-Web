@@ -10,9 +10,10 @@ import { v4 as uuidv4 } from 'uuid'
 import useOnClickOutside from '../Provider/useOnClickOutside'
 import AlertError from '../components/Alert/Error'
 
-export default function LabelScreen({ data }) {
+export default function LabelScreen({ videoId }) {
   const [isLabelEdit, setIsLabelEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('')
+  const [favoData, setFavoData] = useState([])
 
   const { currentScene, currentLabel, changeCurrentLabel } = useCurrent()
   const { labelsData, setLabelsData, oldLabels, setOldLabels, updateLabelsData, deleteLabelData, checkWhetherAdd } = useAnnotation()
@@ -25,26 +26,61 @@ export default function LabelScreen({ data }) {
   let ref = useRef()
   useOnClickOutside(ref, () => setIsLabelEdit(false))
 
-  // シーンが変わった時の処理
+  // シーンが変わった時、ラベルデータを設定する関数
   useEffect(() => {
-    // ラベルデータの抽出
-    let preprocessingData = data.filter(item => item.scene_no == 'scene_' + currentScene)  // ラベルデータ
+    const setLabels = async () => {
+      // ラベルデータの取得
+      let preprocessingData = await getLabelsData(videoId) // ラベルデータ
 
-    // 並び替え（物体ラベルが先、動作ラベルが後）
-    preprocessingData = preprocessingData.filter(item => item.label_id[0] == 'N').concat(preprocessingData.filter(item => item.label_id[0] == 'V'))
+      // 該当シーンのラベルデータを抽出
+      preprocessingData = preprocessingData.filter(item => item.scene_no == 'scene_' + currentScene)  // ラベルデータ
 
-    // ラベルデータを更新
-    preprocessingData.forEach(item => {
-      LabelsDataForSetting[uuidv4()] = item
-    })
+      // 並び替え（物体ラベルが先、動作ラベルが後）
+      preprocessingData = preprocessingData.filter(item => item.label_id[0] == 'N')
+        .concat(preprocessingData.filter(item => item.label_id[0] == 'V'))
 
-    // ラベルデータの設定
-    setLabelsData(LabelsDataForSetting)
-    setOldLabels(LabelsDataForSetting)
+      // ラベルデータを更新
+      preprocessingData.forEach(item => {
+        LabelsDataForSetting[uuidv4()] = item
+      })
 
-    // 設定用を初期化
-    LabelsDataForSetting = {}
+      // ラベルデータの設定
+      setLabelsData(LabelsDataForSetting)
+      setOldLabels(LabelsDataForSetting)
+
+      // 設定用を初期化
+      LabelsDataForSetting = {}
+    }
+    setLabels()
   }, [currentScene])
+
+
+  // 好感度データを設定する関数
+  useEffect(() => {
+    const setFavo = async () => {
+      // 好感度データを取得
+      const result = await getFavoData(videoId) 
+      const favoData = result.map(d => d["favo"]) // 好感度データ
+      setFavoData(favoData)
+    }
+    setFavo()
+  }, [])
+
+  // 該当IDのラベルデータを返す関数
+  const getLabelsData = async (videoId) => {
+    let res = await fetch(`/api/resultLabels/` + videoId)
+    let results = await res.json()
+
+    return results
+  }
+
+  // 該当IDの好感度データを返す関数
+  const getFavoData = async (videoId) => {
+    let res = await fetch(`/api/resultFavo/` + videoId)
+    let results = await res.json()
+
+    return results
+  }
 
   // ラベルクリック時の処理（シングルクリック）
   const onClickHandler = (labelId, currentId) => {
@@ -104,10 +140,6 @@ export default function LabelScreen({ data }) {
   // Enterキー押下時の処理
   const enterHandler = async (event, currentId) => {
     if (event.key == 'Enter') {
-
-      // event.preventDefault()
-      // event.stopPropagation()
-
       // 編集状態を解除
       setIsLabelEdit(false)
 
@@ -127,7 +159,7 @@ export default function LabelScreen({ data }) {
         const errorData = {
           title: '編集したラベルは更新できません',
           icon: 'error',
-          text: '他のラベル名で編集して下さい。', 
+          text: '他のラベル名で編集して下さい。',
           footer: '<a href="/test">ラベル一覧</a>'
         }
         // エラーメッセージを表示
@@ -201,14 +233,7 @@ export default function LabelScreen({ data }) {
     }
   })
 
-  // 好感度データの抽出
-  const sceneCount = [...new Set(data.map(item => item.scene_no))].length
-  const favoData = [...Array(sceneCount).keys()].map(i => ++i).map(cnt => {
-    const reg = new RegExp('^' + 'scene_' + cnt + '$')
-    return data.filter(d => d.scene_no.match(reg) !== null)[0].favo
-  })
-
-  // 好感度グラフの表示
+  // 結果の表示
   return (
     <div id="label-screen" className="border-line">
       <AnnotationButtonArea />
