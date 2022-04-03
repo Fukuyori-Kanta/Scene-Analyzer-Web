@@ -51,7 +51,7 @@ function ResultDetailPageContents({ data }) {
       {/* 動画データ（または画像データ＆バウンディングボックス）とラベルデータ */}
       <div id="result-screen">
         <SwitchScreen videoId={videoId} />
-        <LabelScreen data={data} />
+        <LabelScreen videoId={videoId} />
       </div>
 
       {/* シーン一覧 */}
