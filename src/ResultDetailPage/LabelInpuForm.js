@@ -2,10 +2,12 @@
 import { useMode } from '../Provider/ModeProvider'
 import { useAnnotation } from '../Provider/AnnotationProvider'
 import AlertError from '../components/Alert/Error'
+import { useCurrent } from '../Provider/CurrentProvider'
 
-export default function LabelInpuForm() {
+export default function LabelInpuForm({ videoId }) {
   let { isEditMode } = useMode()  // 現在のモード
   const { addLabelsData, setIsDrawingActive, inputWord, setInputWord, checkWhetherAdd, isDrawingActive } = useAnnotation()
+  const { currentScene } = useCurrent()
 
   // 検索欄に文字入力した時の処理
   const changeHandler = (event) => {
@@ -18,10 +20,14 @@ export default function LabelInpuForm() {
     // 入力単語が設定されている かつ 新規矩形描画を行っていない場合のみ
     if (inputWord && !isDrawingActive) {
       // 追加するかチェック（入力単語がラベル一覧に存在するか判定）
-      const addingLabel = await checkWhetherAdd(inputWord)
+      let addingLabel = await checkWhetherAdd(inputWord)
 
       // 追加できる場合
       if (addingLabel) {
+        // 動画IDとシーン数を追加
+        addingLabel["video_id"] = videoId
+        addingLabel["scene_no"] = 'scene_' + String(currentScene)
+        
         // 入力ラベルを追加
         addLabelsData(addingLabel)
 

@@ -238,7 +238,7 @@ export default function LabelScreen({ videoId }) {
     <div id="label-screen" className="border-line">
       <AnnotationButtonArea />
       <div id="labels">{labels}</div>
-      <LabelInpuForm />
+      <LabelInpuForm videoId={videoId} />
       <FavoChart favoData={favoData} />
     </div>
   )

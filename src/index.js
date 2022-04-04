@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
 import SceneAnalyzerApp from './SceneAnalyzerApp'
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
@@ -11,7 +12,11 @@ document.oncontextmenu = function () {
 
 ReactDOM.render(
   <React.StrictMode>
-    <SceneAnalyzerApp />
-  </React.StrictMode>, 
+    <Router>
+
+      <SceneAnalyzerApp />
+
+    </Router>
+  </React.StrictMode>,
   document.getElementById('root')
 )

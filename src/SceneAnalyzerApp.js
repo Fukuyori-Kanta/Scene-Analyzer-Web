@@ -1,10 +1,5 @@
 ﻿import React from 'react'
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Switch
-} from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import './css/style.css'
 import TopPage from './TopPage/TopPageModule'
 import TestPage from './TestPage/TestPageModule'
@@ -16,22 +11,22 @@ import LabelListPage from './LabelListPage/LabelListPageModule'
 
 // React Routerを使ったメインコンポーネントの定義
 const SceneAnalyzerApp = () => (
-  <Router>
+  <>
     <Header />
-    <Switch>
-      <Route exact path='/' component={TopPage} />
-      <Route path='/top' component={TopPage} />
-      <Route path='/results' component={ResultsPage} />
-      <Route path='/search/:option/:words' component={ResultsPage} />
-      <Route path='/result/:id' component={ResultDetailPage} />
-      <Route path='/statistics' component={StatisticsPage} />
-      <Route path='/newAnalysis' component={NewAnalysisPage} />
-      <Route path='/test' component={LabelListPage} />
-      {/* <Route path='/test' component={TestPage} /> */}
-      <Route component={NotFound} />
-    </Switch>
+    <Routes>
+      <Route exact path='/' element={<TopPage />} />
+      <Route path='/top' element={<TopPage />} />
+      <Route path='/results'  element={<ResultsPage />} />
+      <Route path='/search/:option/:words'  element={<ResultsPage />} />
+      <Route path='/result/:id' element={<ResultDetailPage />} />
+      <Route path='/statistics' element={<StatisticsPage />} />
+      <Route path='/newAnalysis' element={<NewAnalysisPage />} />
+      <Route path='/test' element={<LabelListPage />} />
+      {/* <Route path='/test'  element={<TestPage />} /> */}
+      <Route element={<NotFound />} />
+    </Routes>
     {/* <Footer /> */}
-  </Router>
+  </>
 )
 
 // ヘッダーの定義

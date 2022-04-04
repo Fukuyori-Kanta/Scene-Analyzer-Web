@@ -13,16 +13,17 @@ export default function AnnotationProvider({ children }) {
 
   // ラベルの追加する関数
   const addLabelsData = (addingLabel) => {
+    console.log(addingLabel)
     setLabelsData({ ...labelsData, [uuidv4()]: addingLabel })
   }
 
   // ラベルの更新する関数
   const updateLabelsData = (id, editingLabel) => {
     let tempData = { ...labelsData }  // ラベルデータのコピー
-    
+
     // 同じラベルなら何もしない
     if (tempData[id].label_id == editingLabel.label_id) {
-      return 
+      return
     }
 
     // ラベル情報を更新
@@ -35,11 +36,18 @@ export default function AnnotationProvider({ children }) {
   // 矩形データの更新する関数
   const updateRectData = (id, coordinate) => {
     let tempData = { ...labelsData }  // ラベルデータのコピー
-    
+
     // ラベル情報を更新
+    if (!(id in tempData)) {
+      console.log("新規データ")
+      return 
+    }
+    else {
+      console.log("既存データ");
+    }
     tempData[id].x_axis = coordinate[0]
     tempData[id].y_axis = coordinate[1]
-    tempData[id].width  = coordinate[2]
+    tempData[id].width = coordinate[2]
     tempData[id].height = coordinate[3]
     setLabelsData(tempData)
   }
@@ -67,12 +75,42 @@ export default function AnnotationProvider({ children }) {
   }
 
   // ラベルデータをサーバーに送信する関数
-  const sendAnnotationData = () => {
+  const sendAnnotationData = async () => {
     // 更新されている時のみ
-    if (oldLabels == labelsData ) {
+    if (oldLabels == labelsData) {
       console.log("更新されていない")
       return
     }
+    console.log(oldLabels);
+
+    console.log(labelsData);
+
+    const array1 = Object.keys(labelsData).map(key => {
+      return labelsData[key]
+    })
+
+    const array2 = Object.keys(oldLabels).map(key => {
+      return oldLabels[key]
+    })
+
+    const diffLabels = array1.filter(item => JSON.stringify(array2).indexOf(JSON.stringify(item)) < 0); //itemの文字列表現を検索。
+    console.log(diffLabels)
+
+    // タイムアウト時間の設定（15秒）
+    // const controller = new AbortController()
+    // const timeout = setTimeout(() => { controller.abort() }, option.timeout || 15000)
+    if (diffLabels) {
+      const response = fetch(`/api/storeDB`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ "data": diffLabels })
+      })
+  
+      console.log(response)
+    }
+
     // 更新情報を設定
     setOldLabels(labelsData)
   }
@@ -88,8 +126,8 @@ export default function AnnotationProvider({ children }) {
       inputWord,
       setInputWord,
       addLabelsData,
-      updateLabelsData, 
-      updateRectData, 
+      updateLabelsData,
+      updateRectData,
       resetLabelData,
       deleteLabelData,
       checkWhetherAdd,
