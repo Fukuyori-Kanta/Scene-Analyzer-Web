@@ -1,6 +1,6 @@
 // server.js
-
 // WEBサーバを起動
+const { formatToTimeZone } = require('date-fns-timezone')
 const express = require("express")
 const app = express()
 const port = process.env.PORT || 3001
@@ -284,18 +284,44 @@ app.get("/api/CM_Label", function (req, res) {
 
 
 // anotation
-// app.post('/api/sendAnnotation/:user', (req, res) => {
+app.post('/api/storeDB', (req, res) => {
+  const labelsData = req.body["data"]
+  console.log(req.body)
+  console.log(labelsData)
+  // const key = Object.keys(labelsData)
+  // const videoId = labelsData[key[0]].video_id
+  // const sceneNo = labelsData[key[0]].scene_no
+  // const sceneLabelId = labelsData[key[0]].scene_label_id
+  // console.log(videoId, sceneNo, sceneLabelId)
+  //INSERT INTO annotation_result (user_id, update_time, operation, video_id, scene_no, scene_label_id, labels_no, old_label_id)
+  
+  console.log(formatToTimeZone(new Date(), 'YYYY-MM-DD HH:mm:ss', { timeZone: 'Asia/Tokyo' }));
+  const data = labelsData.map(item => {
+    return ['guest', formatToTimeZone(new Date(), 'YYYY-MM-DD HH:mm:ss', { timeZone: 'Asia/Tokyo' }), 'save', item.video_id, item.scene_no, item.label_id, item.x_axis, item.y_axis, item.width, item.height] 
+  })
 
-//   pool.query(
-//     "SELECT * " +
-//     "FROM label_list " +
-//     "WHERE is_cm_specialization = true;",
-//     function (error, results) {
-//       if (error) throw error
-//       res.send(results)
-//     }
-//   )
-// })
+  console.log(data)
+  // pool.query(
+  //   "INSERT INTO annotation_result (user_id, update_time, operation, video_id, scene_no, label_id, x_axis, y_axis, width, height)" +
+  //   "VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?);", data, 
+  //   function (error, results) {
+  //     if (error) throw error
+  //     res.send(JSON.stringify({"status": 200, "error": null, "response": results}))
+  //   }
+  // )
+
+  console.log("INSERT INTO annotation_result (user_id, update_time, operation, video_id, scene_no, label_id, x_axis, y_axis, width, height)" +
+  "VALUES ?;", [data]);
+
+  pool.query(
+    "INSERT INTO annotation_result (user_id, update_time, operation, video_id, scene_no, label_id, x_axis, y_axis, width, height)" +
+    "VALUES ?;", [data], 
+    function (error, results) {
+      if (error) throw error
+      res.send(JSON.stringify({"status": 200, "error": null, "response": results}))
+    }
+  )
+})
 
 
 // 静的ファイルを自動的に返すようルーティング

@@ -2,13 +2,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { useSearch } from '../Provider/SearchProvider'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 import { usePagination } from '../Provider/PaginationProvider'
 
 export default function SearchArea() {
   const { searchWord, setSearchWord, selectedOption, setSelectedOption } = useSearch()
   const { setCurrentPage } = usePagination()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   // 検索欄に文字入力した時の処理
   const handleChange = (event) => {
@@ -23,7 +23,7 @@ export default function SearchArea() {
   // 検索実行した時の処理
   const formSubmit = (event) => {
     event.preventDefault()
-    history.push(`/search/` + selectedOption + `/` + searchWord + `/`)
+    navigate(`/search/` + selectedOption + `/` + searchWord + `/`)
     
     // ページ番号を初期化
     setCurrentPage(1)
