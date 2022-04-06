@@ -1,5 +1,7 @@
-﻿import React, { createContext, useState, useContext, useEffect } from 'react'
+﻿import React, { createContext, useState, useContext } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import AlertSuccess from '../components/Alert/Success'
+import AlertError from '../components/Alert/Error'
 
 const AnnotationContext = createContext()
 export const useAnnotation = () => useContext(AnnotationContext)
@@ -13,7 +15,6 @@ export default function AnnotationProvider({ children }) {
 
   // ラベルの追加する関数
   const addLabelsData = (addingLabel) => {
-    console.log(addingLabel)
     setLabelsData({ ...labelsData, [uuidv4()]: addingLabel })
   }
 
@@ -40,7 +41,7 @@ export default function AnnotationProvider({ children }) {
     // ラベル情報を更新
     if (!(id in tempData)) {
       console.log("新規データ")
-      return 
+      return
     }
     else {
       console.log("既存データ");
@@ -62,6 +63,14 @@ export default function AnnotationProvider({ children }) {
     let tempData = { ...labelsData }  // ラベルデータのコピー
     delete tempData[id] // 該当IDのラベルを削除
     setLabelsData(tempData)
+  }
+
+  // 一番最後のラベルデータを削除する関数
+  const deleteLastLabel = () => {
+    const keysArray = Object.keys(labelsData)
+    const len = keysArray.length
+    const deleteId = keysArray[len - 1]
+    deleteLabelData(deleteId)
   }
 
   // ラベル一覧に存在するか判定する関数
@@ -99,16 +108,38 @@ export default function AnnotationProvider({ children }) {
     // タイムアウト時間の設定（15秒）
     // const controller = new AbortController()
     // const timeout = setTimeout(() => { controller.abort() }, option.timeout || 15000)
-    if (diffLabels) {
-      const response = fetch(`/api/storeDB`, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({ "data": diffLabels })
-      })
-  
-      console.log(response)
+    if (diffLabels.length == 0) {
+      return
+    }
+
+    const response = await fetch(`/api/storeDB`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ "data": diffLabels })
+    })
+
+    // 保存に成功した場合は、成功した旨をメッセージで表示
+    if (response.status == 200) {
+      const successData = {
+        title: '保存しました',
+        toast: true, 
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000
+      }
+      // 保存成功メッセージを表示
+      AlertSuccess(successData)
+    }
+    // 保存に失敗した場合は、エラーメッセージを表示
+    else {
+      const errorData = {
+        title: '保存に失敗しました',
+        text: '理由: ',
+      }
+      // 保存成功メッセージを表示
+      AlertError(errorData)
     }
 
     // 更新情報を設定
@@ -130,6 +161,7 @@ export default function AnnotationProvider({ children }) {
       updateRectData,
       resetLabelData,
       deleteLabelData,
+      deleteLastLabel, 
       checkWhetherAdd,
       sendAnnotationData
     }}>

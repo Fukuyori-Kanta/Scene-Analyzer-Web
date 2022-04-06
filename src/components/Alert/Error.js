@@ -2,5 +2,5 @@
 import withReactContent from 'sweetalert2-react-content'
 
 export default function AlertError(data) {
-  withReactContent(Swal).fire(data)
+  withReactContent(Swal).fire({...data, icon: 'error'})
 }
