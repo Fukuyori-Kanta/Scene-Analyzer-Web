@@ -3,6 +3,9 @@ import { useCurrent } from './CurrentProvider'
 import { useAnnotation } from './AnnotationProvider'
 import { fabric } from 'fabric'
 import { useContextMenu } from '../Provider/ContextMenuProvider'
+import Swal from 'sweetalert2'
+import AlertInput from '../components/Alert/AlertInput'
+import AlertSuccess from '../components/Alert/Success'
 
 const CanvasContext = createContext()
 export const useCanvas = () => useContext(CanvasContext)
@@ -14,7 +17,7 @@ export default function CanvasProvider({ children }) {
 
   const { setIsMenuOpen } = useContextMenu()
   const { changeCurrentLabel, initCurrentLabel } = useCurrent()
-  const { labelsData, setLabelsData, isDrawingActive, setIsDrawingActive, inputWord, setInputWord, updateRectData } = useAnnotation()
+  const { labelsData, setLabelsData, isDrawingActive, setIsDrawingActive, inputWord, setInputWord, updateRectData, checkWhetherAdd } = useAnnotation()
 
   const canvasRef = useRef(null)  // 新規矩形描画キャンバスの要素を参照
   const [context, setContext] = useState(null)  // キャンバス管理用（2D レンダリングコンテキスト）
@@ -98,7 +101,7 @@ export default function CanvasProvider({ children }) {
         DrawingMemory[index] = { x: startPosition.x, y: startPosition.y, w: x - startPosition.x, h: y - startPosition.y }
         index += 1
         drawFromMemory()
-      } 
+      }
       else {
         clear()
         drawFromMemory()
@@ -120,7 +123,7 @@ export default function CanvasProvider({ children }) {
       let updateLabelData = copiedLabelsData[objId] // 更新用ラベルデータ
       updateLabelData["x_axis"] = resizedCoordinate[0]
       updateLabelData["y_axis"] = resizedCoordinate[1]
-      updateLabelData["width"]  = resizedCoordinate[2]
+      updateLabelData["width"] = resizedCoordinate[2]
       updateLabelData["height"] = resizedCoordinate[3]
 
       // 座標データを設定
@@ -369,6 +372,21 @@ export default function CanvasProvider({ children }) {
     rectCanvas.remove(deleteObj)
   }
 
+  // 有名人の名称をテキストボックスに追加する関数
+  const addPersonData = (currentId, person) => {
+    const updateObj = rectCanvas.getObjects().find(obj => obj.id === currentId)
+    const updateTextBox = updateObj._objects[1]  // 更新するテキストボックス
+
+    console.log(updateTextBox.text + '(' + person + ')')
+
+    updateTextBox.set({
+      text: updateTextBox.text + '(' + person + ') ',     // 塗潰し色
+    }).setCoords()
+
+    // 変更したオブジェクトの描画
+    rectCanvas.renderAll()
+  }
+
   // アクティブオブジェクトをコピー&ペーストをする関数
   const copyAndPaste = () => {
     let _clipboard  // クリップボード
@@ -402,8 +420,34 @@ export default function CanvasProvider({ children }) {
     })
   }
 
+  // ラベル名を編集する関数
+  const editLabelData = () => {
+    const editObj = rectCanvas.getObjects()[0] // 編集するオブジェクト
+    const editTextBox = editObj._objects[1]  // 編集するテキストボックス
+
+    const inputData = {
+      title: 'ラベルを入力してください',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonText: '実行',
+      showLoaderOnConfirm: true,
+      inputValue: editTextBox.text.trim(),
+    }
+
+    const confirmFunc = (result) => {
+      // ラベルを追加
+      updateLabel(editObj.id, result.value)
+
+      AlertSuccess({
+        title: '完了',
+        text: '入力文字:' + result.value
+      })
+    }
+    AlertInput(inputData, confirmFunc)
+  }
+
   // アクティブオブジェクトを最背面にする関数
-  const make_back = () => {
+  const makeBack = () => {
     const obj = rectCanvas.getActiveObjects()[0]
     obj.sendToBack()
     rectCanvas.discardActiveObject()
@@ -412,7 +456,26 @@ export default function CanvasProvider({ children }) {
 
   // アクティブオブジェクトに有名人情報を追加する関数
   const setFamousPerson = () => {
-    console.log(rectCanvas)
+    const inputData = {
+      title: '有名人の名前を入力してください',
+      input: 'text',
+      text: 'もしかして、',
+      showCancelButton: true,
+      confirmButtonText: '実行',
+      showLoaderOnConfirm: true,
+    }
+    
+    const confirmFunc = (result) => {
+      const obj = rectCanvas.getActiveObjects()[0]
+      // 有名人の名称をテキストボックスに追加
+      addPersonData(obj.id, result.value)
+
+      AlertSuccess({
+        title: '完了',
+        text: '入力文字:' + result.value
+      })
+    }
+    AlertInput(inputData, confirmFunc)
   }
 
   // アクティブオブジェクトを削除する関数
@@ -520,10 +583,10 @@ export default function CanvasProvider({ children }) {
     rectCanvas.on('object:modified', (e) => {
       let updateObj = e.target  // 更新するオブジェクト
       let objId = updateObj.id  // オブジェクトID
-      
+
       // 座標を表示用からデータ用に変換
       let coordinate = CanvasSize2ImageSize(updateObj.left, updateObj.top, updateObj.width * updateObj.scaleX, updateObj.height * updateObj.scaleY)
-      
+
       // 更新情報を設定
       updateRectData(objId, coordinate)
     })
@@ -562,16 +625,17 @@ export default function CanvasProvider({ children }) {
       drawRectCanvas,
       drawNewRectCanvas,
       ImageSize2CanvasSize,
-      makeUnselectedAll, 
+      makeUnselectedAll,
       drawRect,
       changeDrawnRect,
       checkedLabel,
-      updateLabel, 
+      updateLabel,
       deleteRect,
-      copyAndPaste, 
-      make_back, 
-      setFamousPerson, 
-      deleteObject, 
+      copyAndPaste,
+      editLabelData,
+      makeBack,
+      setFamousPerson,
+      deleteObject,
       rectSelectionEventHandler,
     }}>
       {children}

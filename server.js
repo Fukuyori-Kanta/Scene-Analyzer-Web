@@ -297,7 +297,7 @@ app.post('/api/storeDB', (req, res) => {
   
   console.log(formatToTimeZone(new Date(), 'YYYY-MM-DD HH:mm:ss', { timeZone: 'Asia/Tokyo' }));
   const data = labelsData.map(item => {
-    return ['guest', formatToTimeZone(new Date(), 'YYYY-MM-DD HH:mm:ss', { timeZone: 'Asia/Tokyo' }), 'save', item.video_id, item.scene_no, item.label_id, item.x_axis, item.y_axis, item.width, item.height] 
+    return ['guest', formatToTimeZone(new Date(), 'YYYY-MM-DD HH:mm:ss', { timeZone: 'Asia/Tokyo' }), 'add', item.video_id, item.scene_no, item.label_id, item.x_axis, item.y_axis, item.width, item.height] 
   })
 
   console.log(data)

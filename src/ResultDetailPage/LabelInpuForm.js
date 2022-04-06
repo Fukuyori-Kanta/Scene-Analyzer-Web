@@ -2,11 +2,12 @@
 import { useMode } from '../Provider/ModeProvider'
 import { useAnnotation } from '../Provider/AnnotationProvider'
 import AlertError from '../components/Alert/Error'
+import AlertWarning from '../components/Alert/Warning'
 import { useCurrent } from '../Provider/CurrentProvider'
 
 export default function LabelInpuForm({ videoId }) {
   let { isEditMode } = useMode()  // 現在のモード
-  const { addLabelsData, setIsDrawingActive, inputWord, setInputWord, checkWhetherAdd, isDrawingActive } = useAnnotation()
+  const { addLabelsData, setIsDrawingActive, inputWord, setInputWord, deleteLastLabel, checkWhetherAdd, isDrawingActive } = useAnnotation()
   const { currentScene } = useCurrent()
 
   // 検索欄に文字入力した時の処理
@@ -38,8 +39,7 @@ export default function LabelInpuForm({ videoId }) {
       else {
         const errorData = {
           title: '入力したラベルは追加できません',
-          icon: 'error',
-          text: '他のラベル名で追加するか、追加しなくても大丈夫なラベルです。', 
+          text: '他のラベル名で追加するか、追加しなくても大丈夫なラベルです。',
           footer: '<a href="/test">ラベル一覧</a>'
         }
         // エラーメッセージを表示
@@ -50,11 +50,22 @@ export default function LabelInpuForm({ videoId }) {
     if (isDrawingActive) {
       const warningData = {
         title: '描画中のラベルがあります',
-        icon: 'warning',
-        text: '追加中のラベルを描画するまで、新たに追加することはできません。'
+        text: '矩形の描画を破棄しますか',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: '破棄',
+        cancelButtonText: '矩形の描画に戻る'
+      }
+
+      const confirmFunc = () => {
+        // 新規描画を終了
+        setIsDrawingActive(false)
+
+        // 直近で通過されたラベルデータを削除
+        deleteLastLabel()
       }
       // 警告メッセージを表示
-      AlertError(warningData)
+      AlertWarning(warningData, confirmFunc)
     }
   }
 
