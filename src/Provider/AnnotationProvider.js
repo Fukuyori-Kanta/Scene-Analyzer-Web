@@ -1,7 +1,8 @@
-﻿import React, { createContext, useState, useContext } from 'react'
+﻿import React, { createContext, useState, useContext, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import AlertSuccess from '../components/Alert/Success'
 import AlertError from '../components/Alert/Error'
+import { useNowDate } from './hooks'
 
 const AnnotationContext = createContext()
 export const useAnnotation = () => useContext(AnnotationContext)
@@ -9,9 +10,37 @@ export const useAnnotation = () => useContext(AnnotationContext)
 export default function AnnotationProvider({ children }) {
   const [labelsData, setLabelsData] = useState({})   // ラベルデータ
   const [oldLabels, setOldLabels] = useState({})     // ラベルデータの初期値
-
+  const [annotationResult, setAnnotationResult] = useState([])  // アノテーション結果
   const [isDrawingActive, setIsDrawingActive] = useState(false) // 新規描画を行うかどうか
   const [inputWord, setInputWord] = useState('')  // 入力単語（ラベル名）
+
+
+  useEffect(() => {
+    console.log(annotationResult)
+  }, [annotationResult])
+
+
+  // アノテーション結果を格納する関数
+  const storeAnnotationResult = (annoData, operation) => {
+    const date = useNowDate()
+
+    switch (operation) {
+      case 'delete':
+        console.log('delete');
+        setAnnotationResult([...annotationResult, {...annoData, 'operation': 'delete', 'user': 'guest', 'timestamp': date}])
+        break
+      case 'add':
+        console.log('add');
+        setAnnotationResult([...annotationResult, {...annoData, 'operation': 'add', 'user': 'guest', 'timestamp': date}])
+        break
+      case 'edit':
+        console.log('edit');
+        setAnnotationResult([...annotationResult, {...annoData, 'operation': 'edit', 'user': 'guest', 'timestamp': date}])
+        break
+      default:
+        break
+    }
+  }
 
   // ラベルの追加する関数
   const addLabelsData = (addingLabel) => {
@@ -31,6 +60,9 @@ export default function AnnotationProvider({ children }) {
     tempData[id].label_id = editingLabel.label_id
     tempData[id].label_name_ja = editingLabel.label_name_ja
     tempData[id].label_name_en = editingLabel.label_name_en
+
+    storeAnnotationResult(tempData[id], 'edit')
+
     setLabelsData(tempData)
   }
 
@@ -60,8 +92,12 @@ export default function AnnotationProvider({ children }) {
 
   // 特定のラベルデータを削除する関数
   const deleteLabelData = (id) => {
+    // アノテーション結果を格納
+    storeAnnotationResult(labelsData[id], 'delete')
+
+    // 該当IDのラベルを削除
     let tempData = { ...labelsData }  // ラベルデータのコピー
-    delete tempData[id] // 該当IDのラベルを削除
+    delete tempData[id]
     setLabelsData(tempData)
   }
 
@@ -90,41 +126,41 @@ export default function AnnotationProvider({ children }) {
       console.log("更新されていない")
       return
     }
-    console.log(oldLabels);
+    // console.log(oldLabels);
 
-    console.log(labelsData);
+    // console.log(labelsData);
 
-    const array1 = Object.keys(labelsData).map(key => {
-      return labelsData[key]
-    })
+    // const array1 = Object.keys(labelsData).map(key => {
+    //   return labelsData[key]
+    // })
 
-    const array2 = Object.keys(oldLabels).map(key => {
-      return oldLabels[key]
-    })
+    // const array2 = Object.keys(oldLabels).map(key => {
+    //   return oldLabels[key]
+    // })
 
-    const diffLabels = array1.filter(item => JSON.stringify(array2).indexOf(JSON.stringify(item)) < 0); //itemの文字列表現を検索。
-    console.log(diffLabels)
+    // const diffLabels = array1.filter(item => JSON.stringify(array2).indexOf(JSON.stringify(item)) < 0); //itemの文字列表現を検索。
+    // console.log(diffLabels)
 
     // タイムアウト時間の設定（15秒）
     // const controller = new AbortController()
     // const timeout = setTimeout(() => { controller.abort() }, option.timeout || 15000)
-    if (diffLabels.length == 0) {
-      return
-    }
+    // if (diffLabels.length == 0) {
+    //   return
+    // }
 
     const response = await fetch(`/api/storeDB`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
-      body: JSON.stringify({ "data": diffLabels })
+      body: JSON.stringify({ "data": annotationResult })
     })
 
     // 保存に成功した場合は、成功した旨をメッセージで表示
     if (response.status == 200) {
       const successData = {
         title: '保存しました',
-        toast: true, 
+        toast: true,
         position: 'top-end',
         showConfirmButton: false,
         timer: 2000
@@ -156,12 +192,13 @@ export default function AnnotationProvider({ children }) {
       setIsDrawingActive,
       inputWord,
       setInputWord,
+      storeAnnotationResult, 
       addLabelsData,
       updateLabelsData,
       updateRectData,
       resetLabelData,
       deleteLabelData,
-      deleteLastLabel, 
+      deleteLastLabel,
       checkWhetherAdd,
       sendAnnotationData
     }}>

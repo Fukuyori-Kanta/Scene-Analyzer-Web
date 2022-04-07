@@ -1,6 +1,5 @@
 // server.js
 // WEBサーバを起動
-const { formatToTimeZone } = require('date-fns-timezone')
 const express = require("express")
 const app = express()
 const port = process.env.PORT || 3001
@@ -14,7 +13,6 @@ app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 // DBへの接続・認証
 const mysql = require("mysql");
-const { query } = require("express");
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
@@ -185,7 +183,7 @@ app.get("/api/resultLabels/:id", function (req, res) {
     "FROM scene_data " +
     "LEFT JOIN scene_label ON scene_label.scene_label_id = scene_data.scene_label_id " +
     "LEFT JOIN label_list ON scene_label.label_id = label_list.label_id " +
-    "WHERE scene_data.video_id='" + videoId + "' " + 
+    "WHERE scene_data.video_id='" + videoId + "' " +
     "AND label_list.is_cm_specialization = true;",
     function (error, results) {
       if (error) throw error
@@ -288,37 +286,33 @@ app.post('/api/storeDB', (req, res) => {
   const labelsData = req.body["data"]
   console.log(req.body)
   console.log(labelsData)
-  // const key = Object.keys(labelsData)
-  // const videoId = labelsData[key[0]].video_id
-  // const sceneNo = labelsData[key[0]].scene_no
-  // const sceneLabelId = labelsData[key[0]].scene_label_id
-  // console.log(videoId, sceneNo, sceneLabelId)
-  //INSERT INTO annotation_result (user_id, update_time, operation, video_id, scene_no, scene_label_id, labels_no, old_label_id)
-  
-  console.log(formatToTimeZone(new Date(), 'YYYY-MM-DD HH:mm:ss', { timeZone: 'Asia/Tokyo' }));
+
   const data = labelsData.map(item => {
-    return ['guest', formatToTimeZone(new Date(), 'YYYY-MM-DD HH:mm:ss', { timeZone: 'Asia/Tokyo' }), 'add', item.video_id, item.scene_no, item.label_id, item.x_axis, item.y_axis, item.width, item.height] 
+    return [
+      item.user,
+      item.timestamp,
+      item.operation,
+      item.video_id,
+      item.scene_no,
+      item.label_id,
+      item.x_axis,
+      item.y_axis,
+      item.width,
+      item.height
+    ]
   })
 
   console.log(data)
-  // pool.query(
-  //   "INSERT INTO annotation_result (user_id, update_time, operation, video_id, scene_no, label_id, x_axis, y_axis, width, height)" +
-  //   "VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?);", data, 
-  //   function (error, results) {
-  //     if (error) throw error
-  //     res.send(JSON.stringify({"status": 200, "error": null, "response": results}))
-  //   }
-  // )
 
-  console.log("INSERT INTO annotation_result (user_id, update_time, operation, video_id, scene_no, label_id, x_axis, y_axis, width, height)" +
-  "VALUES ?;", [data]);
+  console.log("INSERT INTO annotation_result (user_id, timestamp, operation, video_id, scene_no, label_id, x_axis, y_axis, width, height)" +
+    "VALUES ?;", [data]);
 
   pool.query(
-    "INSERT INTO annotation_result (user_id, update_time, operation, video_id, scene_no, label_id, x_axis, y_axis, width, height)" +
-    "VALUES ?;", [data], 
+    "INSERT INTO annotation_result (user_id, timestamp, operation, video_id, scene_no, label_id, x_axis, y_axis, width, height)" +
+    "VALUES ?;", [data],
     function (error, results) {
       if (error) throw error
-      res.send(JSON.stringify({"status": 200, "error": null, "response": results}))
+      res.send(JSON.stringify({ "status": 200, "error": null, "response": results }))
     }
   )
 })

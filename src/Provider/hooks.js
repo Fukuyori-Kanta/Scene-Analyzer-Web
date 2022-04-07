@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from 'react'
+import { formatToTimeZone } from 'date-fns-timezone'
 
 export function useFetch(uri) {
   const [data, setData] = useState()
@@ -19,4 +20,8 @@ export function useFetch(uri) {
     data,
     error
   }
+}
+
+export function useNowDate() {
+  return formatToTimeZone(new Date(), 'YYYY-MM-DD HH:mm:ss', { timeZone: 'Asia/Tokyo' })
 }
