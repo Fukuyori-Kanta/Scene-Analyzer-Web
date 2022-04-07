@@ -3,7 +3,6 @@ import { useCurrent } from './CurrentProvider'
 import { useAnnotation } from './AnnotationProvider'
 import { fabric } from 'fabric'
 import { useContextMenu } from '../Provider/ContextMenuProvider'
-import Swal from 'sweetalert2'
 import AlertInput from '../components/Alert/AlertInput'
 import AlertSuccess from '../components/Alert/Success'
 
@@ -17,7 +16,7 @@ export default function CanvasProvider({ children }) {
 
   const { setIsMenuOpen } = useContextMenu()
   const { changeCurrentLabel, initCurrentLabel } = useCurrent()
-  const { labelsData, setLabelsData, isDrawingActive, setIsDrawingActive, inputWord, setInputWord, updateRectData, checkWhetherAdd } = useAnnotation()
+  const { labelsData, setLabelsData, isDrawingActive, setIsDrawingActive, inputWord, setInputWord, annotationResult, setAnnotationResult, storeAnnotationResult, updateRectData, checkWhetherAdd } = useAnnotation()
 
   const canvasRef = useRef(null)  // 新規矩形描画キャンバスの要素を参照
   const [context, setContext] = useState(null)  // キャンバス管理用（2D レンダリングコンテキスト）
@@ -125,6 +124,8 @@ export default function CanvasProvider({ children }) {
       updateLabelData["y_axis"] = resizedCoordinate[1]
       updateLabelData["width"] = resizedCoordinate[2]
       updateLabelData["height"] = resizedCoordinate[3]
+
+      storeAnnotationResult(updateLabelData, 'add')
 
       // 座標データを設定
       setLabelsData({ ...labelsData, [objId]: updateLabelData })
@@ -323,6 +324,10 @@ export default function CanvasProvider({ children }) {
     // 全矩形を非選択状態にする
     makeUnselectedAll()
 
+    console.log(rectCanvas.getObjects()[0]);
+    if (!rectCanvas.getObjects()[0].id === currentId) {
+      return
+    }
     // 選択された矩形を選択状態にする
     const selectedObj = rectCanvas.getObjects().find(obj => obj.id === currentId) // 選択されたオブジェクト
     const selectedRect = selectedObj._objects[0]
@@ -464,7 +469,7 @@ export default function CanvasProvider({ children }) {
       confirmButtonText: '実行',
       showLoaderOnConfirm: true,
     }
-    
+
     const confirmFunc = (result) => {
       const obj = rectCanvas.getActiveObjects()[0]
       // 有名人の名称をテキストボックスに追加
