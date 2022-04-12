@@ -21,7 +21,7 @@ const SceneAnalyzerApp = () => (
       <Route path='/result/:id' element={<ResultDetailPage />} />
       <Route path='/statistics' element={<StatisticsPage />} />
       <Route path='/newAnalysis' element={<NewAnalysisPage />} />
-      <Route path='/test' element={<LabelListPage />} />
+      <Route path='/labels' element={<LabelListPage />} />
       {/* <Route path='/test'  element={<TestPage />} /> */}
       <Route element={<NotFound />} />
     </Routes>

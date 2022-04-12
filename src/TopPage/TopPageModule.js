@@ -21,7 +21,7 @@ function TopPageContents({ data }) {
           <TransitionButton herf="/results" value="結果一覧" />
           <TransitionButton herf="/statistics" value="統 計" />
           <TransitionButton herf="/newAnalysis" value="新規分析" />
-          <TransitionButton herf="/test" value="ラベル一覧" />
+          <TransitionButton herf="/labels" value="ラベル一覧" />
         </div>
       </section>
 
