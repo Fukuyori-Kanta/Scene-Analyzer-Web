@@ -5,6 +5,7 @@ import { fabric } from 'fabric'
 import { useContextMenu } from '../Provider/ContextMenuProvider'
 import AlertInput from '../components/Alert/AlertInput'
 import AlertSuccess from '../components/Alert/Success'
+import Swal from 'sweetalert2'
 
 const CanvasContext = createContext()
 export const useCanvas = () => useContext(CanvasContext)
@@ -16,7 +17,7 @@ export default function CanvasProvider({ children }) {
 
   const { setIsMenuOpen } = useContextMenu()
   const { changeCurrentLabel, initCurrentLabel } = useCurrent()
-  const { labelsData, setLabelsData, isDrawingActive, setIsDrawingActive, inputWord, setInputWord, annotationResult, setAnnotationResult, storeAnnotationResult, updateRectData, checkWhetherAdd } = useAnnotation()
+  const { labelsData, setLabelsData, isDrawingActive, setIsDrawingActive, inputWord, setInputWord, annotationResult, setAnnotationResult, storeAnnotationResult, updateRectData, checkWhetherAdd, addLabelsData, deleteLabelData, updateLabelsData } = useAnnotation()
 
   const canvasRef = useRef(null)  // 新規矩形描画キャンバスの要素を参照
   const [context, setContext] = useState(null)  // キャンバス管理用（2D レンダリングコンテキスト）
@@ -324,10 +325,6 @@ export default function CanvasProvider({ children }) {
     // 全矩形を非選択状態にする
     makeUnselectedAll()
 
-    console.log(rectCanvas.getObjects()[0]);
-    if (!rectCanvas.getObjects()[0].id === currentId) {
-      return
-    }
     // 選択された矩形を選択状態にする
     const selectedObj = rectCanvas.getObjects().find(obj => obj.id === currentId) // 選択されたオブジェクト
     const selectedRect = selectedObj._objects[0]
@@ -394,6 +391,9 @@ export default function CanvasProvider({ children }) {
 
   // アクティブオブジェクトをコピー&ペーストをする関数
   const copyAndPaste = () => {
+    const obj = rectCanvas.getActiveObject()
+    const objId = obj.id // オブジェクトID
+
     let _clipboard  // クリップボード
 
     // コピー
@@ -403,10 +403,16 @@ export default function CanvasProvider({ children }) {
 
     // ペースト
     _clipboard.clone((clonedObj) => {
+      let deviation = 10  // どのくらいずらして描画するか
+      // 下側・右側にはみ出す場合は、左側・上側にずらす
+      if (obj.getBoundingRect().top + obj.getBoundingRect().height + 10 > obj.canvas.height || obj.getBoundingRect().left + obj.getBoundingRect().width + 10 > obj.canvas.width) {
+        deviation = -10
+      }
+
       rectCanvas.discardActiveObject()
       clonedObj.set({
-        left: clonedObj.left + 10,
-        top: clonedObj.top + 10,
+        left: clonedObj.left + deviation,
+        top: clonedObj.top + deviation,
         evented: true,
       })
       if (clonedObj.type === 'activeSelection') {
@@ -418,18 +424,26 @@ export default function CanvasProvider({ children }) {
       } else {
         rectCanvas.add(clonedObj)
       }
-      _clipboard.top += 10
-      _clipboard.left += 10
+      _clipboard.top += deviation
+      _clipboard.left += deviation
       rectCanvas.setActiveObject(clonedObj)
       rectCanvas.requestRenderAll()
+
+      // ラベルデータに追加
+      const tempData = { ...labelsData }
+      const addingLabel = { ...tempData[objId], ["x_axis"]: tempData[objId].x_axis + deviation, ["y_axis"]: tempData[objId].y_axis + deviation }
+      addLabelsData(addingLabel)
+
+      // アノテーション結果を更新
+      storeAnnotationResult(addingLabel, 'add')
     })
   }
 
   // ラベル名を編集する関数
   const editLabelData = () => {
-    const editObj = rectCanvas.getObjects()[0] // 編集するオブジェクト
+    const editObj = rectCanvas.getActiveObject() // 編集するオブジェクト
     const editTextBox = editObj._objects[1]  // 編集するテキストボックス
-
+    
     const inputData = {
       title: 'ラベルを入力してください',
       input: 'text',
@@ -437,9 +451,32 @@ export default function CanvasProvider({ children }) {
       confirmButtonText: '実行',
       showLoaderOnConfirm: true,
       inputValue: editTextBox.text.trim(),
+      preConfirm: async (inputStr) => {
+        // バリデーションチェック
+        if (inputStr.length == 0) {
+          return Swal.showValidationMessage('１文字以上入力してください')
+        }
+        if (inputStr === editTextBox.text.trim()) {
+          return Swal.showValidationMessage('異なるラベル名を入力して下さい')
+        }
+
+        // 追加するラベルの存在チェック
+        let addingLabel = await checkWhetherAdd(inputStr) 
+        if (!addingLabel) {
+          return Swal.showValidationMessage('入力したラベルは追加できません。他のラベルで追加してください。')
+        }
+        
+        //ローディングを表示させるために3秒スリープ
+        var sleep = function (sec) {
+          return new Promise(resolve => {
+            setTimeout(resolve, sec * 1000)
+          })
+        }
+        return sleep(1)
+      }
     }
 
-    const confirmFunc = (result) => {
+    const confirmFunc = async (result) => {
       // ラベルを追加
       updateLabel(editObj.id, result.value)
 
@@ -447,13 +484,16 @@ export default function CanvasProvider({ children }) {
         title: '完了',
         text: '入力文字:' + result.value
       })
+      
+      let addingLabel = await checkWhetherAdd(result.value) 
+      updateLabelsData(editObj.id, addingLabel)
     }
     AlertInput(inputData, confirmFunc)
   }
 
   // アクティブオブジェクトを最背面にする関数
   const makeBack = () => {
-    const obj = rectCanvas.getActiveObjects()[0]
+    const obj = rectCanvas.getActiveObject()
     obj.sendToBack()
     rectCanvas.discardActiveObject()
     rectCanvas.renderAll()
@@ -468,10 +508,25 @@ export default function CanvasProvider({ children }) {
       showCancelButton: true,
       confirmButtonText: '実行',
       showLoaderOnConfirm: true,
+      preConfirm: async (inputStr) => {
+        // バリデーションチェック
+        if (inputStr.length == 0) {
+          return Swal.showValidationMessage('１文字以上入力してください')
+        }
+
+        //ローディングを表示させるために3秒スリープ
+        var sleep = function (sec) {
+          return new Promise(resolve => {
+            setTimeout(resolve, sec * 1000)
+          })
+        }
+        return sleep(1)
+
+      }
     }
 
     const confirmFunc = (result) => {
-      const obj = rectCanvas.getActiveObjects()[0]
+      const obj = rectCanvas.getActiveObject()
       // 有名人の名称をテキストボックスに追加
       addPersonData(obj.id, result.value)
 
@@ -485,8 +540,9 @@ export default function CanvasProvider({ children }) {
 
   // アクティブオブジェクトを削除する関数
   const deleteObject = () => {
-    const obj = rectCanvas.getActiveObjects()[0]
+    const obj = rectCanvas.getActiveObject()
     deleteRect(obj.id)
+    deleteLabelData(obj.id)
   }
 
   // 矩形選択時のイベントハンドラ

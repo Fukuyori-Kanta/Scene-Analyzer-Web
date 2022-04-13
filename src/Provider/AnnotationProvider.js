@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import AlertSuccess from '../components/Alert/Success'
 import AlertError from '../components/Alert/Error'
 import { useNowDate } from './hooks'
+import { useCurrent } from './CurrentProvider'
 
 const AnnotationContext = createContext()
 export const useAnnotation = () => useContext(AnnotationContext)
@@ -13,12 +14,16 @@ export default function AnnotationProvider({ children }) {
   const [annotationResult, setAnnotationResult] = useState([])  // アノテーション結果
   const [isDrawingActive, setIsDrawingActive] = useState(false) // 新規描画を行うかどうか
   const [inputWord, setInputWord] = useState('')  // 入力単語（ラベル名）
-
+  const { currentScene } = useCurrent ()
 
   useEffect(() => {
     console.log(annotationResult)
   }, [annotationResult])
 
+  // シーン変更でアノテーション結果を初期化
+  useEffect(() => {
+    setAnnotationResult([])
+  }, [currentScene])
 
   // アノテーション結果を格納する関数
   const storeAnnotationResult = (annoData, operation) => {
@@ -26,17 +31,16 @@ export default function AnnotationProvider({ children }) {
 
     switch (operation) {
       case 'delete':
-        console.log('delete');
         setAnnotationResult([...annotationResult, {...annoData, 'operation': 'delete', 'user': 'guest', 'timestamp': date}])
         break
       case 'add':
-        console.log('add');
         setAnnotationResult([...annotationResult, {...annoData, 'operation': 'add', 'user': 'guest', 'timestamp': date}])
         break
       case 'edit':
-        console.log('edit');
         setAnnotationResult([...annotationResult, {...annoData, 'operation': 'edit', 'user': 'guest', 'timestamp': date}])
         break
+      case 'moving_scaling':
+          setAnnotationResult([...annotationResult, {...annoData, 'operation': 'moving_scaling', 'user': 'guest', 'timestamp': date}])
       default:
         break
     }
@@ -51,8 +55,10 @@ export default function AnnotationProvider({ children }) {
   const updateLabelsData = (id, editingLabel) => {
     let tempData = { ...labelsData }  // ラベルデータのコピー
 
+    console.log(tempData[id].label_id, editingLabel.label_id);
     // 同じラベルなら何もしない
     if (tempData[id].label_id == editingLabel.label_id) {
+      console.log("何もしない");
       return
     }
 
@@ -83,6 +89,7 @@ export default function AnnotationProvider({ children }) {
     tempData[id].width = coordinate[2]
     tempData[id].height = coordinate[3]
     setLabelsData(tempData)
+    storeAnnotationResult(tempData[id], 'moving_scaling')
   }
 
   // ラベルデータを初期化する関数
@@ -167,6 +174,12 @@ export default function AnnotationProvider({ children }) {
       }
       // 保存成功メッセージを表示
       AlertSuccess(successData)
+
+      // 更新情報を設定
+      setOldLabels(labelsData)
+
+      // アノテーション結果を初期化
+      setAnnotationResult([])
     }
     // 保存に失敗した場合は、エラーメッセージを表示
     else {
@@ -177,9 +190,6 @@ export default function AnnotationProvider({ children }) {
       // 保存成功メッセージを表示
       AlertError(errorData)
     }
-
-    // 更新情報を設定
-    setOldLabels(labelsData)
   }
 
   return (
