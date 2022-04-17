@@ -11,6 +11,62 @@ app.use(bodyParser.json())
 app.use(cors())
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
+const createError = require('http-errors')
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const basicAuth = require('basic-auth')
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+// Basic Auth
+var allowedUsers = {
+  "guest": "password"
+}
+var judgeAllowedUse = function(credentials) {
+  if (!credentials) {
+    return false;
+  }
+  var username = credentials.name;
+  var password = credentials.pass;
+  var valid = true
+  valid = !!allowedUsers[username] && allowedUsers[username] === password && valid;
+  return valid;
+}
+
+app.use('/*', function (req, res, next) {
+  if (req.originalUrl !== '/top') {
+    next();
+  } else {
+    var credentials = basicAuth(req);
+    if (judgeAllowedUse(credentials)) {
+      next();
+    } else {
+      res.setHeader('WWW-Authenticate', 'Basic realm="tutorial"');
+      next(createError(401));
+    }
+  }
+});
+/*
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+*/
+
 // DBへの接続・認証
 const mysql = require("mysql");
 const pool = mysql.createPool({
@@ -278,15 +334,9 @@ app.get("/api/CM_Label", function (req, res) {
   )
 })
 
-
-
-
-// anotation
+// アノテーション結果を保存するAPI
 app.post('/api/storeDB', (req, res) => {
   const labelsData = req.body["data"]
-  console.log(req.body)
-  console.log(labelsData)
-
   const data = labelsData.map(item => {
     return [
       item.user,
@@ -301,12 +351,6 @@ app.post('/api/storeDB', (req, res) => {
       item.height
     ]
   })
-
-  console.log(data)
-
-  console.log("INSERT INTO annotation_result (user_id, timestamp, operation, video_id, scene_no, label_id, x_axis, y_axis, width, height)" +
-    "VALUES ?;", [data]);
-
   pool.query(
     "INSERT INTO annotation_result (user_id, timestamp, operation, video_id, scene_no, label_id, x_axis, y_axis, width, height)" +
     "VALUES ?;", [data],
@@ -316,7 +360,6 @@ app.post('/api/storeDB', (req, res) => {
     }
   )
 })
-
 
 // 静的ファイルを自動的に返すようルーティング
 app.use('/top', express.static('./public'))
