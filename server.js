@@ -253,7 +253,7 @@ app.get("/api/resultLabels/:id", function (req, res) {
 app.get("/api/resultFavo/:id", function (req, res) {
   const videoId = req.params.id
   pool.query(
-    "SELECT scene_favo.favo " +
+    "SELECT scene_favo.favo, scene_data.frame_num " +
     "FROM scene_favo " +
     "LEFT JOIN scene_data ON scene_favo.scene_favo_id = scene_data.scene_favo_id " +
     "LEFT JOIN score_category ON scene_favo.category = score_category.category " +

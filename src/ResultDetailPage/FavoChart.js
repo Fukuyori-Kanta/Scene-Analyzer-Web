@@ -9,8 +9,10 @@ import {
   Title,
   Tooltip,
   Legend,
+  TimeScale,
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
+import 'chartjs-adapter-moment';
 
 ChartJS.register(
   CategoryScale,
@@ -19,10 +21,11 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  TimeScale,
 )
 
-export default function FavoChart({ favoData }) {
+export default function FavoChart({ favoData, frameData }) {
   const { currentScene, changeCurrentScene } = useCurrent()
 
   // 全角 → 半角に変換する関数
@@ -32,12 +35,17 @@ export default function FavoChart({ favoData }) {
     })
   }
 
+  // フレーム数をそのシーンまでの時間（秒:ミリ秒 = ss:SSS）にする
+  let time = frameData.map((frame, index) => {
+    return (Math.round((frameData.slice(0, index + 1).reduce((sum, element) => sum + element, 0) / 30) * 1000) / 1000).toFixed(3);
+  })
+
   // x軸ラベル（シーン〇  〇は全角数字）
   const xAxisLabels = [...Array(favoData.length).keys()].map((d) => { return "シーン" + zenkaku2Hankaku(String(d + 1)); })
 
   // 描画するグラフのデータ
   const lineChartData = {
-    labels: xAxisLabels,
+    labels: time,
     datasets: [
       {
         label: '好感度',
@@ -56,12 +64,55 @@ export default function FavoChart({ favoData }) {
       legend: {
         display: false
       },
+      // ツールチップを数値からシーン数に変更
+      tooltip: {
+        callbacks: {
+          title: function (context) {
+            let title = ''
+
+            if (context[0].parsed.y !== null) {
+              title += xAxisLabels[context[0].dataIndex] // シーン数に変更
+            }
+            return title
+          }
+        }
+      }
     },
     // アニメーション無し
     animation: false,
     // 大きさ
     scales: {
+      x: {
+        // 軸ラベル表示
+        display: true,
+        title: {
+          display: true,
+          text: '秒',
+          font: { size: 14 },
+        },
+        // 時間軸の設定
+        type: 'time',
+        time: {
+          parser: 'ss.SSS',
+          unit: 'second',
+          stepSize: 1,
+          displayFormats: {
+            'second': 'ss'
+          }
+        },
+        // X軸の範囲を指定（maxはデータの最大値）
+        ticks: {
+          min: 0,
+          max: Math.round((time[time.length-1]))
+        }
+      },
       y: {
+        display: true,
+        title: {
+          display: true,
+          text: '好感度スコア',
+          font: { size: 14 },
+        },
         ticks: {
           min: 0,
           stepSize: 0.01,
