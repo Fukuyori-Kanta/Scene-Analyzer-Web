@@ -14,6 +14,7 @@ export default function LabelScreen({ videoId }) {
   const [isLabelEdit, setIsLabelEdit] = useState(false)
   const [editLabel, setEditLabel] = useState('')
   const [favoData, setFavoData] = useState([])
+  const [frameData, setframeData] = useState([])
 
   const { currentScene, currentLabel, changeCurrentLabel } = useCurrent()
   const { labelsData, setLabelsData, oldLabels, setOldLabels, updateLabelsData, deleteLabelData, checkWhetherAdd } = useAnnotation()
@@ -59,9 +60,15 @@ export default function LabelScreen({ videoId }) {
   useEffect(() => {
     const setFavo = async () => {
       // 好感度データを取得
-      const result = await getFavoData(videoId) 
+      const result = await getFavoData(videoId)
       const favoData = result.map(d => d["favo"]) // 好感度データ
+      const frameData = result.map(d => d["frame_num"])
+
+      // 先頭の値（0）を挿入
+      // favoData.unshift(0)
+      // frameData.unshift(0)
       setFavoData(favoData)
+      setframeData(frameData)
     }
     setFavo()
   }, [])
@@ -238,7 +245,7 @@ export default function LabelScreen({ videoId }) {
       <AnnotationButtonArea />
       <div id="labels">{labels}</div>
       <LabelInpuForm videoId={videoId} />
-      <FavoChart favoData={favoData} />
+      <FavoChart favoData={favoData} frameData={frameData} />
     </div>
   )
 }
