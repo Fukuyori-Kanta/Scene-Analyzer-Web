@@ -22,10 +22,6 @@ export default function CanvasProvider({ children }) {
   const canvasRef = useRef(null)  // 新規矩形描画キャンバスの要素を参照
   const [context, setContext] = useState(null)  // キャンバス管理用（2D レンダリングコンテキスト）
 
-  useEffect(() => {
-    console.log(labelsData)
-  }, [labelsData])
-
   // 2D レンダリングコンテキストが設定された時の処理
   useEffect(() => {
     if (canvasRef.current) {
@@ -378,8 +374,6 @@ export default function CanvasProvider({ children }) {
   const addPersonData = (currentId, person) => {
     const updateObj = rectCanvas.getObjects().find(obj => obj.id === currentId)
     const updateTextBox = updateObj._objects[1]  // 更新するテキストボックス
-
-    console.log(updateTextBox.text + '(' + person + ')')
 
     updateTextBox.set({
       text: updateTextBox.text + '(' + person + ') ',     // 塗潰し色
