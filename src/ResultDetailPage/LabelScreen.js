@@ -150,8 +150,8 @@ export default function LabelScreen({ videoId }) {
       // 編集状態を解除
       setIsLabelEdit(false)
 
+      // 編集ラベルが追加できるかチェック
       const editingLabel = await checkWhetherAdd(editLabel)
-      console.log(editingLabel)
 
       // 編集できる場合
       if (editingLabel) {

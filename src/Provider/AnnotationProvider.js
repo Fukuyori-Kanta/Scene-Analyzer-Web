@@ -16,10 +16,6 @@ export default function AnnotationProvider({ children }) {
   const [inputWord, setInputWord] = useState('')  // 入力単語（ラベル名）
   const { currentScene } = useCurrent ()
 
-  useEffect(() => {
-    console.log(annotationResult)
-  }, [annotationResult])
-
   // シーン変更でアノテーション結果を初期化
   useEffect(() => {
     setAnnotationResult([])
@@ -55,10 +51,8 @@ export default function AnnotationProvider({ children }) {
   const updateLabelsData = (id, editingLabel) => {
     let tempData = { ...labelsData }  // ラベルデータのコピー
 
-    console.log(tempData[id].label_id, editingLabel.label_id);
     // 同じラベルなら何もしない
     if (tempData[id].label_id == editingLabel.label_id) {
-      console.log("何もしない");
       return
     }
 
@@ -78,11 +72,7 @@ export default function AnnotationProvider({ children }) {
 
     // ラベル情報を更新
     if (!(id in tempData)) {
-      console.log("新規データ")
       return
-    }
-    else {
-      console.log("既存データ");
     }
     tempData[id].x_axis = coordinate[0]
     tempData[id].y_axis = coordinate[1]
@@ -130,24 +120,8 @@ export default function AnnotationProvider({ children }) {
   const sendAnnotationData = async () => {
     // 更新されている時のみ
     if (oldLabels == labelsData) {
-      console.log("更新されていない")
       return
     }
-    // console.log(oldLabels);
-
-    // console.log(labelsData);
-
-    // const array1 = Object.keys(labelsData).map(key => {
-    //   return labelsData[key]
-    // })
-
-    // const array2 = Object.keys(oldLabels).map(key => {
-    //   return oldLabels[key]
-    // })
-
-    // const diffLabels = array1.filter(item => JSON.stringify(array2).indexOf(JSON.stringify(item)) < 0); //itemの文字列表現を検索。
-    // console.log(diffLabels)
-
     // タイムアウト時間の設定（15秒）
     // const controller = new AbortController()
     // const timeout = setTimeout(() => { controller.abort() }, option.timeout || 15000)
