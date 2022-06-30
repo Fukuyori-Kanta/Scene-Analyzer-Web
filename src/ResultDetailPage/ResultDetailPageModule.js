@@ -11,6 +11,7 @@ import SwitchScreen from './SwitchScreen'
 import LabelScreen from './LabelScreen'
 import CurrentScene from './CurrentScene'
 import ContextMenuProvider from '../Provider/ContextMenuProvider'
+import LabelsCheckBox from './LabelsCheckBox'
 
 export default function ResultDetailPage() {
   const videoId = useParams().id  // 動画ID
@@ -45,10 +46,16 @@ function ResultDetailPageContents({ data }) {
       {/* パンくずリスト */}
       <Breadcrumbs productName={productName} />
 
-      {/* 作品名と現在のシーン数 */}
-      <div className="video-info">
-        <div id="file-name">{productName}</div>
-        <CurrentScene />
+      <div className='info-block'>
+        {/* 作品名と現在のシーン数 */}
+        <div className="video-info left">
+          <div id="file-name">{productName}</div>
+          <CurrentScene />
+        </div>
+
+        <div className='right'>
+          <LabelsCheckBox videoId={videoId}/>
+        </div>
       </div>
 
       {/* 動画データ（または画像データ＆バウンディングボックス）とラベルデータ */}
