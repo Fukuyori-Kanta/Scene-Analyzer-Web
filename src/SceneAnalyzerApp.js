@@ -2,6 +2,7 @@
 import { Routes, Route } from 'react-router-dom'
 import './css/style.css'
 import TopPage from './TopPage/TopPageModule'
+import LoginPage from './LoginPage/LoginPageModule'
 import TestPage from './TestPage/TestPageModule'
 import ResultsPage from './ResultsPage/ResultsPageModule'
 import ResultDetailPage from './ResultDetailPage/ResultDetailPageModule'
@@ -16,6 +17,7 @@ const SceneAnalyzerApp = () => (
     <Routes>
       <Route exact path='/' element={<TopPage />} />
       <Route path='/top' element={<TopPage />} />
+      <Route path='/login' element={<LoginPage />} />
       <Route path='/results'  element={<ResultsPage />} />
       <Route path='/search/:option/:words'  element={<ResultsPage />} />
       <Route path='/result/:id' element={<ResultDetailPage />} />
@@ -35,7 +37,7 @@ const Header = () => (
     <NaviMenu
       title="SceneAnalyzer"
       values="結果一覧,統計,新規分析,ラベル一覧"
-      herf="/results,/statistics,/newAnalysis,/test" />
+      herf="/results,/statistics,/newAnalysis,/labels" />
     {/* <HamburgerMenu /> */}
   </header>
 )

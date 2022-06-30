@@ -1653,3 +1653,42 @@ details[open] summary {
     transform: rotate(360deg);
   }
 }
+
+/* ログインページ */
+.login-container {
+  margin: 15px;
+}
+.login-container form {
+  max-width: 300px;
+}
+
+.login-container form input {
+  border: 2px solid #606060;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.login-container button {
+  border: 1px solid #606060;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+}
+
+.login-container button {
+  border: 1px solid #606060;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+  width: 75px;
+  height: 45px;
+}
+
+.login-container .submit-btn {
+  background-color: #a5d7f3;
+}
+
+.login-container .cancel-btn {
+  background-color: #606060;
+}

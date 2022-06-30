@@ -344,6 +344,7 @@ app.post("/api/storeDB", (req, res) => {
 
 // 静的ファイルを自動的に返すようルーティング
 app.use('/top', express.static('./public'))
+app.use('/login', express.static('./public'))
 app.use('/results', express.static('./public'))
 app.use('/result/:id', express.static('./public'))
 app.use('/statistics', express.static('./public'))
