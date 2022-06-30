@@ -342,6 +342,27 @@ app.post("/api/storeDB", (req, res) => {
   )
 })
 
+// ラベルチェック結果を保存するAPI
+app.post("/api/postLabelsChecked", (req, res) => {
+  const labelsCheckedData = req.body["data"]
+  console.log(labelsCheckedData);
+  const data = labelsCheckedData .map(item => {
+    return [
+      item.user_id,
+      item.video_id,
+      item.checked_time
+    ]
+  })
+  pool.query(
+    "INSERT INTO label_checked_cm (user_id, video_id, checked_time) " +
+    "VALUES ?", [data],
+    function (error, results) {
+      if (error) throw error
+      res.send(JSON.stringify({ "status": 200, "error": null, "response": results }))
+    }
+  )
+})
+
 // 静的ファイルを自動的に返すようルーティング
 app.use('/top', express.static('./public'))
 app.use('/login', express.static('./public'))

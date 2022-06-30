@@ -1692,3 +1692,76 @@ details[open] summary {
 .login-container .cancel-btn {
   background-color: #606060;
 }
+
+
+
+
+.right {
+  margin-left: auto;
+}
+.info-block {
+  display: flex;
+}
+
+
+
+.ECM_CheckboxInput {
+  padding: 0 18px 5px 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.ECM_CheckboxInput-Input {
+  margin: 0;
+  width: 0;
+  opacity: 0;
+}
+.ECM_CheckboxInput:hover > .ECM_CheckboxInput-DummyInput{
+  background: #CCffCC;
+}
+.ECM_CheckboxInput-Input:focus + .ECM_CheckboxInput-DummyInput{
+  background: #CCffCC;
+}
+.ECM_CheckboxInput-Input:checked + .ECM_CheckboxInput-DummyInput {
+  background: #55cc55;
+}
+.ECM_CheckboxInput-Input:checked + .ECM_CheckboxInput-DummyInput::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 35%;
+  height: 2px;
+  transform: translate(-5px, 6px) rotateZ(-135deg);
+  transform-origin: 1px 1px;
+  background: #FFFFFF;
+}
+.ECM_CheckboxInput-Input:checked + .ECM_CheckboxInput-DummyInput::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  height: 2px;
+  transform: translate(-5px, 6px) rotateZ(-45deg);
+  transform-origin: 1px 1px;
+  background: #FFFFFF;
+}
+.ECM_CheckboxInput-DummyInput {
+  position: relative;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 32px;
+  height: 32px;
+  background: #F5F5F5;
+  box-shadow: 0 1px 4px rgba(0,0,0, .4) inset;
+}
+.ECM_CheckboxInput-LabelText {
+  margin-left: 12px;
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+}
