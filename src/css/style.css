@@ -1765,3 +1765,26 @@ details[open] summary {
   font-size: 18px;
   font-weight: bold;
 }
+
+/* チェック済みCMアイコン */ 
+.contents {
+  display: inline-flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.icon {
+  background-color: #33cc99;
+  opacity: 0.8;
+  width: 25%;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+#check-icon {
+  font-size: 250%; 
+}

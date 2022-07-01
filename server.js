@@ -363,6 +363,20 @@ app.post("/api/postLabelsChecked", (req, res) => {
   )
 })
 
+// ラベルチェック済みCM一覧を返すAPI
+// WHEREでユーザーを絞る
+app.get("/api/getLabelsCheckedCM/", function (req, res) {
+  pool.query(
+    "SELECT video_id " +
+    "FROM label_checked_cm " +
+    "GROUP BY video_id",
+    function (error, results) {
+      if (error) throw error
+      res.send(results)
+    }
+  )
+})
+
 // 静的ファイルを自動的に返すようルーティング
 app.use('/top', express.static('./public'))
 app.use('/login', express.static('./public'))
