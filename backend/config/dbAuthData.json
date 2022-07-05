@@ -1,0 +1,6 @@
+{
+  "host": "localhost",
+  "user": "root",
+  "password": "mySql-888",
+  "database": "analysis_db"
+}

@@ -9,6 +9,8 @@ import ResultDetailPage from './ResultDetailPage/ResultDetailPageModule'
 import StatisticsPage from './StatisticsPage/StatisticsPageModule'
 import NewAnalysisPage from './NewAnalysisPage/NewAnalysisPageModule'
 import LabelListPage from './LabelListPage/LabelListPageModule'
+import UserPage from './UserPageModule'
+import NaviMenu from './components/NavigationManu'
 
 // React Routerを使ったメインコンポーネントの定義
 const SceneAnalyzerApp = () => (
@@ -18,8 +20,9 @@ const SceneAnalyzerApp = () => (
       <Route exact path='/' element={<TopPage />} />
       <Route path='/top' element={<TopPage />} />
       <Route path='/login' element={<LoginPage />} />
-      <Route path='/results'  element={<ResultsPage />} />
-      <Route path='/search/:option/:words'  element={<ResultsPage />} />
+      <Route path='/user' element={<UserPage />} />
+      <Route path='/results' element={<ResultsPage />} />
+      <Route path='/search/:option/:words' element={<ResultsPage />} />
       <Route path='/result/:id' element={<ResultDetailPage />} />
       <Route path='/statistics' element={<StatisticsPage />} />
       <Route path='/newAnalysis' element={<NewAnalysisPage />} />
@@ -72,36 +75,7 @@ const styleHeader = {
   color: 'white',
   padding: 8
 }
-class NaviMenu extends React.Component {
-  render() {
-    const values = this.props.values.split(",") // 遷移先ページ名
-    const herf = this.props.herf.split(",") // 遷移先パス
 
-    // 遷移先のページ名とパスの対応リスト作成関数
-    const zip = (...arrays) => {
-      const length = Math.min(...(arrays.map(arr => arr.length)))
-      return new Array(length).fill().map((_, i) => arrays.map(arr => arr[i]))
-    }
-
-    const items = zip(values, herf) // 遷移先のページ名とパスの対応リスト
-    const itemsObj = items.map(
-      (item) => {
-        return (
-          <li key={item[0]}>
-            <a href={item[1]}>{item[0]}</a>
-          </li>
-        )
-      })
-    let title = this.props.title  // タイトル
-    if (!title) title = "LIST"
-
-    return (
-      <div className="left-side">
-        <h1 className="headline"><a href="/top">{title}</a></h1>
-        <ul className="main-nav">{itemsObj}</ul>
-      </div>)
-  }
-}
 
 // ハンバーガーメニュー
 // const HamburgerMenu = () => {

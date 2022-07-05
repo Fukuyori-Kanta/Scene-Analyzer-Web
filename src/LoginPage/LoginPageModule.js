@@ -23,7 +23,7 @@ function LoginPageContents() {
   return (
     <div className="login-container">
       <h1>Login Page</h1>
-      <form role="form" action="/login" method="post">
+      <form role="form" action="/api/login" method="post">
         <div className="form-group">
           <input type="text" name="username" placeholder="Enter Username" className="form-control" />
         </div>
