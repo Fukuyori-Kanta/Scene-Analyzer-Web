@@ -90,6 +90,28 @@ img {
   display: flex;
 }
 
+.login-user-name {
+  margin-left: 36px;
+}
+
+.login-user-name p{
+  display:inline;
+  margin-left: 10px;
+  font-size: 1.25rem;
+  color: #ffffff;
+}
+.login-user-name p:hover{
+  color: #4699ca;
+}
+#user-icon {
+  font-size: 280%; 
+  color: #FFF;
+  padding: 10px 0 0 0;
+}
+#user-icon:hover {
+  color: #4699ca;
+}
+
 /* メニュー開閉ボタン */
 .menu-btn {
   position: absolute;
