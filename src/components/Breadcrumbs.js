@@ -8,7 +8,7 @@ import {
 export default function Breadcrumbs({ productName = '' }) {
   let location = useLocation()  // 現在のURL
   let currentPath = '/' + (location.pathname.split('/')[1]) // 現在のパス
- 
+
   // 結果詳細ページ(/result/:id)の前ページを結果一覧ページ(/results)に設定
   if (currentPath == '/result') {
     currentPath = '/results'
@@ -26,6 +26,12 @@ export default function Breadcrumbs({ productName = '' }) {
         return '結果一覧'
       case '/labels':
         return 'ラベル一覧'
+      case '/login':
+        return 'ログイン'
+      case '/user':
+        return 'ユーザー'
+      case '/regist':
+        return '新規登録'
       default:
         return 'テスト'
     }

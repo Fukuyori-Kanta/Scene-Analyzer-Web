@@ -22,6 +22,10 @@ export function useFetch(uri) {
   }
 }
 
-export function useNowDate() {
+export function useNowTime() {
   return formatToTimeZone(new Date(), 'YYYY-MM-DD HH:mm:ss', { timeZone: 'Asia/Tokyo' })
+}
+
+export function useNowDate() {
+  return formatToTimeZone(new Date(), 'YYYY-MM-DD', { timeZone: 'Asia/Tokyo' })
 }

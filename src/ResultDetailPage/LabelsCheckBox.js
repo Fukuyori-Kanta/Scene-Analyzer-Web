@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from 'react'
-import { useNowDate } from '../Provider/hooks'
+import { useNowTime } from '../Provider/hooks'
 
 export default function LabelsCheckBox({ videoId }) {
   const [labelsChecked, setLabelsChecked] = useState(false)
@@ -31,7 +31,7 @@ export default function LabelsCheckBox({ videoId }) {
     if (labelsChecked) {
 
       const userId = 'U00000'
-      const timestamp = useNowDate()
+      const timestamp = useNowTime()
       console.log({'user_id': userId, 'video_id': videoId, 'checked_time': timestamp });
 
       const response = await fetch(`/api/postLabelsChecked`, {
