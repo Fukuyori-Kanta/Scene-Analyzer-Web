@@ -59,11 +59,11 @@ var LocalStrategy = require('passport-local').Strategy
 var session = require('express-session')
 
 // セッションミドルウェア設定
-app.use(session({ resave: false, saveUninitialized: false, secret: 'passport test' })); // 追記
+app.use(session({ resave: false, saveUninitialized: false, secret: 'passport auth' }))
 
-app.use(passport.initialize());
-app.use(passport.session()); // 追記
-var LocalStrategy = require('passport-local').Strategy;
+app.use(passport.initialize())
+app.use(passport.session())
+var LocalStrategy = require('passport-local').Strategy
 
 passport.use(new LocalStrategy({
   usernameField: 'username',
@@ -73,32 +73,29 @@ passport.use(new LocalStrategy({
 }, function (req, username, password, done) {
   pool.query("select * from user_info;", function (err, users) {
     // usernameもpasswordもユニーク前提
-    var usernames = [];
-    var passwords = [];
+    var usernames = []
+    var passwords = []
     for (i = 0; i < users.length; i++) {
-      usernames.push(users[i].user_name);
-      // input(type="password")で渡される値はstringのようなので、
-      // データベースから取り出した値もstringにしています。
-      var pw = users[i].password.toString();
-      passwords.push(pw);
+      usernames.push(users[i].user_name)
+      var pw = users[i].password.toString()
+      passwords.push(pw)
     }
     if (usernames.includes(username) && passwords.includes(password)) {
-      console.log('ok');
-      return done(null, username);
+      console.log('success')
+      return done(null, username)
     }
-    console.log("ng");
-    return done(null, false, { message: "invalid" });
-  });
-
-}));
+    console.log("invalid")
+    return done(null, false, { message: "invalid" })
+  })
+}))
 
 passport.serializeUser(function (user, done) {
-  done(null, user);
-});
+  done(null, user)
+})
 
 passport.deserializeUser(function (user, done) {
-  done(null, user);
-});
+  done(null, user)
+})
 
 // APIの定義
 // 閲覧履歴（直近５件）を返すAPI
@@ -367,7 +364,6 @@ app.post("/api/storeDB", (req, res) => {
 // ラベルチェック結果を保存するAPI
 app.post("/api/postLabelsChecked", (req, res) => {
   const labelsCheckedData = req.body["data"]
-  console.log(labelsCheckedData);
   const data = labelsCheckedData.map(item => {
     return [
       item.user_id,
@@ -403,13 +399,13 @@ app.get("/api/getLabelsCheckedCM/", function (req, res) {
 app.get('/api/getUserName', function (req, res) {
   // ログイン済みの場合、ログイン時のユーザー名を返す
   if (req.user) {
-    res.send(JSON.stringify({ user: req.user }));
+    res.send(JSON.stringify({ user: req.user }))
   }
   // ログイン済みでない場合、ゲストのユーザー名を返す
   else {
-    res.send(JSON.stringify({ user: 'guest' }));
+    res.send(JSON.stringify({ user: 'guest' }))
   }
-});
+})
 
 // ログインフォームから送信された情報が正しいかチェックするAPI
 app.post('/api/login', passport.authenticate('local',
@@ -418,12 +414,55 @@ app.post('/api/login', passport.authenticate('local',
     failureRedirect: '/login',
     session: true
   }
-));
+))
+// app.post('/api/login', function(req, res, next) {
+//   passport.authenticate('local', function(err, user, info) {
+//     if (err) { return next(err)}
+//     if (!user) { return res.redirect('/top')}
+//     req.login(user, function(err) {
+//       if (err) { return next(err) }
+//       return res.redirect('/user')
+//     })
+//   })(req, res, next)
+// })
+
+// ユーザー名が登録済みであるかチェックするAPI
+app.get('/api/checkRegistered:user_name', function (req, res) {
+  const userName = req.params.user_name
+  pool.query(
+    "SELECT * " +
+    "FROM user_info " +
+    "WHERE user_name = '" + userName + "';",
+    function (error, results) {
+      if (error) throw error
+      res.send(results)
+    }
+  )
+})
+
+// ユーザー情報を登録するAPI
+app.post("/api/registUser", (req, res) => {
+  // 登録情報
+  const formData = [[
+    req.body.username,
+    req.body.password,
+    req.body.creation_date
+  ]]
+  pool.query(
+    "INSERT INTO user_info (user_name, password, creation_date) " +
+    "VALUES ?", [formData],
+    function (error, results) {
+      if (error) throw error
+      res.send(JSON.stringify({ "status": 200, "error": null, "response": results }))
+    }
+  )
+})
 
 // 静的ファイルを自動的に返すようルーティング
 app.use('/top', express.static('./public'))
 app.use('/login', express.static('./public'))
 app.use('/user', express.static('./public'))
+app.use('/regist', express.static('./public'))
 app.use('/results', express.static('./public'))
 app.use('/result/:id', express.static('./public'))
 app.use('/statistics', express.static('./public'))

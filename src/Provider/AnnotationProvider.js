@@ -2,7 +2,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import AlertSuccess from '../components/Alert/Success'
 import AlertError from '../components/Alert/Error'
-import { useNowDate } from './hooks'
+import { useNowTime } from './hooks'
 import { useCurrent } from './CurrentProvider'
 
 const AnnotationContext = createContext()
@@ -23,7 +23,7 @@ export default function AnnotationProvider({ children }) {
 
   // アノテーション結果を格納する関数
   const storeAnnotationResult = (annoData, operation) => {
-    const date = useNowDate()
+    const date = useNowTime()
 
     switch (operation) {
       case 'delete':
@@ -161,7 +161,7 @@ export default function AnnotationProvider({ children }) {
         title: '保存に失敗しました',
         text: '理由: ',
       }
-      // 保存成功メッセージを表示
+      // 保存失敗メッセージを表示
       AlertError(errorData)
     }
   }

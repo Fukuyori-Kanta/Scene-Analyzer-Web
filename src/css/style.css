@@ -66,6 +66,10 @@ img {
   color: #fff;
 }
 
+.left-side {
+  display: flex;
+}
+
 .main-nav {
   display: flex;
   font-size: 1.25rem;
@@ -86,12 +90,12 @@ img {
   color: #4699ca;
 }
 
-.left-side {
+.right-side {
   display: flex;
+  margin-left: auto;
 }
-
 .login-user-name {
-  margin-left: 36px;
+  margin-right: 10px;
 }
 
 .login-user-name p{
@@ -112,64 +116,25 @@ img {
   color: #4699ca;
 }
 
-/* メニュー開閉ボタン */
-.menu-btn {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  z-index: 6;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #888;
-  color: #fff;
+.dropdown-button {
+  color: #FFF;
+  margin-top: 15px;
+  margin-right: 50px;
+  font-size: 200%;
 }
-
-/* メニュー本体 */
-.menu {
-  position: fixed;
-  top: 30px;
-  right: 0;
-  z-index: 5;
-  width: 30vw;
-  height: calc(100vh - 40px);
+.dropdown-menu {
   list-style: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #555;
+  position:absolute;
+  padding: 10px;
+  background-color: #333;
+  z-index: 20;
+  top: 52px;
+  right: 0%;
 }
-
-.menu-item {
-  width: 100%;
-  height: auto;
-  padding: .5em 1em;
-  text-align: center;
-  color: #fff;
-  box-sizing: border-box;
-}
-
-.menu-item a {
-  color: #fff;
-}
-
-.menu-item a:hover {
-  color: #4699ca;
-}
-
-/* アニメーション部分 */
-/* アニメーション前のメニューの状態 */
-.menu {
-  transform: translateX(100vw);
-  transition: all .3s linear;
-}
-
-/* アニメーション後のメニューの状態 */
-.menu.is-active {
-  transform: translateX(0);
+.dropdown-list p {
+  font-size: 1.125rem;
+  color: #FFF;
+  margin: 10px;
 }
 
 /* パンくずリスト
@@ -1677,7 +1642,7 @@ details[open] summary {
 }
 
 /* ログインページ */
-.login-container {
+/* .login-container {
   margin: 15px;
 }
 .login-container form {
@@ -1709,24 +1674,61 @@ details[open] summary {
 
 .login-container .submit-btn {
   background-color: #a5d7f3;
+} */
+
+.form-container {
+  margin: 15px;
+  max-width: 300px;
 }
 
-.login-container .cancel-btn {
-  background-color: #606060;
+.form-container .form-group {
+  margin-top: 15px;
 }
 
-
-
-
-.right {
-  margin-left: auto;
-}
-.info-block {
-  display: flex;
+.form-container input {
+  border: 2px solid #606060;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 5px;
 }
 
+.form-container button {
+  border: 1px solid #606060;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+}
 
+.form-container button {
+  border: 1px solid #606060;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 10px;
+  width: 100px;
+  height: 45px;
+}
 
+.form-container .submit-btn {
+  background-color: #a5d7f3;
+}
+
+/* ユーザー登録ページ */
+.regist-guidance .link {
+  text-decoration: none;
+  color: #00f;
+}
+.regist-guidance {
+  margin-left: 10px;
+  font-size: 1.125rem;
+}
+
+/* ユーザーページ */
+.user-page .greeting {
+  margin: 10px;
+  font-size: 1.25rem;
+}
+
+/* CMチェック */
 .ECM_CheckboxInput {
   padding: 0 18px 5px 10px;
   display: flex;
