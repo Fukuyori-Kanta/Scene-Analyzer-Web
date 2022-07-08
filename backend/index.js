@@ -382,11 +382,12 @@ app.post("/api/postLabelsChecked", (req, res) => {
 })
 
 // ラベルチェック済みCM一覧を返すAPI
-// WHEREでユーザーを絞る
-app.get("/api/getLabelsCheckedCM/", function (req, res) {
+app.get("/api/getLabelsCheckedCM/:id", function (req, res) {
+  const userId = req.params.id // ユーザー名
   pool.query(
     "SELECT video_id " +
     "FROM label_checked_cm " +
+    "WHERE user_id = '" + userId + "' " +
     "GROUP BY video_id",
     function (error, results) {
       if (error) throw error
@@ -406,6 +407,25 @@ app.get('/api/getUserName', function (req, res) {
     res.send(JSON.stringify({ user: 'guest' }))
   }
 })
+
+// ログインしたユーザー名を返すAPI
+app.get('/api/getLoggingInUserId/:name', function (req, res) {
+  const userName = req.params.name // ユーザー名
+
+  pool.query(
+    "SELECT user_id " +
+    "FROM user_info " +
+    "WHERE user_id = (" +
+      "SELECT user_id " +
+      "FROM user_info " +
+      "WHERE user_name = '" + userName + "');",
+    function (error, results) {
+      if (error) throw error
+      res.send(results)
+    }
+  )
+})
+
 
 // ログインフォームから送信された情報が正しいかチェックするAPI
 app.post('/api/login', passport.authenticate('local',

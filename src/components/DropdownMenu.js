@@ -12,8 +12,8 @@ export default function DropdownMenu() {
   // ユーザー名を取得する処理
   useEffect(() => {
     (async () => {
-      const UserName= await getUserName()
-      setUserName(UserName)
+      const userName= await getUserName()
+      setUserName(userName)
     })()
   }, [])
 
