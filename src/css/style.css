@@ -1729,6 +1729,12 @@ details[open] summary {
 }
 
 /* CMチェック */
+.info-block {
+  display: flex;
+}
+.info-block .right {
+  margin-left: auto;
+}
 .ECM_CheckboxInput {
   padding: 0 18px 5px 10px;
   display: flex;

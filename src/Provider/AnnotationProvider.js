@@ -14,29 +14,47 @@ export default function AnnotationProvider({ children }) {
   const [annotationResult, setAnnotationResult] = useState([])  // アノテーション結果
   const [isDrawingActive, setIsDrawingActive] = useState(false) // 新規描画を行うかどうか
   const [inputWord, setInputWord] = useState('')  // 入力単語（ラベル名）
-  const { currentScene } = useCurrent ()
+  const { currentScene } = useCurrent()
 
   // シーン変更でアノテーション結果を初期化
   useEffect(() => {
     setAnnotationResult([])
   }, [currentScene])
 
+  // ログイン時のユーザー名を取得する関数
+  const getUserName = async () => {
+    let res = await fetch(`/api/getUserName/`)
+    let results = await res.json()
+
+    return results.user
+  }
+  // ログイン中のユーザーのIDを取得する関数
+  const getLoggingInUser = async (userName) => {
+    let res = await fetch(`/api/getLoggingInUserId/` + userName)
+    let results = await res.json()
+
+    return results[0].user_id
+  }
+
   // アノテーション結果を格納する関数
-  const storeAnnotationResult = (annoData, operation) => {
+  const storeAnnotationResult = async (annoData, operation) => {
     const date = useNowTime()
+
+    const userName = await getUserName() // ユーザー名の取得
+    const userId = await getLoggingInUser(userName) // ユーザーID
 
     switch (operation) {
       case 'delete':
-        setAnnotationResult([...annotationResult, {...annoData, 'operation': 'delete', 'user': 'guest', 'timestamp': date}])
+        setAnnotationResult([...annotationResult, { ...annoData, 'operation': 'delete', 'user': userId, 'timestamp': date }])
         break
       case 'add':
-        setAnnotationResult([...annotationResult, {...annoData, 'operation': 'add', 'user': 'guest', 'timestamp': date}])
+        setAnnotationResult([...annotationResult, { ...annoData, 'operation': 'add', 'user': userId, 'timestamp': date }])
         break
       case 'edit':
-        setAnnotationResult([...annotationResult, {...annoData, 'operation': 'edit', 'user': 'guest', 'timestamp': date}])
+        setAnnotationResult([...annotationResult, { ...annoData, 'operation': 'edit', 'user': userId, 'timestamp': date }])
         break
       case 'moving_scaling':
-          setAnnotationResult([...annotationResult, {...annoData, 'operation': 'moving_scaling', 'user': 'guest', 'timestamp': date}])
+        setAnnotationResult([...annotationResult, { ...annoData, 'operation': 'moving_scaling', 'user': userId, 'timestamp': date }])
       default:
         break
     }
@@ -176,7 +194,7 @@ export default function AnnotationProvider({ children }) {
       setIsDrawingActive,
       inputWord,
       setInputWord,
-      storeAnnotationResult, 
+      storeAnnotationResult,
       addLabelsData,
       updateLabelsData,
       updateRectData,
