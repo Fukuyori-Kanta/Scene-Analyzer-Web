@@ -1,10 +1,12 @@
 ﻿import React from 'react'
-import { ContextMenu, MenuItem } from "react-contextmenu"
-import { RiFileCopyLine, RiDeleteBin6Line } from 'react-icons/ri'
-import { BsBack } from 'react-icons/bs'
-import { BiEdit } from 'react-icons/bi'
-import { GiCharacter } from 'react-icons/gi'
 import { useCanvas } from '../Provider/CanvasProvider'
+import { ContextMenu, MenuItem } from "react-contextmenu"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCopy } from '@fortawesome/free-solid-svg-icons/faCopy'
+import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash'
+import { faUserEdit } from '@fortawesome/free-solid-svg-icons/faUserEdit'
+import { faPenSquare } from '@fortawesome/free-solid-svg-icons/faPenSquare'
+import { faSquare } from '@fortawesome/free-solid-svg-icons/faSquare'
 
 export default function ContextMenuBody() {
   const { copyAndPaste, editLabelData, makeBack, setFamousPerson, deleteObject } = useCanvas()
@@ -12,26 +14,26 @@ export default function ContextMenuBody() {
   return (
     <ContextMenu id="contextmenu" >
       <MenuItem data={{ copy: 'MI50' }} onClick={copyAndPaste}>
-        <RiFileCopyLine className="copy-paste" />
+        <FontAwesomeIcon icon={faCopy} />
         <span>コピー &amp; ペースト</span>
       </MenuItem>
       <MenuItem onClick={editLabelData}>
-        <BiEdit className="label-edit" />
+        <FontAwesomeIcon icon={faPenSquare} className="label-edit" />
         <span>ラベル名を編集</span>
       </MenuItem>
       <MenuItem onClick={setFamousPerson}>
-        <GiCharacter className="famous-person" />
+        <FontAwesomeIcon icon={faUserEdit} className="famous-person" />
         <span>有名人の名前を入力</span>
       </MenuItem>
       <MenuItem onClick={makeBack}>
-        <BsBack className="move-back" />
+        <FontAwesomeIcon icon={faSquare} id="forward" className="move-back" />
+        <FontAwesomeIcon icon={faSquare} id="back" className="move-back" />
         <span>最背面へ移動</span>
       </MenuItem>
       <MenuItem onClick={deleteObject}>
-        <RiDeleteBin6Line className="delete" />
+        <FontAwesomeIcon icon={faTrash} className="delete" />
         <span>削除</span>
       </MenuItem>
     </ContextMenu>
-
   )
 }

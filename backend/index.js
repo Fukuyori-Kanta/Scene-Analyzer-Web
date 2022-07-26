@@ -154,7 +154,7 @@ app.get("/api/results/label-name/:words", function (req, res) {
     "WHERE scene_label.scene_label_id in ( " +
     "SELECT DISTINCT(scene_label_id) FROM scene_label " +
     "WHERE label_name_ja = '" + words[0] + "')) " +
-    "GROUP BY works_data.video_id "
+    "GROUP BY works_data.video_id, works_data.product_name "
 
   let qry2 = "SELECT works_data.video_id, works_data.product_name  " +
     "FROM scene_data INNER JOIN works_data ON scene_data.video_id = works_data.video_id " +
@@ -168,7 +168,7 @@ app.get("/api/results/label-name/:words", function (req, res) {
     "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
     "WHERE label_list.label_name_ja = '" + words[1] + "') As t2 " +
     "WHERE t1.scene_label_id = t2.scene_label_id )) " +
-    "GROUP BY works_data.video_id "
+    "GROUP BY works_data.video_id, works_data.product_name "
 
   let qry3 = "SELECT works_data.video_id, works_data.product_name " +
     "FROM scene_data INNER JOIN works_data ON scene_data.video_id = works_data.video_id " +
@@ -184,7 +184,7 @@ app.get("/api/results/label-name/:words", function (req, res) {
     "(SELECT DISTINCT(scene_label_id) FROM scene_label INNER JOIN label_list ON scene_label.label_id = label_list.label_id " +
     "WHERE label_list.label_name_ja = '" + words[2] + "') As t3 " +
     "WHERE t1.scene_label_id = t2.scene_label_id AND t2.scene_label_id = t3.scene_label_id)) " +
-    "GROUP BY works_data.video_id "
+    "GROUP BY works_data.video_id, works_data.product_name "
 
   // 単語数による判定
   switch (words.length) {
