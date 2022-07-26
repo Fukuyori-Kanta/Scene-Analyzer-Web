@@ -1,5 +1,7 @@
 const path = require('path')
 
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+
 module.exports = {
   entry: path.join(__dirname, 'src/index.js'),
   output: {
@@ -31,7 +33,7 @@ module.exports = {
       },
       {
         //ローダの処理対象ファイル
-        test:/\.(png|jpg|gif)$/i,
+        test: /\.(png|jpg|gif)$/i,
         //ローダの処理対象となるディレクトリ
         include: path.resolve(__dirname, 'public'),
         //利用するローダー
@@ -44,19 +46,10 @@ module.exports = {
     buildDependencies: {
       config: [__filename]
     }
-  },/*
-  // モード値を production に設定すると最適化された状態で、
-  // development に設定するとソースマップ有効でJSファイルが出力される
-  mode: "development",
-
-  // ローカル開発用環境を立ち上げる
-  // 実行時にブラウザが自動的に localhost を開く
-  devServer: {
-    static: {
-      directory: path.resolve(__dirname, 'public'),
-    },
-    open: true, 
-    port: 3001
-  }*/
+  },
+  // バンドルファイルのサイズ割合を表示（※確認時以外はコメントアウト）
+  plugins: [
+    new BundleAnalyzerPlugin()
+  ]
 }
 

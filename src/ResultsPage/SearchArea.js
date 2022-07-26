@@ -1,6 +1,6 @@
 ﻿import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch'
 import { useSearch } from '../Provider/SearchProvider'
 import { useNavigate } from 'react-router'
 import { usePagination } from '../Provider/PaginationProvider'

@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react'
 import Thumbnail from './Thumbnail'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck'
 
 export default function VideoList({ dataList, id }) {
   const [labelsCheckedCM, setLabelsCheckedCM] = useState([])  // チェック済みCMの一覧

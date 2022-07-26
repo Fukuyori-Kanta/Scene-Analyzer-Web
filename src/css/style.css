@@ -994,18 +994,15 @@ nav.react-contextmenu {
   border-radius: 4px;
   background-color: #fff;
   padding: 10px 0;
-  z-index: 99;
+  z-index: 10;
   box-shadow: 0 0 20px rgba(0, 0, 0, .2);
 }
-
 .react-contextmenu .react-contextmenu-item:hover {
   background: #cccccc;
 }
-
 .react-contextmenu-item:hover:not(.react-contextmenu-item--disabled) {
   background-color: #f1f1f1;
 }
-
 .react-contextmenu .react-contextmenu-item {
   font-size: 14px;
   display: block;
@@ -1021,15 +1018,25 @@ nav.react-contextmenu {
   align-items: center;
   outline: none;
 }
-
 .react-contextmenu-item span {
   margin-left: 10px;
 }
-
 .react-contextmenu-item svg {
   font-size: 14px;
 }
-
+.react-contextmenu-item #forward{
+  color:#aaa;
+  font-size: 80%;
+  margin-top: 6px;
+  margin-left: -3px;
+}
+.react-contextmenu-item #back{
+  font-size: 80%;
+  margin-left: -5px;
+}
+.react-contextmenu-item .famous-person{
+  font-size: 80%;
+}
 .react-contextmenu-item .delete {
   color: red
 }

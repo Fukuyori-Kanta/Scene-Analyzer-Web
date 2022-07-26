@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect, useRef } from "react"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons/faCaretDown'
 import { Link } from 'react-router-dom'
 import LoginUserName from "./LoginUserName"
 
@@ -35,9 +35,9 @@ export default function DropdownMenu() {
   // 他の要素をクリックした時の処理
   const handleOutsideClick = (e) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-      setIsOpen(false);
+      setIsOpen(false)
     }
-  };
+  }
   
   return (
     <div className="right-side" ref={dropdownRef}>
