@@ -1,25 +1,27 @@
-﻿import React from "react"
-import { Fetch } from "../Provider/Fetch"
+﻿import React, { useLayoutEffect } from 'react'
+import { useLoggingInUser } from '../Provider/hooks'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SubTitle from '../components/SubTitle'
 
 export default function UserPage() {
   return (
-    <Fetch
-      uri={`/api/getUserName`}
-      renderSuccess={UserPageContents}
-    />
+    <UserPageContents />
   )
 }
 
-function UserPageContents({ data }) {
-  const userName = data.user  // ユーザー名
-  
+function UserPageContents() {
+  const [userInfo, setLoggingInUserInfo] = useLoggingInUser() // ログイン中のユーザー情報
+
+  // ログイン中のユーザー情報を設定
+  useLayoutEffect(() => {
+    setLoggingInUserInfo()
+  }, [])
+
   return (
     <div className="user-page">
       <Breadcrumbs />
       <SubTitle heading="ユーザーページ" />
-      <div className="greeting">ようこそ {userName} さん</div>
+      <div className="greeting">ようこそ {userInfo.user_name} さん</div>
     </div>
   )
 }

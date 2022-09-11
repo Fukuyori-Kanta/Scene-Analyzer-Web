@@ -1,52 +1,32 @@
-﻿import React from "react"
-import { Fetch } from "../Provider/Fetch"
-import Breadcrumbs from '../components/Breadcrumbs'
-import SceneList from '../ResultDetailPage/SceneList'
-import CurrentProvider from '../Provider/CurrentProvider'
-import ModeProvider from '../Provider/ModeProvider'
-import AnnotationProvider from '../Provider/AnnotationProvider'
-import CanvasProvider from "../Provider/CanvasProvider"
-import SwitchScreen from '../ResultDetailPage/SwitchScreen'
-import LabelScreen from "../ResultDetailPage/LabelScreen"
+﻿import React, { useLayoutEffect } from 'react'
+import { useLoggingInUser } from '../Provider/hooks'
 
 export default function TestPage() {
-  const videoId = 'A211079487'
-
   return (
-    <Fetch
-      uri={`/api/CM_Label`}
-      renderSuccess={TestPageContents}
-    />
+    <TestPageContents />
   )
 }
 
-function TestPageContents({ data }) {
-  
-  // 重複を削除
-  const result = data.filter((element, index, self) =>
-    self.findIndex(e =>
-      e.label_name_ja === element.label_name_ja
-    ) === index
-  )
+function TestPageContents() {
+  const [userInfo, setLoggingInUserInfo] = useLoggingInUser() // ログイン中のユーザー情報
 
-  // CMに付与するラベル一覧
-  const CM_Label = result.map(label => {
-    const labelId = label.label_id // ラベルID
-    return (
-      <div key={labelId} className="label-item">
-        <h3 className={(labelId[0] == 'V') ? "action-label" : "label"}>
-          {label.label_name_ja}
-        </h3>
-      </div>
-    )
-  })
+  // ログイン中のユーザー情報を設定
+  useLayoutEffect(() => {
+    setLoggingInUserInfo()
+  }, [])
 
-  /* 各種データの表示 */
+  const clickEvent = () => {
+    setLoggingInUserInfo()
+  }
+
   return (
-    
-    <div id="labels">
-      {CM_Label}
+    <>
+      <h1>
+        {userInfo.user_name}
+      </h1>
+      <button onClick={clickEvent}>asd</button>
+    </>
 
-    </div>
   )
+
 }

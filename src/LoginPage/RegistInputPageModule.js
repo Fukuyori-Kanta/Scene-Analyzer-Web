@@ -1,10 +1,10 @@
-﻿import React, { useState, useEffect, useRef } from "react"
-import { Fetch } from "../Provider/Fetch"
+﻿import React, { useState } from 'react'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SubTitle from '../components/SubTitle'
 import AlertSuccess from '../components/Alert/Success'
 import AlertError from '../components/Alert/Error'
-import { useNowDate } from "../Provider/hooks"
+import { useNowDate } from '../Provider/hooks'
+import { useNavigate } from 'react-router'
 
 export default function RegistInputPage() {
   return (
@@ -15,6 +15,7 @@ export default function RegistInputPage() {
 function RegistInputPageContents() {
   const [formData, setFormData] = useState({ username: '', password: '' })  // フォームデータ
   const passwordSize = 6  // 6文字以上
+  const navigate = useNavigate()  // ページ遷移用
 
   // フォームデータを更新する関数
   const handleChange = (e) => {
@@ -78,12 +79,12 @@ function RegistInputPageContents() {
       // 登録成功メッセージを表示
       AlertSuccess(successData)
 
-      // TOPページに遷移
+      // ログインページに遷移
       setTimeout(() => {
-        window.location.href = "/login"
+        navigate(`/login/`)
       }, 3 * 1000)
     }
-    // 保存に失敗した場合は、エラーメッセージを表示
+    // 登録に失敗した場合は、エラーメッセージを表示
     else {
       const errorData = {
         title: '登録に失敗しました',
@@ -113,6 +114,5 @@ function RegistInputPageContents() {
         </div>
       </div>
     </div>
-
   )
 }

@@ -13,9 +13,7 @@ document.oncontextmenu = function () {
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-
       <SceneAnalyzerApp />
-
     </Router>
   </React.StrictMode>,
   document.getElementById('root')
