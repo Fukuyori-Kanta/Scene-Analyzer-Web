@@ -1,14 +1,15 @@
-﻿import React, { createContext, useState, useContext, useEffect } from 'react'
+﻿import React, { createContext, useState, useContext, useEffect, useLayoutEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import AlertSuccess from '../components/Alert/Success'
 import AlertError from '../components/Alert/Error'
-import { useNowTime } from './hooks'
+import { useNowTime, useLoggingInUser } from './hooks'
 import { useCurrent } from './CurrentProvider'
 
 const AnnotationContext = createContext()
 export const useAnnotation = () => useContext(AnnotationContext)
 
 export default function AnnotationProvider({ children }) {
+  const [userInfo, setLoggingInUserInfo] = useLoggingInUser()  // ログイン時のユーザー情報
   const [labelsData, setLabelsData] = useState({})   // ラベルデータ
   const [oldLabels, setOldLabels] = useState({})     // ラベルデータの初期値
   const [annotationResult, setAnnotationResult] = useState([])  // アノテーション結果
@@ -16,32 +17,20 @@ export default function AnnotationProvider({ children }) {
   const [inputWord, setInputWord] = useState('')  // 入力単語（ラベル名）
   const { currentScene } = useCurrent()
 
+  // ログイン中のユーザー情報を設定
+  useLayoutEffect(() => {
+    setLoggingInUserInfo()
+  }, [])
+
   // シーン変更でアノテーション結果を初期化
   useEffect(() => {
     setAnnotationResult([])
   }, [currentScene])
 
-  // ログイン時のユーザー名を取得する関数
-  const getUserName = async () => {
-    let res = await fetch(`/api/getUserName/`)
-    let results = await res.json()
-
-    return results.user
-  }
-  // ログイン中のユーザーのIDを取得する関数
-  const getLoggingInUser = async (userName) => {
-    let res = await fetch(`/api/getLoggingInUserId/` + userName)
-    let results = await res.json()
-
-    return results[0].user_id
-  }
-
   // アノテーション結果を格納する関数
   const storeAnnotationResult = async (annoData, operation) => {
-    const date = useNowTime()
-
-    const userName = await getUserName() // ユーザー名の取得
-    const userId = await getLoggingInUser(userName) // ユーザーID
+    const date = useNowTime() // 現在時刻
+    const userId = userInfo.user_id // ユーザーID
 
     switch (operation) {
       case 'delete':
@@ -136,7 +125,12 @@ export default function AnnotationProvider({ children }) {
 
   // ラベルデータをサーバーに送信する関数
   const sendAnnotationData = async () => {
-    // 更新されている時のみ
+    // ゲストアカウントの場合は送信しない
+    if (userInfo.user_name == 'guest') {
+      return 
+    } 
+
+    // 更新されてない場合は送信しない
     if (oldLabels == labelsData) {
       return
     }

@@ -1,15 +1,22 @@
-﻿import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
-import { useNowTime } from '../Provider/hooks'
+﻿import React, { useState, useEffect, useLayoutEffect } from 'react'
+import { useNowTime, useLoggingInUser } from '../Provider/hooks'
 
 export default function LabelsCheckBox({ videoId }) {
-  const [labelsChecked, setLabelsChecked] = useState(false) // ラベルがチェック済みであるかどうか
-  const [userCheck, setUserCheck] = useState(false) // ユーザーがチェックしたかどうか
+  const [userInfo, setLoggingInUserInfo] = useLoggingInUser()  // ログイン時のユーザー情報
+  const [labelsChecked, setLabelsChecked] = useState(false)    // ラベルがチェック済みであるかどうか
+  const [userCheck, setUserCheck] = useState(false)            // ユーザーがチェックしたかどうか
 
+  // チェック済みかどうかを取得
   useLayoutEffect(() => {
     (async () => {
       const isChecked = await isLabelsChecked()
       setLabelsChecked(isChecked)
     })()
+  }, [])
+
+  // ログイン中のユーザー情報を設定
+  useLayoutEffect(() => {
+    setLoggingInUserInfo()
   }, [])
 
   useEffect(() => {
@@ -29,8 +36,7 @@ export default function LabelsCheckBox({ videoId }) {
 
   // 表示中のCMがチェック済みであるかどうか確認する関数
   const isLabelsChecked = async () => {
-    const userName = await getUserName() // ユーザー名の取得
-    const userId = await getLoggingInUser(userName)
+    const userId = userInfo.user_id     // ユーザーID
 
     let res = await fetch(`/api/getLabelsCheckedCM/` + userId)
     let results = await res.json()
@@ -45,32 +51,17 @@ export default function LabelsCheckBox({ videoId }) {
     }
   }
 
-  // ログイン時のユーザー名を取得する関数
-  const getUserName = async () => {
-    let res = await fetch(`/api/getUserName/`)
-    let results = await res.json()
-
-    return results.user
-  }
-
-  // ログイン中のユーザーのIDを取得する関数
-  const getLoggingInUser = async (userName) => {
-    let res = await fetch(`/api/getLoggingInUserId/` + userName)
-    let results = await res.json()
-
-    return results[0].user_id
-  }
-
   // チェックした動画とユーザー、時刻を送信する関数
   const postLabelsChecked = async () => {
-    const userName = await getUserName() // ユーザー名の取得
+    const userId = userInfo.user_id     // ユーザーID
+    const userName = userInfo.user_name // ユーザー名
+
     // ゲストアカウントの場合は何もしない
     if (userName == 'guest') {
       return
     }
 
-    const userId = await getLoggingInUser(userName)
-    const timestamp = useNowTime()
+    const timestamp = useNowTime()      // 現在時刻
     console.log({ 'user_id': userId, 'video_id': videoId, 'checked_time': timestamp });
 
     const response = await fetch(`/api/postLabelsChecked`, {

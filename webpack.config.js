@@ -48,8 +48,14 @@ module.exports = {
     }
   },
   // バンドルファイルのサイズ割合を表示（※確認時以外はコメントアウト）
-  plugins: [
-    new BundleAnalyzerPlugin()
-  ]
+  // plugins: [
+  //   new BundleAnalyzerPlugin()
+  // ]
+  // devServer: {
+  //   static: './public/', 
+  //   open: true,
+  //   host: '127.0.0.1',
+  //   port: 3001
+  // }
 }
 

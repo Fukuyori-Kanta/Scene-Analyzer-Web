@@ -30,7 +30,7 @@ const SceneAnalyzerApp = () => (
       <Route path='/statistics' element={<StatisticsPage />} />
       <Route path='/newAnalysis' element={<NewAnalysisPage />} />
       <Route path='/labels' element={<LabelListPage />} />
-      {/* <Route path='/test'  element={<TestPage />} /> */}
+      <Route path='/test' element={<TestPage />} />
       <Route element={<NotFound />} />
     </Routes>
     {/* <Footer /> */}

@@ -396,55 +396,41 @@ app.get("/api/getLabelsCheckedCM/:id", function (req, res) {
   )
 })
 
-// ログインしたユーザー名を返すAPI
-app.get('/api/getUserName', function (req, res) {
-  // ログイン済みの場合、ログイン時のユーザー名を返す
+// ログインしたユーザー情報を返すAPI
+app.get('/api/getUserInfo', function (req, res) {
+  // ログイン済みの場合
   if (req.user) {
-    res.send(JSON.stringify({ user: req.user }))
-  }
-  // ログイン済みでない場合、ゲストのユーザー名を返す
-  else {
-    res.send(JSON.stringify({ user: 'guest' }))
-  }
-})
-
-// ログインしたユーザー名を返すAPI
-app.get('/api/getLoggingInUserId/:name', function (req, res) {
-  const userName = req.params.name // ユーザー名
-
-  pool.query(
-    "SELECT user_id " +
-    "FROM user_info " +
-    "WHERE user_id = (" +
+    pool.query(
       "SELECT user_id " +
       "FROM user_info " +
-      "WHERE user_name = '" + userName + "');",
-    function (error, results) {
-      if (error) throw error
-      res.send(results)
-    }
-  )
+      "WHERE user_id = (" +
+        "SELECT user_id " +
+        "FROM user_info " +
+        "WHERE user_name = '" + req.user + "');",
+      function (error, results) {
+        if (error) throw error
+        // 該当のIDと名前を返す
+        res.send(JSON.stringify({ user_id: results[0].user_id, user_name: req.user }))
+      }
+    )
+  }
+  // ログイン済みでない場合、ゲスト情報を返す
+  else {
+    res.send(JSON.stringify({ user_id: 5, user_name: 'guest' }))
+  }
 })
 
 
 // ログインフォームから送信された情報が正しいかチェックするAPI
-app.post('/api/login', passport.authenticate('local',
-  {
-    successRedirect: '/user',
-    failureRedirect: '/login',
-    session: true
+app.post('/api/login', passport.authenticate('local'),
+  function(req, res) {
+    // 認証チェック
+    if (req.isAuthenticated()) {
+      // 正しい場合は成功レスポンスを返す
+      res.send(200)
+    }
   }
-))
-// app.post('/api/login', function(req, res, next) {
-//   passport.authenticate('local', function(err, user, info) {
-//     if (err) { return next(err)}
-//     if (!user) { return res.redirect('/top')}
-//     req.login(user, function(err) {
-//       if (err) { return next(err) }
-//       return res.redirect('/user')
-//     })
-//   })(req, res, next)
-// })
+)
 
 // ユーザー名が登録済みであるかチェックするAPI
 app.get('/api/checkRegistered:user_name', function (req, res) {
@@ -489,6 +475,7 @@ app.use('/statistics', express.static('./public'))
 app.use('/newAnalysis', express.static('./public'))
 app.use('/labels', express.static('./public'))
 app.use('/search/:option/:word', express.static('./public'))
+app.use('/test', express.static('./public'))
 app.use('/', (req, res) => {
   res.redirect(302, '/top')
 })
