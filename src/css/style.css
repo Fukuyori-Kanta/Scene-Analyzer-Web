@@ -136,6 +136,9 @@ img {
   color: #FFF;
   margin: 10px;
 }
+.dropdown-list p:hover {
+  cursor: pointer;
+}
 
 /* パンくずリスト
 ------------------------------- */
