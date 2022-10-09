@@ -35,7 +35,7 @@ export function useNowTime() {
 
 // 初期ユーザー 
 const initialUser = {
-  user_id: 5, 
+  user_id: 5,
   user_name: 'guest'
 }
 
@@ -44,12 +44,12 @@ export function useLoggingInUser() {
   const [userInfo, setUserInfo] = useState(initialUser)  // ログイン中のユーザー情報（ID, 名前）
 
   // ログイン中のユーザー情報を設定する関数
-  const setLoggingInUserInfo = useCallback(async () => {
+  const setLoggingInUserInfo = async () => {
     let res = await fetch(`/api/getUserInfo/`)
     let userInfo = await res.json()
 
     setUserInfo(userInfo)
-  }, [])
+  }
 
   return [userInfo, setLoggingInUserInfo]
 }

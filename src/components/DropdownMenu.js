@@ -12,7 +12,9 @@ export default function DropdownMenu() {
 
   // ログイン中のユーザー情報を設定
   useLayoutEffect(() => {
-    setLoggingInUserInfo()
+    (async () => {
+      await setLoggingInUserInfo()
+    })()
   }, [])
 
   // ドロップダウンメニューの処理
@@ -26,6 +28,35 @@ export default function DropdownMenu() {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       setIsOpen(false)
     }
+  }
+
+  const logOutUser = async () => {  
+      // ユーザー情報を送信
+      const response = await fetch(`/api/logout`)
+  
+      console.log(response);
+      // // ログインに成功した場合、ユーザーページに遷移
+      // if (response.status == 200) {
+      //   const successData = {
+      //     title: 'ログイン成功',
+      //     text: 'ユーザーページに遷移します',
+      //     toast: true,
+      //     position: 'top-end',
+      //     showConfirmButton: false,
+      //     timer: 1000
+      //   }
+      //   // 登録成功メッセージを表示
+      //   AlertSuccess(successData)
+  
+      //   // ユーザーページに遷移
+      //   setTimeout(() => {
+      //     navigate(`/user/`)
+      //   }, 1.2 * 1000)
+      // }
+      // // ログインに失敗した場合、エラーメッセージを表示
+      // else {
+      //   AlertError({ title: 'ログインに失敗しました', text: 'ユーザー名 もしくは パスワードが違います。', })
+      // }
   }
 
   return (
@@ -50,9 +81,7 @@ export default function DropdownMenu() {
             </Link>
           </li>
           <li className="dropdown-list">
-            <Link to={'/logout'}>
-              <p>ログアウト</p>
-            </Link>
+              <p onClick={logOutUser}>ログアウト</p>
           </li>
         </ul>
       )}

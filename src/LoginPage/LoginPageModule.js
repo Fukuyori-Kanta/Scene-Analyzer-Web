@@ -49,9 +49,9 @@ function LoginPageContents() {
       AlertSuccess(successData)
 
       // ユーザーページに遷移
-      setTimeout(() => {
-        navigate(`/user/`)
-      }, 1.2 * 1000)
+      // setTimeout(() => {
+      //   navigate(`/top/`, { replace: true })
+      // }, 2 * 1000)
     }
     // ログインに失敗した場合、エラーメッセージを表示
     else {
