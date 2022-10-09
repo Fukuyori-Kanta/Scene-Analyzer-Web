@@ -2,25 +2,14 @@
 
 module.exports = (app) => {
 
-  // ログインフォームから送信された情報が正しいかチェックするAPI
-  app.post('/api/login', passport.authenticate('local'),
-    function (req, res) {
-      // 認証チェック
-      if (req.isAuthenticated()) {
-        // 正しい場合は成功レスポンスを返す
-        res.send(200)
-      }
-    }
-  )
-
   // ユーザー名が登録済みであるかチェックするAPI
-  app.get('/api/checkRegistered:user_name', function (req, res) {
+  app.get('/api/checkRegistered:user_name', (req, res) => {
     const userName = req.params.user_name
     pool.query(
       "SELECT * " +
       "FROM user_info " +
       "WHERE user_name = '" + userName + "';",
-      function (error, results) {
+      (error, results) => {
         if (error) throw error
         res.send(results)
       }
@@ -38,28 +27,38 @@ module.exports = (app) => {
     pool.query(
       "INSERT INTO user_info (user_name, password, creation_date) " +
       "VALUES ?", [formData],
-      function (error, results) {
+      (error, results) => {
         if (error) throw error
         res.send(JSON.stringify({ "status": 200, "error": null, "response": results }))
       }
     )
   })
 
+  // ログインフォームから送信された情報が正しいかチェックするAPI
+  app.post('/api/login', passport.authenticate('local'), (req, res) => {
+    // 認証チェック
+    if (req.isAuthenticated()) {
+      // 正しい場合は成功レスポンスを返す
+      res.sendStatus(200)
+    }
+  })
+
   // ログイン中のユーザーからログアウトするAPI
-  app.get("/api/logout", function (req, res, next) {
-    console.log(req.session.passport.user);
-    delete req.session.passport.user;
-    console.log(req.session.passport.user);
-    return res.redirect("/");
-  });
+  app.post("/api/logout", (req, res) => {
+    const userBeforeDeletion = req.session.passport.user   // 削除前のユーザー
 
+    // ログイン中のユーザー情報をセッションから削除
+    delete req.session.passport.user
 
-  // app.post('/api/logout', (req, res) => {
-  //   console.log("asd");
-  //   console.log(req.session.passport.user);
-  //   req.session.passport.user = undefined;
-  //   delete req.session.user;
-  //   console.log(req.session.passport.user);
-  //   res.redirect('/');
-  // });
+    const userAfterDeletion = req.session.passport.user   // 削除後のユーザー
+
+    // ログアウト出来た場合
+    if (typeof req.session.passport.user === "undefined" && userBeforeDeletion != userAfterDeletion) {
+      // 成功レスポンスを返す
+      res.sendStatus(200)
+    }
+    else {
+      res.sendStatus(500)
+    }
+  })
 }
