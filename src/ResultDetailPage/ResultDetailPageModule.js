@@ -1,4 +1,4 @@
-﻿import React from 'react'
+﻿import React, { useEffect } from 'react'
 import { Fetch } from '../Provider/Fetch'
 import { useParams } from 'react-router-dom'
 import Breadcrumbs from '../components/Breadcrumbs'
@@ -12,6 +12,7 @@ import LabelScreen from './LabelScreen'
 import CurrentScene from './CurrentScene'
 import ContextMenuProvider from '../Provider/ContextMenuProvider'
 import LabelsCheckBox from './LabelsCheckBox'
+import UpdateAccessHistory from './UpdateAccessHistory'
 
 export default function ResultDetailPage() {
   const videoId = useParams().id  // 動画ID
@@ -35,7 +36,7 @@ export default function ResultDetailPage() {
 }
 
 // 結果詳細画面の各種コンテンツを表示する関数
-function ResultDetailPageContents({ data }) {
+function ResultDetailPageContents({ data }) { 
   const videoId = data[0].video_id  // 動画データ
   const productName = data[0].product_name  // 作品名
   const sceneCount = [...new Set(data.map(item => item.scene_no))].length // 全シーン数
@@ -43,6 +44,9 @@ function ResultDetailPageContents({ data }) {
   /* 各種データの表示 */
   return (
     <div id="result-show">
+      {/* 閲覧履歴の更新 */}
+      <UpdateAccessHistory videoId={videoId}/>
+      
       {/* パンくずリスト */}
       <Breadcrumbs productName={productName} />
 
