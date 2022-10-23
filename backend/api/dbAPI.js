@@ -14,6 +14,20 @@ module.exports = (app) => {
     )
   })
 
+  // 閲覧履歴を更新するAPI
+  app.get("/api/updateAccessHistory/:id", function (req, res) {
+    const videoId = req.params.id
+    
+    pool.query(
+      "UPDATE access_history set last_access_time = NOW() " +
+      "WHERE video_id='" + videoId + "'",
+      function (error, results) {
+        if (error) throw error
+        res.send(results)
+      }
+    )
+  })
+
   // 結果一覧（動画ID, 作品名）を返すAPI
   app.get("/api/results", function (req, res) {
     pool.query(
@@ -128,7 +142,7 @@ module.exports = (app) => {
       "WHERE scene_data.video_id='" + videoId + "' AND score_category.category = 'F'",
       function (error, results) {
         if (error) throw error
-        console.log(results)
+        // console.log(results)
         res.send(results)
       }
     )
@@ -146,7 +160,7 @@ module.exports = (app) => {
       "AND label_list.is_cm_specialization = true",
       function (error, results) {
         if (error) throw error
-        console.log(results)
+        // console.log(results)
         res.send(results)
       }
     )
@@ -163,7 +177,7 @@ module.exports = (app) => {
       "WHERE scene_data.video_id='" + videoId + "' AND score_category.category = 'F'",
       function (error, results) {
         if (error) throw error
-        console.log(results)
+        // console.log(results)
         res.send(results)
       }
     )
@@ -189,7 +203,7 @@ module.exports = (app) => {
       "FROM ranking LEFT JOIN score_category ON ranking.category = score_category.category",
       function (error, results) {
         if (error) throw error
-        console.log(results)
+        // console.log(results)
         res.send(results)
       }
     )
