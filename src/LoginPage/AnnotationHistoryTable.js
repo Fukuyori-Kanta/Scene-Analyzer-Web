@@ -4,19 +4,6 @@ import { useTable, useSortBy } from "react-table"
 export default function AnnotationHistoryTable(userId) {
 
   // テーブルの列定義
-  // const columns = useMemo(
-  //   () => [
-  //     { Header: "動画名", accessor: "product_name", disableSortBy: false },
-  //     { Header: "シーン番号", accessor: "scene_no", disableSortBy: true },
-  //     { Header: "ラベル名", accessor: "label_name_ja", disableSortBy: false },
-  //     { Header: "操作", accessor: "operation", disableSortBy: false },
-  //     { Header: "X座標", accessor: "x_axis", disableSortBy: true },
-  //     { Header: "Y座標", accessor: "y_axis", disableSortBy: true },
-  //     { Header: "幅", accessor: "width", disableSortBy: true },
-  //     { Header: "高さ", accessor: "height", disableSortBy: true },
-  //     { Header: "タイムスタンプ", accessor: "timestamp", disableSortBy: false }
-  //   ]
-  // )
   const [state, setState] = useState({
     columns: [
       { Header: "動画名", accessor: "product_name", disableSortBy: false },
@@ -39,9 +26,8 @@ export default function AnnotationHistoryTable(userId) {
     const fetchAnnotationResults = async () => {
       setData(await getAnnotationResult(userId.userId))
     }
-
     fetchAnnotationResults()
-  }, []);
+  }, [])
 
   // 作業履歴を取得する関数
   const getAnnotationResult = async (userId) => {
@@ -85,7 +71,7 @@ export default function AnnotationHistoryTable(userId) {
                               : "🔼"
                             : ""}
                         </div>
-                      );
+                      )
                     })()}
                 </th>
               ))}

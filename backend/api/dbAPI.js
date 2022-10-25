@@ -352,4 +352,24 @@ module.exports = (app) => {
       }
     )
   })
+
+   // アノテーション作業の進捗を返すAPI
+   app.get("/api/annotationProgress/:id", function (req, res) {
+    const userId = req.params.id // ユーザーID
+    pool.query(
+      "SELECT video_id " +
+      "FROM label_checked_cm " +
+      "WHERE video_id IN (" +
+      "SELECT video_id FROM (" +
+      "SELECT video_id " +
+      "FROM scene_data " +
+      "WHERE user_id = '" + userId + "'" + 
+      "GROUP BY video_id " +
+      "LIMIT 100, 100 ) AS progress);",
+      function (error, results) {
+        if (error) throw error
+        res.send(results)
+      }
+    )
+  })
 }
