@@ -84,14 +84,17 @@ export default function AnnotationHistoryTable(userId) {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
-                  if (cell.value == 'add') {
-                    return <td {...cell.getCellProps()} className='add'>{cell.render("Cell")}</td>
+                  if (cell.value == 'delete') {
+                    return <td {...cell.getCellProps()}><p className='delete'>{cell.render("Cell")}</p></td>
                   }
-                  else if (cell.value == 'delete') {
-                    return <td {...cell.getCellProps()} className='delete'>{cell.render("Cell")}</td>
+                  else if (cell.value == 'add') {
+                    return <td {...cell.getCellProps()}><p className='add'>{cell.render("Cell")}</p></td>
+                  }
+                  else if (cell.value == 'edit') {
+                    return <td {...cell.getCellProps()}><p className='edit'>{cell.render("Cell")}</p></td>
                   }
                   else if (cell.value == 'moving_scaling') {
-                    return <td {...cell.getCellProps()} className='moving'>{cell.render("Cell")}</td>
+                    return <td {...cell.getCellProps()}><p className='moving'>moving</p></td>
                   }
                   else {
                     return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
