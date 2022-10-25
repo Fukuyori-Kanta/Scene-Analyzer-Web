@@ -28,7 +28,7 @@ function TopPageContents({ data }) {
       {/* 閲覧履歴 */}
       <section id="recent-videos" className="border-line-vertical">
         <div id="history-heading">
-          <h3 className="bgc-gray text-center">最 近 閲 覧 さ れ た Ｃ Ｍ</h3>
+          <h3 className="bgc-gray text-center">最 近 閲 覧 さ れ た C M</h3>
         </div>
         <VideoList id='access-history' dataList={data}/>
         <div id="add">
