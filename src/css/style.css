@@ -1734,15 +1734,38 @@ details[open] summary {
 
 /* ユーザーページ */
 .user-page .greeting {
-  margin-top: 15px;
-  margin-left: 20px;
+  margin-top: 20px;
+  margin-left: 30px;
   font-size: 1.25rem;
 }
-
 /* アノテーション作業履歴 */
+.user-page .flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.user-page .considerations {
+  margin-top: 50px;
+  margin-left: 70px;
+}
+.user-page .considerations h3, h4{
+  margin-bottom: 5px;
+}
+.user-page .considerations  h4{
+  margin-left: 10px;
+}
+.circle-title {
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+.progress-circle {
+  text-align: "center";
+  margin-left: auto;
+  margin-right: 70px;
+}
+
 .table-title {
   width: 96.5%;
-  margin-top: 30px;
   margin-left: 20px;
   border-bottom: double 5px #444;
 }
