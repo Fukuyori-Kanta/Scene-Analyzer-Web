@@ -1743,9 +1743,8 @@ details[open] summary {
   display: flex;
   flex-direction: row;
 }
-
 .user-page .considerations {
-  margin-top: 50px;
+  margin-top: 60px;
   margin-left: 70px;
 }
 .user-page .considerations h3, h4{
@@ -1756,22 +1755,23 @@ details[open] summary {
 }
 .circle-title {
   margin-left: 10px;
-  margin-bottom: 10px;
 }
 .progress-circle {
   text-align: "center";
   margin-left: auto;
   margin-right: 70px;
 }
-
 .table-title {
   width: 96.5%;
-  margin-left: 20px;
+  margin-top: -20px;
+  margin-left: 30px;
   border-bottom: double 5px #444;
 }
+.annotation-result {
+  height: 65vh;
+  overflow: auto;
+}
 .annotation-result table {
-  width: 100%;
-  
   padding: 20px 40px;
   border-spacing: 0;
   table-layout: fixed;
@@ -1780,6 +1780,7 @@ details[open] summary {
 }
 .annotation-result thead {
   text-align: left;
+  background-color: #aee;
 }
 .annotation-result th,td {
   border-bottom: solid 1px #444;
@@ -1796,9 +1797,55 @@ details[open] summary {
 .annotation-result table tr:nth-child(even){
   background-color: #ddd
 }
-.annotation-result {
-  height: 60vh;
-  overflow: auto;
+/* テーブル列の幅設定 */
+.annotation-result table tr td:nth-child(1) {
+  width: 35vw;
+}
+.annotation-result table tr td:nth-child(2) {
+  width: 10vw;
+}
+.annotation-result table tr td:nth-child(3) {
+  width: 15vw;
+}
+.annotation-result table tr td:nth-child(4) {
+  width: 15vw;
+}
+.annotation-result table tr td:nth-child(5) {
+  width: 10vw;
+}
+.annotation-result table tr td:nth-child(6) {
+  width: 10vw;
+}
+.annotation-result table tr td:nth-child(7) {
+  width: 10vw;
+}
+.annotation-result table tr td:nth-child(8) {
+  width: 10vw;
+}
+.annotation-result table tr td:nth-child(9) {
+  width: 25vw;
+}
+.annotation-result td p {
+  width: 70%;
+  height: 70%;
+  text-align: center;
+  color: white;
+  padding: 5px, 5px;
+  border-radius: 30px;
+  margin: auto;
+  opacity: 0.7;
+}
+.annotation-result td p.delete {
+  background-color: #D73A4A;
+}
+.annotation-result td p.add {
+  background-color: #25b327;
+}
+.annotation-result td p.edit {
+  background-color: #72BDE3;
+}
+.annotation-result td p.moving {
+  background-color: #6B65A9;
 }
 
 /* CMチェック */
