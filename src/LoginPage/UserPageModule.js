@@ -2,6 +2,7 @@
 import { useLoggingInUser } from '../Provider/hooks'
 import Breadcrumbs from '../components/Breadcrumbs'
 import SubTitle from '../components/SubTitle'
+import AnnotationHistoryTable from './AnnotationHistoryTable'
 
 export default function UserPage() {
   return (
@@ -22,6 +23,13 @@ function UserPageContents() {
       <Breadcrumbs />
       <SubTitle heading="ユーザーページ" />
       <div className="greeting">ようこそ {userInfo.user_name} さん</div>
+
+      <h3 className="table-title">アノテーション作業履歴</h3>
+      {
+        userInfo.user_name != 'guest' &&
+        <AnnotationHistoryTable userId={userInfo.user_id} />
+      }
+
     </div>
   )
 }
