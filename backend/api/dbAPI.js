@@ -341,7 +341,7 @@ module.exports = (app) => {
   app.get("/api/annotationResults/:id", function (req, res) {
     const userId = req.params.id // ユーザーID
     pool.query(
-      "SELECT works_data.product_name, scene_no, label_list.label_name_ja, operation, x_axis, y_axis, width, height, DATE_FORMAT(timestamp, '%Y-%m-%d %H:%i:%s') as timestamp " +
+      "SELECT works_data.video_id, works_data.product_name, scene_no, label_list.label_name_ja, operation, x_axis, y_axis, width, height, DATE_FORMAT(timestamp, '%Y-%m-%d %H:%i:%s') as timestamp " +
       "FROM annotation_result " +
       "LEFT JOIN works_data ON annotation_result.video_id = works_data.video_id " + 
       "LEFT JOIN label_list ON annotation_result.label_id = label_list.label_id " +
