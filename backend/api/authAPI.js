@@ -1,10 +1,11 @@
 ﻿var passport = require('passport')
+var pool = require('../dbConnection') // コネクションプール
 
 module.exports = (app) => {
 
   // ユーザー名が登録済みであるかチェックするAPI
-  app.get('/api/checkRegistered:user_name', (req, res) => {
-    const userName = req.params.user_name
+  app.get('/api/checkRegistered/:userName', (req, res) => {
+    const userName = req.params.userName  // ユーザー名
     pool.query(
       "SELECT * " +
       "FROM user_info " +

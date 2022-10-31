@@ -25,7 +25,7 @@ function RegistInputPageContents() {
 
   // ユーザー名が登録できるかを返す関数（出来る: ture, 出来ない: false）
   const checkRegisteredUser = async (userName) => {
-    let res = await fetch(`/api/checkRegistered` + userName)
+    let res = await fetch(`/api/checkRegistered/` + userName)
     let results = await res.json()
     // 登録可能な場合
     if (results.length == 0) {
@@ -50,6 +50,7 @@ function RegistInputPageContents() {
 
     // ユーザー名の登録チェック
     let isRegistered = await checkRegisteredUser(formData.username)
+    console.log(isRegistered);
 
     // 登録できない場合
     if (!isRegistered) {
