@@ -1797,6 +1797,9 @@ details[open] summary {
 .annotation-result table tr:nth-child(even){
   background-color: #ddd
 }
+.annotation-result tr a:hover {
+  color: #888;
+}
 /* テーブル列の幅設定 */
 .annotation-result table tr td:nth-child(1) {
   width: 35vw;
