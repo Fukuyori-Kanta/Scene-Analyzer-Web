@@ -365,7 +365,8 @@ module.exports = (app) => {
       "FROM scene_data " +
       "WHERE user_id = '" + userId + "'" + 
       "GROUP BY video_id " +
-      "LIMIT 100, 100 ) AS progress);",
+      "LIMIT 100, 100 ) AS progress) " +
+      "GROUP BY video_id;",
       function (error, results) {
         if (error) throw error
         res.send(results)

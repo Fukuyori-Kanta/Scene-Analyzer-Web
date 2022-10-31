@@ -12,7 +12,7 @@ export default function AnnotationProgressCircle(userId) {
       const doneRecordNum = await getAnnotationProgress(userId.userId)
 
       // 進捗率の設定
-      setProgress(doneRecordNum / workRange.workNum * 100)
+      setProgress(Math.trunc(doneRecordNum / workRange.workNum * 100))
     }
     fetchAnnotationProgress()
   }, [])
